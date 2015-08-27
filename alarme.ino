@@ -56,7 +56,8 @@ void alarme_every1s(void)
 
 	for (i = 0; i < MAX_COUNT_ALARM; i++)
 	{
-		if (al_pool[i]->horaire.heures == heure_courante.heures
+		if (al_pool[i]->isValid == True
+		 && al_pool[i]->horaire.heures == heure_courante.heures
 		 && al_pool[i]->horaire.minutes == heure_courante.minutes
 		 && al_pool[i]->horaire.secondes == heure_courante.secondes)
 		{

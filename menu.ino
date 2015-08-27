@@ -59,6 +59,7 @@ void menu_every10ms(void)
 					{
 						clearCmdButtons();
 						lcd_clear();
+						clock_reset();
 						state = 2;
 					}
 					else

@@ -45,7 +45,7 @@ void InterruptTimer2()
 	// TOUTES LES 10 MILLISECONDES
 	boutons_every10ms(); 
 	lcd_every10ms();
-	clock_every10ms();
+	//clock_every10ms();
 	menu_every10ms();
 	alarme_every10ms();
 }
@@ -53,6 +53,7 @@ void InterruptTimer2()
 void loop()
 {
 	// Idle
+	clock_every1ms();
 	moteur_every1ms();
 
 }
