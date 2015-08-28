@@ -12,9 +12,10 @@
 #include "common.h"
 #include "clock.h"
 
-QueueArray<char> f_boutons;
-QueueArray<char> f_moteur;
-QueueArray<char> f_lcd;
+QueueArray<char>   f_boutons;
+QueueArray<char>   f_moteur;
+QueueArray<char>   f_lcd;
+QueueArray<Logs_t> f_log;
 
 // FIFO boutons
 void put_btfifo(char event);
@@ -33,5 +34,11 @@ void put_lcdfifo(char event);
 Bool isEmpty_lcdfifo(void);
 char get_lcdfifo(void);
 Bool isFull_lcdfifo(void);
+
+// FIFO Logs
+void put_logfifo(Logs_t obj);
+Bool isEmpty_logfifo(void);
+Logs_t get_logfifo(void);
+Bool isFull_logfifo(void);
 
 #endif /* _CTRLEUR_H_ */
