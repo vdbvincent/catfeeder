@@ -19,7 +19,7 @@
 #define MENU_EVENT      0
 #define MENU_NO_EVENT   4
 
-void menu_setup(void);
+void menu_setup(unsigned int p_tempoDem);
 void menu_every10ms(void);
 
 void clearCmdButtons(void);
