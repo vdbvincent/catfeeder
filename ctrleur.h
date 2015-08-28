@@ -40,5 +40,6 @@ void put_logfifo(Logs_t obj);
 Bool isEmpty_logfifo(void);
 Logs_t get_logfifo(void);
 Bool isFull_logfifo(void);
+void print_log(Criticite_t crit, char * texte);
 
 #endif /* _CTRLEUR_H_ */
