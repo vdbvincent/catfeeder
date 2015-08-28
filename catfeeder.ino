@@ -18,7 +18,7 @@ static int c10 = 0 ;
 
 void setup()
 {
-	// init du process bouton avec un delai de filtrage de 4*4=20ms
+	// init du process bouton avec un delai de filtrage de 2*4=8ms
 	boutons_setup(2);
 	// Init de l'écran LCD
 	lcd_setup();
@@ -27,7 +27,7 @@ void setup()
 	// Init du moteur
 	moteur_setup();
 	// Init du memu
-	menu_setup();
+	menu_setup(300);  // 2sec de tempo pour l'écran de démarrage
 	// Init de l'alarme
 	alarme_setup();
 
