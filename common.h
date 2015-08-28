@@ -41,6 +41,14 @@ typedef struct
   char secondes;
 }clock;
 
+// Définition des type pour le log
+typedef enum {ERREUR = 1, INFO = 2, DEBUG = 3} Criticite_e;
+
+typedef struct
+{
+	Criticite_e crit;
+	char * texte;
+} Logs_t;
 
 // Définition des événements moteur
 #define FEDD1  1
