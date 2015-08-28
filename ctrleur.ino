@@ -72,3 +72,24 @@ Bool isFull_lcdfifo(void)
 {
   return (Bool)f_lcd.isFull();
 }
+
+// FIFO Logs
+void put_logfifo(Logs_t obj)
+{
+  f_log.enqueue(obj);
+}
+
+Bool isEmpty_logfifo(void)
+{
+  return (Bool)f_log.isEmpty();
+}
+
+Logs_t get_logfifo(void)
+{
+  return f_log.dequeue();
+}
+
+Bool isFull_logfifo(void)
+{
+  return (Bool)f_log.isFull();
+}
