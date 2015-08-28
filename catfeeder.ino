@@ -13,9 +13,6 @@
 #include "menu.h"
 #include "alarme.h"
 
-// Déclaration de fonctions
-//void InterruptTimer2();
-
 // Variables globales
 static int c10 = 0 ;
 
@@ -35,7 +32,7 @@ void setup()
 	alarme_setup();
 
 	// initialisation interruption Timer 2
-	MsTimer2::set(5, InterruptTimer2); // période 5ms 
+	MsTimer2::set(10, InterruptTimer2); // période 10ms 
 	MsTimer2::start(); // active Timer2 
 }
 
@@ -45,7 +42,7 @@ void InterruptTimer2()
 	// TOUTES LES 10 MILLISECONDES
 	boutons_every10ms(); 
 	lcd_every10ms();
-	//clock_every10ms();
+	clock_every10ms();
 	menu_every10ms();
 	alarme_every10ms();
 }
@@ -53,7 +50,7 @@ void InterruptTimer2()
 void loop()
 {
 	// Idle
-	clock_every1ms();
+	//clock_every1ms();  // trop rapide
 	moteur_every1ms();
 
 }
