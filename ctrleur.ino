@@ -93,3 +93,12 @@ Bool isFull_logfifo(void)
 {
   return (Bool)f_log.isFull();
 }
+
+void print_log(Criticite_t crit, char * texte)
+{
+  Logs_t mylog;
+  mylog.crit = crit;
+  mylog.texte = texte;
+  if (!isFull_logfifo())
+    put_logfifo(mylog);
+}
