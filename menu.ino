@@ -6,14 +6,14 @@
  */
 #include "menu.h"
 
-#define TEMPS_DEM  300  // 2s pour l'écran de démarrage
-
 // Variables globales
 static char c_menuEventAlarme = MENU_NO_EVENT;
+static unsigned int ui_tempoDem = 300;  // Valeur par défaut 300 = 2s
  
-void menu_setup(void)
+void menu_setup(unsigned int p_tempoDem)
 {
-  // rien a faire
+  // Configuration de la tempo de l'écran de démarrage
+  ui_tempoDem = p_tempoDem;
 }
 
 void menu_doFeedTheCatEvent(void)
