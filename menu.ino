@@ -55,7 +55,7 @@ void menu_every10ms(void)
 				break;
 
 				case 1:
-					if (cmp >= TEMPS_DEM)
+					if (cmp >= ui_tempoDem)
 					{
 						clearCmdButtons();
 						lcd_clear();

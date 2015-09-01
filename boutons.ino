@@ -16,10 +16,6 @@ int filtre = 0;
 
 void boutons_setup(int p_delayFiltre_ms)
 {
-    // Init debug
-    Serial.begin(9600);
-    Serial.println("Init des boutons");
-    
     // Init boutons
     pinMode(BP_G, INPUT_PULLUP);
     pinMode(BP_B, INPUT_PULLUP);
@@ -51,7 +47,7 @@ void boutons_every10ms(void)
                 	etatBp = lireBoutonGauche();
                         if (etatBp == EVENEMENT_PRESSE)
                         {
-                                Serial.println("Bouton gauche PRESSE");
+                                //Serial.println("Bouton gauche PRESSE");
                                 sendEvent(BT_G_PRESSE);
                         }
                         else if (etatBp == EVENEMENT_RELACHE)
@@ -68,7 +64,7 @@ void boutons_every10ms(void)
                 	etatBp = lireBoutonDroit();
                 	if (etatBp == EVENEMENT_PRESSE)
                         {
-                                Serial.println("Bouton droit PRESSE");
+                                //Serial.println("Bouton droit PRESSE");
                                 sendEvent(BT_D_PRESSE);
                         }
                         else if (etatBp == EVENEMENT_RELACHE)
@@ -85,7 +81,7 @@ void boutons_every10ms(void)
                 	etatBp = lireBoutonBas();
                 	if (etatBp == EVENEMENT_PRESSE)
                         {
-                                Serial.println("Bouton bas PRESSE");
+                                //Serial.println("Bouton bas PRESSE");
                                 sendEvent(BT_B_PRESSE);
                         }
                         else if (etatBp == EVENEMENT_RELACHE)
@@ -102,7 +98,7 @@ void boutons_every10ms(void)
                 	etatBp = lireBoutonHaut();
                 	if (etatBp == EVENEMENT_PRESSE)
                         {
-                                Serial.println("Bouton haut PRESSE");
+                                //Serial.println("Bouton haut PRESSE");
                                 sendEvent(BT_H_PRESSE);
                         }
                         else if (etatBp == EVENEMENT_RELACHE)
@@ -131,15 +127,15 @@ char lireBoutonGauche(void)
 		case NON_PRESSE:
 			if (ret < 1)
 			{
-                                retEtat = AUCUN_EVENEMENT;
+                retEtat = AUCUN_EVENEMENT;
 				state = ENFONCE;
 				icpt = 0;
-                                //Serial.println("NON_PRESSE -> ENFONCE");
+                //Serial.println("NON_PRESSE -> ENFONCE");
 			}
-                        else
-                        {
-                                retEtat = AUCUN_EVENEMENT;
-                        }
+            else
+            {
+                retEtat = AUCUN_EVENEMENT;
+            }
 		break;
 
 		case ENFONCE:
@@ -150,13 +146,13 @@ char lireBoutonGauche(void)
 			else if (ret >= 1)
 			{
 				state = NON_PRESSE;
-                                //Serial.println("ENFONCE -> NON_PRESSE");
+                //Serial.println("ENFONCE -> NON_PRESSE");
 			}
 			if (icpt > filtre)
 			{
 				state = PRESSE;
-                                //Serial.println("ENFONCE -> PRESSE");
-                                retEtat = EVENEMENT_PRESSE;
+                //Serial.println("ENFONCE -> PRESSE");
+                retEtat = EVENEMENT_PRESSE;
 			}
 		break;
 
@@ -164,13 +160,13 @@ char lireBoutonGauche(void)
 			if (ret >= 1)
 			{
 				state = NON_PRESSE;
-                                //Serial.println("PRESSE -> NON_PRESSE");
-                                retEtat = EVENEMENT_RELACHE;
+                //Serial.println("PRESSE -> NON_PRESSE");
+                retEtat = EVENEMENT_RELACHE;
 			}
-                        else
-                        {
-                                retEtat = AUCUN_EVENEMENT;
-                        }
+            else
+            {
+                retEtat = AUCUN_EVENEMENT;
+            }
 		break;
 	}
 
@@ -181,7 +177,7 @@ char lireBoutonGauche(void)
 char lireBoutonDroit(void)
 {
 	static char state = NON_PRESSE;
-        static char retEtat = AUCUN_EVENEMENT;
+    static char retEtat = AUCUN_EVENEMENT;
 	static int ret = 0;
 	static int icpt = 0;
         
@@ -192,15 +188,15 @@ char lireBoutonDroit(void)
 		case NON_PRESSE:
 			if (ret < 1)
 			{
-                                retEtat = AUCUN_EVENEMENT;
+                retEtat = AUCUN_EVENEMENT;
 				state = ENFONCE;
 				icpt = 0;
-                                Serial.println("NON_PRESSE -> ENFONCE");
+                //Serial.println("NON_PRESSE -> ENFONCE");
 			}
-                        else
-                        {
-                                retEtat = AUCUN_EVENEMENT;
-                        }
+            else
+            {
+                retEtat = AUCUN_EVENEMENT;
+            }
 		break;
 
 		case ENFONCE:
@@ -211,13 +207,13 @@ char lireBoutonDroit(void)
 			else if (ret >= 1)
 			{
 				state = NON_PRESSE;
-                                Serial.println("ENFONCE -> NON_PRESSE");
+                //Serial.println("ENFONCE -> NON_PRESSE");
 			}
 			if (icpt > filtre)
 			{
 				state = PRESSE;
-                                Serial.println("ENFONCE -> PRESSE");
-                                retEtat = EVENEMENT_PRESSE;
+                //Serial.println("ENFONCE -> PRESSE");
+                retEtat = EVENEMENT_PRESSE;
 			}
 		break;
 
@@ -225,13 +221,13 @@ char lireBoutonDroit(void)
 			if (ret >= 1)
 			{
 				state = NON_PRESSE;
-                                Serial.println("PRESSE -> NON_PRESSE");
-                                retEtat = EVENEMENT_RELACHE;
+                //Serial.println("PRESSE -> NON_PRESSE");
+                retEtat = EVENEMENT_RELACHE;
 			}
-                        else
-                        {
-                                retEtat = AUCUN_EVENEMENT;
-                        }
+            else
+            {
+                retEtat = AUCUN_EVENEMENT;
+            }
 		break;
 	}
 
@@ -241,7 +237,7 @@ char lireBoutonDroit(void)
 char lireBoutonBas(void)
 {
 	static char state = NON_PRESSE;
-        static char retEtat = AUCUN_EVENEMENT;
+    static char retEtat = AUCUN_EVENEMENT;
 	static int ret = 0;
 	static int icpt = 0;
         
@@ -252,15 +248,15 @@ char lireBoutonBas(void)
 		case NON_PRESSE:
 			if (ret < 1)
 			{
-                                retEtat = AUCUN_EVENEMENT;
+                retEtat = AUCUN_EVENEMENT;
 				state = ENFONCE;
 				icpt = 0;
-                                //Serial.println("NON_PRESSE -> ENFONCE");
+                //Serial.println("NON_PRESSE -> ENFONCE");
 			}
-                        else
-                        {
-                                retEtat = AUCUN_EVENEMENT;
-                        }
+            else
+            {
+                retEtat = AUCUN_EVENEMENT;
+            }
 		break;
 
 		case ENFONCE:
@@ -271,13 +267,13 @@ char lireBoutonBas(void)
 			else if (ret >= 1)
 			{
 				state = NON_PRESSE;
-                                //Serial.println("ENFONCE -> NON_PRESSE");
+                //Serial.println("ENFONCE -> NON_PRESSE");
 			}
 			if (icpt > filtre)
 			{
 				state = PRESSE;
-                                //Serial.println("ENFONCE -> PRESSE");
-                                retEtat = EVENEMENT_PRESSE;
+                //Serial.println("ENFONCE -> PRESSE");
+                retEtat = EVENEMENT_PRESSE;
 			}
 		break;
 
@@ -285,13 +281,13 @@ char lireBoutonBas(void)
 			if (ret >= 1)
 			{
 				state = NON_PRESSE;
-                                //Serial.println("PRESSE -> NON_PRESSE");
-                                retEtat = EVENEMENT_RELACHE;
+                //Serial.println("PRESSE -> NON_PRESSE");
+                retEtat = EVENEMENT_RELACHE;
 			}
-                        else
-                        {
-                                retEtat = AUCUN_EVENEMENT;
-                        }
+            else
+            {
+                retEtat = AUCUN_EVENEMENT;
+            }
 		break;
 	}
 

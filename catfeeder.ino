@@ -32,7 +32,7 @@ void setup()
 	alarme_setup();
 
 	// initialisation interruption Timer 2
-	MsTimer2::set(10, InterruptTimer2); // période 10ms 
+	MsTimer2::set(1, InterruptTimer2); // période 10ms 
 	MsTimer2::start(); // active Timer2 
 }
 
@@ -40,11 +40,44 @@ void setup()
 void InterruptTimer2()
 {
 	// TOUTES LES 10 MILLISECONDES
-	boutons_every10ms(); 
-	lcd_every10ms();
-	clock_every10ms();
-	menu_every10ms();
-	alarme_every10ms();
+	switch (c10) 
+	{
+		case 0:
+			boutons_every10ms();
+		break;
+		case 1:
+			lcd_every10ms();
+		break;
+		case 2:
+			clock_every10ms();
+		break;
+		case 3:
+			menu_every10ms();
+		break;
+		case 4:
+			alarme_every10ms();
+		break;
+		case 5:
+		// do something
+		break;
+		case 6:
+		// do something
+		break;
+		case 7:
+		// do something
+		break;
+		case 8:
+		// do something
+		break;
+		case 9:
+		// do something
+		break;
+	}
+	if (c10 >= 10)
+		c10 = 0;
+	else
+		c10 ++;
+
 }
 
 void loop()
@@ -52,7 +85,4 @@ void loop()
 	// Idle
 	//clock_every1ms();  // trop rapide
 	moteur_every1ms();
-
 }
-
-

@@ -11,7 +11,7 @@
 LiquidCrystal lcd(11,10,9,8,7,6); //liaison 4 bits de données
 
 // Variable de la FSM
-static Bool isInit = False;
+static Bool lcd_isInit = False;
 
 // Variables popup
 static char popup_timeout = 0;
@@ -179,7 +179,7 @@ Menu_t ALARME_MENU =
 void lcd_setup(void)
 {
   // Init debug
-  Serial.begin(9600);
+  //Serial.begin(9600);
 
   // Chargement du symbole reveil
   lcd.createChar(0, reveil1);
@@ -189,12 +189,12 @@ void lcd_setup(void)
   // set up the LCD's number of columns and rows:
   lcd.begin(16, 2);
   lcd.clear();
-  isInit = True;
+  lcd_isInit = True;
 }
 
 Bool lcd_init(void)
 {
-  return isInit;
+  return lcd_isInit;
 }
 
 void lcd_popup(char * texte, uint8_t temps)
@@ -207,7 +207,7 @@ void lcd_popup(char * texte, uint8_t temps)
 
 void welcomeScreen(void)
 {
-  if (isInit)
+  if (lcd_isInit)
   {
     lcd.clear();
     lcd.print("CatFeeder  v1.0");
@@ -216,7 +216,7 @@ void welcomeScreen(void)
 
 void lcd_clear(void)
 {
-  if (isInit)
+  if (lcd_isInit)
   {
     lcd.clear();
     popup_timeout = 0;
@@ -347,7 +347,7 @@ Select_t afficheMenu(Menu_t myMenu)
       switch(event)
       {
         case BT_B_PRESSE:
-          Serial.println("Bt bas");
+          //Serial.println("Bt bas");
           // choix suivant s'il existe
           if (selection < (myMenu.nbItem - 1))
           {
@@ -357,14 +357,14 @@ Select_t afficheMenu(Menu_t myMenu)
             lcd.setCursor(0,1);
             lcd.print("                ");
           }
-		  else
-		  {
-			// Revient au premier choix
-			selection = 0;
-			// Effacement de la ligne
+    		  else
+    		  {
+        		// Revient au premier choix
+        		selection = 0;
+        		// Effacement de la ligne
             lcd.setCursor(0,1);
             lcd.print("                ");
-		  }
+    		  }
         break;
         
         case BT_H_PRESSE:
@@ -377,14 +377,14 @@ Select_t afficheMenu(Menu_t myMenu)
             lcd.setCursor(0,1);
             lcd.print("                ");
           }
-		  else
-		  {
-			// Va au dernier choix
-			selection = myMenu.nbItem - 1;
-			// Effacement de la ligne
+    		  else
+    		  {
+      			// Va au dernier choix
+      			selection = myMenu.nbItem - 1;
+      			// Effacement de la ligne
             lcd.setCursor(0,1);
             lcd.print("                ");
-		  }
+    		  }
         break;
         
         case BT_D_PRESSE:

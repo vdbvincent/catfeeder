@@ -7,18 +7,18 @@
 #include "logs.h"
 
 #define FILTRE  3 // Filtrage de l'affichage des logs. 0 = Rien afficher
-//													                           1 - Afficher les logs ERREUR
-//													                           2 - Afficher les logs ERREUR + INFO
-//													                           3 - Afficher les logs ERREUR + INFO + DEBUG
+//													   1 - Afficher les logs ERREUR
+//													   2 - Afficher les logs ERREUR + INFO
+//													   3 - Afficher les logs ERREUR + INFO + DEBUG
 
-Bool isInit = False;
+static Bool logs_isInit = False;
 
 void logs_setup(void)
 {
 	Serial.begin(9600);
 	Serial.println("Init du logs");
-	isInit = True;
-{
+	logs_isInit = True;
+}
 
 void logs_every10ms(void)
 {
@@ -28,7 +28,7 @@ void logs_every10ms(void)
 	char buffer[2048];
 	char * crit;
 	
-	if ((! isEmpty_logfifo()) && (isInit == True))
+	if ((! isEmpty_logfifo()) && (logs_isInit == True))
 	{
 		objLog = get_logfifo();
 
@@ -43,9 +43,9 @@ void logs_every10ms(void)
 				crit = "DEBUG";
 
 			// Affichage sur LS
-			sprintf_s(buf, 2048, "[%] - [%s]", crit, objLog.texte);
+			sprintf(buffer, "[%] - [%s]", crit, objLog.texte);
 			
-			Serial.println(buf);
+			Serial.println(buffer);
 		}
 	}
 }

@@ -16,10 +16,10 @@ const int IN_D = 5;
 void moteur_setup(void)
 {
     // Init debug
-    Serial.begin(9600);
+    //Serial.begin(9600);
  
     // Init des sorties
-    Serial.println("Init des sorties moteur");
+    //Serial.println("Init des sorties moteur");
     pinMode(IN_A, OUTPUT);
     pinMode(IN_B, OUTPUT);
     pinMode(IN_C, OUTPUT);
@@ -44,7 +44,7 @@ void moteur_every1ms(void)
   {
     // Reception de la quantité
     event = get_mtfifo();
-    Serial.println("Moteur : event recu");
+    //Serial.println("Moteur : event recu");
   }
   
   
@@ -113,7 +113,7 @@ void moteur_every1ms(void)
       {
         state = 0;
         sendMoteurEvent(END);
-        Serial.println("Moteur : rotation finie");
+        //Serial.println("Moteur : rotation finie");
       }
       
     break;

@@ -94,7 +94,7 @@ Bool isFull_logfifo(void)
   return (Bool)f_log.isFull();
 }
 
-void print_log(Criticite_t crit, char * texte)
+void print_log(Criticite_e crit, char * texte)
 {
   Logs_t mylog;
   mylog.crit = crit;
