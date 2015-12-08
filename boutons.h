@@ -20,6 +20,16 @@ typedef struct
 } CTXT_FILTRE;
 
 
+/*******************
+*       LOG        *
+********************/
+#define LOG_PRINTF
+#ifdef LOG_PRINTF
+	log(value)	printstr(##value)
+#else
+#endif
+
+
 void boutons_setup(int p_delayFiltre_ms);
 void boutons_every10ms(void);
 

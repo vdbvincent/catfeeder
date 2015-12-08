@@ -9,6 +9,6 @@
 #define _CATFEEDER_H_
 
  int main(void);
- //void every500ms(void);
+ void every500ms(void);
 
 #endif */ _CATFEEDER_H_ */

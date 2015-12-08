@@ -33,10 +33,10 @@ void boutons_setup(int p_delayFiltre_ms)
     sgContexte[BP_B].retEtat = AUCUN_EVENEMENT;
     sgContexte[BP_B].icpt = 0;
     // Init boutons
-    pinMode(BP_G, INPUT_PULLUP);
-    pinMode(BP_B, INPUT_PULLUP);
-    pinMode(BP_D, INPUT_PULLUP);
-    pinMode(BP_H, INPUT_PULLUP);
+    //pinMode(BP_G, INPUT_PULLUP);
+    //pinMode(BP_B, INPUT_PULLUP);
+    //pinMode(BP_D, INPUT_PULLUP);
+    //pinMode(BP_H, INPUT_PULLUP);
 
     
     // Init du filtrage anti-rebond
@@ -55,30 +55,29 @@ void sendEvent(char event)
 void boutons_every10ms(void)
 {
 
-   
-
     static int state = 0;
   	char etatBp = AUCUN_EVENEMENT;
 
-    //printstr("test");
+    //log("test");
 
     switch(state)
     {
-        case 0 : etatBp = lireBouton(BP_G); state = 1; break;
+        case 0 : etatBp = lireBouton(BP_G); state = 0; break;
         case 1 : etatBp = lireBouton(BP_D); state = 2; break;
         case 2 : etatBp = lireBouton(BP_H); state = 3; break;
         case 3 : etatBp = lireBouton(BP_B); state = 0; break;
 
-        if (etatBp == EVENEMENT_PRESSE)
-        {
-                printstr("Bouton PRESSE");
-                //sendEvent(BT_H_PRESSE);
-        }
-        else if (etatBp == EVENEMENT_RELACHE)
-        {
-                printstr("Bouton RELACHE");
-                //sendEvent(BT_H_RELACHE);
-        }
+    }
+    
+    if (etatBp == EVENEMENT_PRESSE)
+    {
+            log("Bouton PRESSE\n");
+            //sendEvent(BT_H_PRESSE);
+    }
+    else if (etatBp == EVENEMENT_RELACHE)
+    {
+            log("Bouton RELACHE\n");
+            //sendEvent(BT_H_RELACHE);
     }
 
 #if 0
@@ -162,19 +161,44 @@ char lireBouton(uint8_t voie)
     char retEtat = sgContexte[voie].retEtat;
     int icpt = sgContexte[voie].icpt;
     int ret = 0;
+    int value = 0;
         
-    ret = analogRead(voie);
-    //ret = mcubind_virtualport_read(voie);
+    //ret = analogRead(voie);
+
+    switch (voie)
+    {
+        case BP_G:
+          value = MCUBIND_VIRTUALPORT_ADC00;
+          break;
+        case BP_B:
+          value = MCUBIND_VIRTUALPORT_ADC01;
+          break;
+
+        case BP_D:
+          value = MCUBIND_VIRTUALPORT_ADC02;
+          break;
+
+        case BP_H:
+          value = MCUBIND_VIRTUALPORT_ADC03;
+          break;
+
+        //default:
+          // do something
+    }
+
+    ret = mcubind_virtualport_read(value);
+
 
     switch(state)
     {
         case NON_PRESSE:
-            if (ret < 1)
+            //if (ret < 1)
+            if (ret >= 4)
             {
                 retEtat = AUCUN_EVENEMENT;
                 state = ENFONCE;
                 icpt = 0;
-                //Serial.println("NON_PRESSE -> ENFONCE");
+                log("NON_PRESSE -> ENFONCE\n");
             }
             else
             {
@@ -183,28 +207,31 @@ char lireBouton(uint8_t voie)
         break;
 
         case ENFONCE:
-            if (ret < 1)
+            //if (ret < 1)
+            if (ret >= 4)
             {
                 icpt ++;
             }
-            else if (ret >= 1)
+            //else if (ret >= 1)
+            else if (ret < 4)
             {
                 state = NON_PRESSE;
-                //Serial.println("ENFONCE -> NON_PRESSE");
+                log("ENFONCE -> NON_PRESSE\n");
             }
             if (icpt > filtre)
             {
                 state = PRESSE;
-                //Serial.println("ENFONCE -> PRESSE");
+                log("ENFONCE -> PRESSE\n");
                 retEtat = EVENEMENT_PRESSE;
             }
         break;
 
         case PRESSE:
-            if (ret >= 1)
+            //if (ret >= 1)
+            if (ret < 4)
             {
                 state = NON_PRESSE;
-                //Serial.println("PRESSE -> NON_PRESSE");
+                log("PRESSE -> NON_PRESSE\n");
                 retEtat = EVENEMENT_RELACHE;
             }
             else

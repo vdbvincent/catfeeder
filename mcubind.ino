@@ -16,8 +16,8 @@
 void init_mcubind(void)
 {
 	init_serial();
-	//init_timer1();
-	//adc_init();
+	init_timer1();
+	adc_init();
 }
 
 
@@ -98,12 +98,11 @@ static void init_timer1(void)
     // enable global interrupts:
     sei();
 }
-/*
+
 ISR(TIMER1_COMPA_vect)
 {
     every500ms(); // Appel du sequenceur
 }
-*/
 
 
 
@@ -157,13 +156,13 @@ uint8_t mcubind_virtualport_read(uint8_t virtualPort)
 {
 	switch (virtualPort)
 	{
-		case MCUBIND_VIRTUALPORT_ADC00 : return ((adc_lecture(0) * 1023) / 5);  // make convertion
-		case MCUBIND_VIRTUALPORT_ADC01 : return ((adc_lecture(1) * 2013) / 5);
-		case MCUBIND_VIRTUALPORT_ADC02 : return ((adc_lecture(2) * 1023) / 5);
-		case MCUBIND_VIRTUALPORT_ADC03 : return ((adc_lecture(3) * 1023) / 5);
-		case MCUBIND_VIRTUALPORT_ADC04 : return ((adc_lecture(4) * 1023) / 5);
-		case MCUBIND_VIRTUALPORT_ADC05 : return ((adc_lecture(5) * 1023) / 5);
-		case MCUBIND_VIRTUALPORT_ADC06 : return ((adc_lecture(6) * 1023) / 5);
+		case MCUBIND_VIRTUALPORT_ADC00 : return ((adc_lecture(0) * 5) / 249);  // make convertion
+		case MCUBIND_VIRTUALPORT_ADC01 : return ((adc_lecture(1) * 5) / 249);
+		case MCUBIND_VIRTUALPORT_ADC02 : return ((adc_lecture(2) * 5) / 249);
+		case MCUBIND_VIRTUALPORT_ADC03 : return ((adc_lecture(3) * 5) / 249);
+		case MCUBIND_VIRTUALPORT_ADC04 : return ((adc_lecture(4) * 5) / 249);
+		case MCUBIND_VIRTUALPORT_ADC05 : return ((adc_lecture(5) * 5) / 249);
+		case MCUBIND_VIRTUALPORT_ADC06 : return ((adc_lecture(6) * 5) / 249);
 	}
 
 }
@@ -233,8 +232,8 @@ static void adc_init(void)
 static uint8_t adc_lecture(uint8_t voie)
 {
 	// choose channel voie must be 0-7
-	voie &= 0x03;
-	ADMUX |= voie;
+	//voie &= 0x03;
+	ADMUX |= voie & 0x03;
 
 	// Start single conversion
 	ADCSRA |= (1 << ADSC);
@@ -245,5 +244,5 @@ static uint8_t adc_lecture(uint8_t voie)
 	// Clear ADIF by writting 1 to it
 	ADCSRA |= (1 << ADIF);
 
-	return ADC;
+	return ADCW;
 }
