@@ -8,11 +8,22 @@
 #ifndef _BOUTONS_H_
 #define _BOUTONS_H_
 
+#include "mcubind.h"
 #include "common.h"
 #include "ctrleur.h"
 
+typedef struct
+{
+	char state;
+    char retEtat;
+    int icpt;
+} CTXT_FILTRE;
+
+
 void boutons_setup(int p_delayFiltre_ms);
 void boutons_every10ms(void);
+
+char lireBouton(uint8_t voie);
 
 char lireBoutonHaut(void);
 char lireBoutonBas(void);
