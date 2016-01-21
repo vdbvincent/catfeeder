@@ -4,13 +4,15 @@
  *  Created on: 31 juil. 2015
  *      Author: vincent
  */
+
 #ifndef _MENU_H_
 #define _MENU_H_
  
 #include "common.h"
 #include "lcd.h"
-#include "ctrleur.h"
 #include "clock.h"
+#include "alarme.h"
+#include "boutons.h"
 
 // Définitions des actions MENU
 #define MENU_OK         0

@@ -10,37 +10,27 @@
 
 #include "mcubind.h"
 #include "common.h"
-#include "ctrleur.h"
+#include "logs.h"
 
-typedef struct
-{
-	char state;
-    char retEtat;
-    int icpt;
-} CTXT_FILTRE;
+#include "QueueArray.h"
 
 
-/*******************
-*       LOG        *
-********************/
-#define LOG_PRINTF
-#ifdef LOG_PRINTF
-	log(value)	printstr(##value)
-#else
-#endif
+// Définition de la fifo
+QueueArray<char>   f_boutons;
 
-
+// Fonctions de base
 void boutons_setup(int p_delayFiltre_ms);
-void boutons_every10ms(void);
+void boutons_every100ms(void);
 
-char lireBouton(uint8_t voie);
+// Fonctions internes
+static uint16_t lireBouton(void);
+static char lireEvenement(int * p_bouton);
 
-char lireBoutonHaut(void);
-char lireBoutonBas(void);
-char lireBoutonDroit(void);
-char lireBoutonGauche(void);
-
-void sendEvent(char event);
-
+// Fonctions de fifo
+static void sendEvent(char event);
+static void put_btfifo(char event);
+Bool isEmpty_btfifo(void);
+char get_btfifo(void);
+Bool isFull_btfifo(void);
 
 #endif /* _BOUTONS_H_ */

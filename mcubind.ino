@@ -18,6 +18,7 @@ void init_mcubind(void)
 	init_serial();
 	init_timer1();
 	adc_init();
+	//pwm_init();  // Fait direct dans pwm_out
 }
 
 
@@ -26,7 +27,7 @@ void init_mcubind(void)
 /*    __201008110080__  Liaison série                                      */
 /*                                                                         */
 /***************************************************************************/
-static void init_serial(void)
+void init_serial(void)
 {
 	// Calcul valeur du registre
 	#if BAUD_RATE < 57600
@@ -51,7 +52,7 @@ static void init_serial(void)
 }
 
 // Envoi d'un caractère
-static void putchr(char c)
+void putchr(char c)
 {
 	// On attend que ce soit dispo/utilisable
 	loop_until_bit_is_set(UCSR0A, UDRE0);
@@ -60,7 +61,7 @@ static void putchr(char c)
 }
 
 // Envoi d'une chaine de caractères
-static void printstr(const char * s)
+void printstr(const char * s)
 {
 	// On boucle tant qu'il y a des caractères
 	while(*s)
@@ -81,12 +82,14 @@ static void printstr(const char * s)
 
 static void init_timer1(void)
 {
+#ifndef FAKEDEV
 	cli();          // disable global interrupts
     TCCR1A = 0;     // set entire TCCR1A register to 0
     TCCR1B = 0;     // same for TCCR1B
  
     // set compare match register to desired timer count:
-    OCR1A = 7812;//   0.000064  // 10ms de periode
+    //OCR1A = 7812;//   0.000064  // 10ms de periode
+    OCR1A = 156;
     // turn on CTC mode:
     TCCR1B |= (1 << WGM12);
     // Set CS10 and CS12 bits for 1024 prescaler:
@@ -97,11 +100,12 @@ static void init_timer1(void)
     TIMSK1 |= (1 << OCIE1A);
     // enable global interrupts:
     sei();
+#endif
 }
 
 ISR(TIMER1_COMPA_vect)
 {
-    every500ms(); // Appel du sequenceur
+    every10ms(); // Appel du sequenceur
 }
 
 
@@ -114,19 +118,25 @@ ISR(TIMER1_COMPA_vect)
 
 void mcubind_virtualport_init(uint8_t virtualPort, uint8_t flagUseAsOutput)
 {
-	if (flagUseAsOutput)
+	if (flagUseAsOutput == 1)
 	{
 		switch (virtualPort)
 		{
 			// config du port en I/O (0 = input only)
-			case MCUBIND_VIRTUALPORT_B_b0 : DDRB |= _BV(PB0) ; break ;
-			case MCUBIND_VIRTUALPORT_B_b1 : DDRB |= _BV(PB1) ; break ;
-			case MCUBIND_VIRTUALPORT_B_b2 : DDRB |= _BV(PB2) ; break ;
-			case MCUBIND_VIRTUALPORT_B_b3 : DDRB |= _BV(PB3) ; break ;
-			case MCUBIND_VIRTUALPORT_B_b4 : DDRB |= _BV(PB4) ; break ;
-			case MCUBIND_VIRTUALPORT_B_b5 : DDRB |= _BV(PB5) ; break ;
-			case MCUBIND_VIRTUALPORT_B_b6 : DDRB |= _BV(PB6) ; break ;
-			case MCUBIND_VIRTUALPORT_B_b7 : DDRB |= _BV(PB7) ; break ;
+			case MCUBIND_VIRTUALPORT_D_b0  : DDRD |= (1 << DDD0) ; break ;
+			case MCUBIND_VIRTUALPORT_D_b1  : DDRD |= (1 << DDD1) ; break ;
+			case MCUBIND_VIRTUALPORT_D_b2  : DDRD |= (1 << DDD2) ; break ;
+			case MCUBIND_VIRTUALPORT_D_b3  : DDRD |= (1 << DDD3) ; break; // _BV(PD3) ; break ;
+			case MCUBIND_VIRTUALPORT_D_b4  : DDRD |= (1 << DDD4) ; break ;
+			case MCUBIND_VIRTUALPORT_D_b5  : DDRD |= (1 << DDD5) ; break ;
+			case MCUBIND_VIRTUALPORT_D_b6  : DDRD |= (1 << DDD6) ; break ;
+			case MCUBIND_VIRTUALPORT_D_b7  : DDRD |= (1 << DDD7) ; break ;
+			case MCUBIND_VIRTUALPORT_B_b8  : DDRB |= (1 << DDB0) ; break ;
+			case MCUBIND_VIRTUALPORT_B_b9  : DDRB |= (1 << DDB1) ; break ;
+			case MCUBIND_VIRTUALPORT_B_b10 : DDRB |= (1 << DDB2) ; break ;
+			case MCUBIND_VIRTUALPORT_B_b11 : DDRB |= (1 << DDB3) ; break ;
+			case MCUBIND_VIRTUALPORT_B_b12 : DDRB |= (1 << DDB4) ; break ;
+			case MCUBIND_VIRTUALPORT_B_b13 : DDRB |= (1 << DDB5) ; break ;
 		}
 	}
 	else
@@ -134,14 +144,20 @@ void mcubind_virtualport_init(uint8_t virtualPort, uint8_t flagUseAsOutput)
 		switch (virtualPort)
 		{
 			// config du port en I/O (0 = input only)
-			case MCUBIND_VIRTUALPORT_B_b0 : DDRB &= ~_BV(PB0) ; break ;
-			case MCUBIND_VIRTUALPORT_B_b1 : DDRB &= ~_BV(PB1) ; break ;
-			case MCUBIND_VIRTUALPORT_B_b2 : DDRB &= ~_BV(PB2) ; break ;
-			case MCUBIND_VIRTUALPORT_B_b3 : DDRB &= ~_BV(PB3) ; break ;
-			case MCUBIND_VIRTUALPORT_B_b4 : DDRB &= ~_BV(PB4) ; break ;
-			case MCUBIND_VIRTUALPORT_B_b5 : DDRB &= ~_BV(PB5) ; break ;
-			case MCUBIND_VIRTUALPORT_B_b6 : DDRB &= ~_BV(PB6) ; break ;
-			case MCUBIND_VIRTUALPORT_B_b7 : DDRB &= ~_BV(PB7) ; break ;
+			case MCUBIND_VIRTUALPORT_D_b0  : DDRD &= ~(1 << DDD0) ; break ;
+			case MCUBIND_VIRTUALPORT_D_b1  : DDRD &= ~(1 << DDD1) ; break ;
+			case MCUBIND_VIRTUALPORT_D_b2  : DDRD &= ~(1 << DDD2) ; break ;
+			case MCUBIND_VIRTUALPORT_D_b3  : DDRD &= ~(1 << DDD3); break; //~_BV(PD3) ; break ;
+			case MCUBIND_VIRTUALPORT_D_b4  : DDRD &= ~(1 << DDD4) ; break ;
+			case MCUBIND_VIRTUALPORT_D_b5  : DDRD &= ~(1 << DDD5) ; break ;
+			case MCUBIND_VIRTUALPORT_D_b6  : DDRD &= ~(1 << DDD6) ; break ;
+			case MCUBIND_VIRTUALPORT_D_b7  : DDRD &= ~(1 << DDD7) ; break ;
+			case MCUBIND_VIRTUALPORT_B_b8  : DDRB &= ~(1 << DDB0) ; break ;
+			case MCUBIND_VIRTUALPORT_B_b9  : DDRB &= ~(1 << DDB1) ; break ;
+			case MCUBIND_VIRTUALPORT_B_b10 : DDRB &= ~(1 << DDB2) ; break ;
+			case MCUBIND_VIRTUALPORT_B_b11 : DDRB &= ~(1 << DDB3) ; break ;
+			case MCUBIND_VIRTUALPORT_B_b12 : DDRB &= ~(1 << DDB4) ; break ;
+			case MCUBIND_VIRTUALPORT_B_b13 : DDRB &= ~(1 << DDB5) ; break ;
 		}
 	}
 }
@@ -152,17 +168,20 @@ void mcubind_virtualport_init(uint8_t virtualPort, uint8_t flagUseAsOutput)
 /*                                                                         */
 /***************************************************************************/
 
-uint8_t mcubind_virtualport_read(uint8_t virtualPort)
+uint16_t mcubind_virtualport_read(uint8_t virtualPort)
 {
+	// TODO : faire la lecture des ports numeriques
 	switch (virtualPort)
 	{
-		case MCUBIND_VIRTUALPORT_ADC00 : return ((adc_lecture(0) * 5) / 249);  // make convertion
-		case MCUBIND_VIRTUALPORT_ADC01 : return ((adc_lecture(1) * 5) / 249);
-		case MCUBIND_VIRTUALPORT_ADC02 : return ((adc_lecture(2) * 5) / 249);
-		case MCUBIND_VIRTUALPORT_ADC03 : return ((adc_lecture(3) * 5) / 249);
-		case MCUBIND_VIRTUALPORT_ADC04 : return ((adc_lecture(4) * 5) / 249);
-		case MCUBIND_VIRTUALPORT_ADC05 : return ((adc_lecture(5) * 5) / 249);
-		case MCUBIND_VIRTUALPORT_ADC06 : return ((adc_lecture(6) * 5) / 249);
+		case MCUBIND_VIRTUALPORT_ADC00 : return (adc_lecture(0));
+		case MCUBIND_VIRTUALPORT_ADC01 : return (adc_lecture(1));
+		case MCUBIND_VIRTUALPORT_ADC02 : return (adc_lecture(2));
+		case MCUBIND_VIRTUALPORT_ADC03 : return (adc_lecture(3));
+		case MCUBIND_VIRTUALPORT_ADC04 : return (adc_lecture(4));
+		case MCUBIND_VIRTUALPORT_ADC05 : return (adc_lecture(5));
+		case MCUBIND_VIRTUALPORT_ADC06 : return (adc_lecture(6));
+
+		case MCUBIND_VIRTUALPORT_D_b3 : return (PIND & (1 << DDD3)); break;
 	}
 
 }
@@ -177,19 +196,20 @@ uint8_t mcubind_virtualport_read(uint8_t virtualPort)
 
 void mcubind_virtualport_write(uint8_t virtualPort, uint8_t value)
 {
-	if (value)
+	// TODO : faire pareil pour le port B (8-13)
+	if (value == 1)
 	{
 		switch (virtualPort)
 		{
 			// config du port en I/O (0 = input only)
-			case MCUBIND_VIRTUALPORT_B_b0 : PORTB |= _BV(PB0) ; break ;
-			case MCUBIND_VIRTUALPORT_B_b1 : PORTB |= _BV(PB1) ; break ;
-			case MCUBIND_VIRTUALPORT_B_b2 : PORTB |= _BV(PB2) ; break ;
-			case MCUBIND_VIRTUALPORT_B_b3 : PORTB |= _BV(PB3) ; break ;
-			case MCUBIND_VIRTUALPORT_B_b4 : PORTB |= _BV(PB4) ; break ;
-			case MCUBIND_VIRTUALPORT_B_b5 : PORTB |= _BV(PB5) ; break ;
-			case MCUBIND_VIRTUALPORT_B_b6 : PORTB |= _BV(PB6) ; break ;
-			case MCUBIND_VIRTUALPORT_B_b7 : PORTB |= _BV(PB7) ; break ;
+			case MCUBIND_VIRTUALPORT_D_b0 : PORTD |= (1 << DDD0) ; break ;
+			case MCUBIND_VIRTUALPORT_D_b1 : PORTD |= (1 << DDD1) ; break ;
+			case MCUBIND_VIRTUALPORT_D_b2 : PORTD |= (1 << DDD2) ; break ;
+			case MCUBIND_VIRTUALPORT_D_b3 : PORTD |= (1 << DDD3) ; break; //_BV(PD3) ; break ;
+			case MCUBIND_VIRTUALPORT_D_b4 : PORTD |= (1 << DDD4) ; break ;
+			case MCUBIND_VIRTUALPORT_D_b5 : PORTD |= (1 << DDD5) ; break ;
+			case MCUBIND_VIRTUALPORT_D_b6 : PORTD |= (1 << DDD6) ; break ;
+			case MCUBIND_VIRTUALPORT_D_b7 : PORTD |= (1 << DDD7) ; break ;
 		}
 	}
 	else
@@ -197,14 +217,14 @@ void mcubind_virtualport_write(uint8_t virtualPort, uint8_t value)
 		switch (virtualPort)
 		{
 			// config du port en I/O (0 = input only)
-			case MCUBIND_VIRTUALPORT_B_b0 : PORTB &= ~_BV(PB0) ; break ;
-			case MCUBIND_VIRTUALPORT_B_b1 : PORTB &= ~_BV(PB1) ; break ;
-			case MCUBIND_VIRTUALPORT_B_b2 : PORTB &= ~_BV(PB2) ; break ;
-			case MCUBIND_VIRTUALPORT_B_b3 : PORTB &= ~_BV(PB3) ; break ;
-			case MCUBIND_VIRTUALPORT_B_b4 : PORTB &= ~_BV(PB4) ; break ;
-			case MCUBIND_VIRTUALPORT_B_b5 : PORTB &= ~_BV(PB5) ; break ;
-			case MCUBIND_VIRTUALPORT_B_b6 : PORTB &= ~_BV(PB6) ; break ;
-			case MCUBIND_VIRTUALPORT_B_b7 : PORTB &= ~_BV(PB7) ; break ;
+			case MCUBIND_VIRTUALPORT_D_b0 : PORTD &= ~(1 << DDD0) ; break ;
+			case MCUBIND_VIRTUALPORT_D_b1 : PORTD &= ~(1 << DDD1) ; break ;
+			case MCUBIND_VIRTUALPORT_D_b2 : PORTD &= ~(1 << DDD2) ; break ;
+			case MCUBIND_VIRTUALPORT_D_b3 : PORTD &= ~(1 << DDD3) ; break; //~_BV(PD3) ; break ;
+			case MCUBIND_VIRTUALPORT_D_b4 : PORTD &= ~(1 << DDD4) ; break ;
+			case MCUBIND_VIRTUALPORT_D_b5 : PORTD &= ~(1 << DDD5) ; break ;
+			case MCUBIND_VIRTUALPORT_D_b6 : PORTD &= ~(1 << DDD6) ; break ;
+			case MCUBIND_VIRTUALPORT_D_b7 : PORTD &= ~(1 << DDD7) ; break ;
 		}
 	}
 }
@@ -229,20 +249,109 @@ static void adc_init(void)
 /*                                                                         */
 /***************************************************************************/
 
-static uint8_t adc_lecture(uint8_t voie)
+static uint16_t adc_lecture(uint8_t voie)
 {
+	uint8_t low = 0;
+    uint8_t high = 0;
+    uint16_t ret = 0;
 	// choose channel voie must be 0-7
 	//voie &= 0x03;
 	ADMUX |= voie & 0x03;
 
 	// Start single conversion
 	ADCSRA |= (1 << ADSC);
+	// The sbi() is a macro to set the bit(the second argument) of the 
+	// address(the first argument) to 1.
+	// Setting the ADSC bit of ADCSRA to 1 begins the AD conversion.
+	//SBI(ADCSRA, ADSC);
 
 	// Wait for convertion to complete
-	while (! (ADCSRA & ( 1 << ADIF) ) );
+	//while (! (ADCSRA & ( 1 << ADIF) ) );
+
+	// The bit_is_set is a macro that checks if the second argument bit of the
+	// first argument is 1. If the conversion finishes, the ADSC of ADCSRA becomes 0.
+	while (bit_is_set(ADCSRA, ADSC));
 	
 	// Clear ADIF by writting 1 to it
-	ADCSRA |= (1 << ADIF);
+	//ADCSRA |= (1 << ADIF);
 
-	return ADCW;
+	//return ADC;
+
+	low = ADCL;
+	high = ADCH ;
+	ret = (high << 8) | low ;
+	return ret;
+}
+
+
+/***************************************************************************/
+/*                                                                         */
+/*    __201008110041__  pwm_init()                                         */
+/*                                                                         */
+/***************************************************************************/
+
+static void pwm_init(void)
+{
+/*
+	DDRD |= (1 << DDD3);
+
+	// Set pwm for 50% duty cycle
+	OCR0A = 128;
+
+	// Set none-inverting mode
+	TCCR0A |= (1 << COM0A1);
+
+	// Set fast mode
+	TCCR0A |= (1 << WGM01) | (1 << WGM00);
+
+	// set prescaler to 8 and start pwm
+	TCCR0B |= (1 << CS01);
+*/
+
+	// PD3 an output
+	mcubind_virtualport_init(MCUBIND_VIRTUALPORT_D_b3, 1);
+	/**
+	 * There are quite a number of PWM modes available but for the
+	 * sake of simplicity we'll just use the 8-bit Fast PWM mode.
+	 * This is done by setting the WGM00 and WGM01 bits.  The 
+	 * Setting COM0A1 tells the microcontroller to set the 
+	 * output of the OCR0A pin low when the timer's counter reaches
+	 * a compare value (which will be explained below).  CS00 being
+	 * set simply turns the timer on without a prescaler (so at full
+	 * speed).  The timer is used to determine when the PWM pin should be
+	 * on and when it should be off.
+	 */
+	TCCR2A |= _BV(COM2B1) | _BV(WGM20) | _BV(WGM21);
+	TCCR2B |= _BV(CS20);
+}
+
+/***************************************************************************/
+/*                                                                         */
+/*    __201008110041__  pwm_out()                                          */
+/*                                                                         */
+/***************************************************************************/
+
+static void pwm_out(uint8_t pwm)
+{
+	// set prescaler to 8 and start pwm
+	//TCCR0B |= (1 << CS01);
+
+	static uint8_t flag = 0;
+
+	if (pwm > 0)
+	{
+		if (flag == 0)
+		{
+			pwm_init();
+			flag = 1;
+		}
+		OCR2B = pwm;
+	}
+	else
+	{
+		OCR2B = pwm;
+		TCCR2A = 0x00;
+		flag = 0;
+	}
+
 }

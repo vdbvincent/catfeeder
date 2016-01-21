@@ -4,16 +4,137 @@
  *  Created on: 31 juil. 2015
  *      Author: vincent
  */
+
+
 #include "menu.h"
+
+static unsigned int ui_tempoDem = 300;  // Valeur par défaut 300 = 2s
+
+uint8_t g_tmp = 0;
+
+void menu_setup(unsigned int p_tempoDem)
+{
+	// Configuration de la tempo de l'écran de démarrage
+  ui_tempoDem = p_tempoDem;
+  lcd_init();
+}
+
+void menu_idle(void)
+{
+	static uint8_t state = 0;
+	static Select_t select;
+
+	switch (state)
+	{
+		// ECRAN DEMARRAGE
+		case 0:
+	      	welcomeScreen();
+	      	alarme_setMinuteur(2, &procGtmp); // Affiche pour 2 seconde
+			state = 1;
+	      break;
+
+	    case 1:
+	    	if (g_tmp != 0)  // Fin de l'ecran de demarrage
+	    	{
+	    		clearCmdButtons();
+				lcd_clear();
+				clock_reset();
+				state = 2;
+	    	}
+	      	break;
+
+	    // ECRAN D'ACCEUIL
+
+	    case 2:
+	    	afficheHome();
+
+			// Attente de l'appuie du bouton gauche
+			if ( ! isEmpty_btfifo())
+			{
+				char event = get_btfifo();
+				if (event == BT_D_PRESSE)
+				{
+					// Affiche du menu
+					state = 3;
+					lcd_clear();
+				}
+			}
+	    	break;
+
+
+	    // MENU PRINCIPAL
+
+		case 3:
+			select = afficheMenu(MAIN_MENU);
+			if (select.retour == SELECT_OK)
+			{
+				switch (select.selection)
+				{
+					case 0:
+						// Regler l'horloge
+						state = 5;
+						lcd_clear();
+					break;
+
+					case 1:
+						// Régler alarme
+						state = 6;
+						lcd_clear();
+					break;
+
+					case 2 :
+						// Donner à manger
+						state = 4;
+						lcd_clear();
+					break;
+				}
+			}
+			else if (select.retour == SELECT_CANCEL)
+			{
+				// retour à l'écran d'acceuil
+				lcd_clear();
+				state = 2;
+			}
+
+		break;
+
+
+		// DONNER A MANGER
+
+		case 4:
+			if (feedTheCat() == MENU_NO_EVENT)
+			{
+				// Lorsque la distribution est terminée, aller en 2
+				state = 2;
+			}
+		break;	
+	}
+}
+
+
+void procGtmp(void)
+{
+	g_tmp = 1;
+}
+
+
+
+
+
+
+
+
+
+
+
+
 
 // Variables globales
 static char c_menuEventAlarme = MENU_NO_EVENT;
-static unsigned int ui_tempoDem = 300;  // Valeur par défaut 300 = 2s
  
-void menu_setup(unsigned int p_tempoDem)
+
 {
-  // Configuration de la tempo de l'écran de démarrage
-  ui_tempoDem = p_tempoDem;
+  
 }
 
 void menu_doFeedTheCatEvent(void)
@@ -206,6 +327,11 @@ void clearCmdButtons(void)
   }
 }
 
+
+
+
+
+// TODO : a mettre dans un fsm a part qui chapote un peu tou
 
 // Méthode permettant de controler la distribution de nourriture. Retourne 0 lorsque c'est fini. 1 sinon.
 char feedTheCat(void)

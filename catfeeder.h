@@ -8,7 +8,10 @@
 #ifndef _CATFEEDER_H_
 #define _CATFEEDER_H_
 
- int main(void);
- void every500ms(void);
+#include "common.h"
 
-#endif */ _CATFEEDER_H_ */
+void every10ms(void);
+void procAlarme(void);
+void procMinu(void);
+
+#endif /* _CATFEEDER_H_ */

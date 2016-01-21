@@ -9,7 +9,7 @@
  
 #include "common.h"
 #include "clock.h"
-#include "alarme.h"
+//#include "alarme.h"
 
 // Définitions
 #define SELECT_BACK    0
@@ -89,7 +89,7 @@ extern Menu_t ALARME_MENU;
 void lcd_setup(void);
 void lcd_every10ms(void);
 
-Bool lcd_init(void);
+Bool lcd_is_init(void);
 void lcd_clear(void);
 void lcd_popup(char * texte, uint8_t temps);
 

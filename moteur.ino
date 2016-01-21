@@ -1,5 +1,5 @@
 /*
- * lcd.c
+ * moteur.c
  *
  *  Created on: 31 juil. 2015
  *      Author: vincent
@@ -7,216 +7,82 @@
 
 #include "moteur.h"
 
-const int IN_A = 12;
-const int IN_B = 13;
-const int IN_C = 4;
-const int IN_D = 5;
-
+static uint8_t commande = 0;
+static uint8_t isRunning = 0;
 
 void moteur_setup(void)
 {
-    // Init debug
-    //Serial.begin(9600);
- 
-    // Init des sorties
-    //Serial.println("Init des sorties moteur");
-    pinMode(IN_A, OUTPUT);
-    pinMode(IN_B, OUTPUT);
-    pinMode(IN_C, OUTPUT);
-    pinMode(IN_D, OUTPUT);
-}
 
-void sendMoteurEvent(char event)
-{
-  if (! isFull_lcdfifo())
-  {
-    put_lcdfifo(event);
-  }
-}
-
-void moteur_every1ms(void)
-{
-  static int state = 0;
-  static int cmp = 0;
-  char event = NO_EVENT; 
-  
-  if ((event == NO_EVENT) && (! isEmpty_mtfifo()))
-  {
-    // Reception de la quantité
-    event = get_mtfifo();
-    //Serial.println("Moteur : event recu");
-  }
-  
-  
-  switch (state)
-  {
-    
-    // Attente de demande de nourriture.
-    case 0:
-      step0();
-      if (event != NO_EVENT)
-      {
-        state = 1;
-        cmp = 0;
-        sendMoteurEvent(BEGIN);
-      }
-      
-    break;
-    
-    
-    case 1:
-      step1();
-      state = 2;
-    break;
-    
-    case 2:
-      step2();
-      state = 3;
-    break;
-    
-    case 3:
-      step3();
-      state = 4;
-    break;
-    
-    case 4:
-      step4();
-      state = 5;
-    break;
-    
-    case 5:
-      step5();
-      state = 6;
-    break;
-    
-    case 6:
-      step6();
-      state = 7;
-    break;
-    
-    case 7:
-      step7();
-      state = 8;
-    break;
-    
-    case 8:
-      step8();
-      
-      event = NO_EVENT;
-      
-      if (cmp < 512)
-      {
-        cmp ++;
-        state = 1;
-      }
-      else
-      {
-        state = 0;
-        sendMoteurEvent(END);
-        //Serial.println("Moteur : rotation finie");
-      }
-      
-    break;
-    
-  }
 }
 
 
-//revolve clockwise
-void clockwiserotate(void)
+void moteur_every100ms(void)
 {
-  step1();
-  step2();
-  step3();
-  step4();
-  step5();
-  step6();
-  step7();
-  step8();
+	static uint8_t state = 0;
+	static uint8_t cmp = 0;
+
+	
+	switch (state)
+	{
+	    case 0:
+	      	// Attente d'une commande
+			if (commande != MT_NONE)
+			{
+				print_log(DEBUG, "MT : commande captee\n");
+				isRunning = 1;
+				cmp = 4;	// valeur de 4 pour démarrer le calcul de la rampe
+				state = 1;
+			}
+	      break;
+
+	    case 1:
+	      	// regime transitoire
+	      	if (cmp >= DUTYCYCLE)
+	      	{
+	      		cmp = 0;
+	      		state = 2;
+	      		pwm_out(DUTYCYCLE);
+	      		print_log(DEBUG, "MT : rampe finie\n");
+	      	}
+	      	else
+	      	{
+	      		// Tant que la consigne n'est pas atteinte, multiplier le rapport cycle par 2
+	      		pwm_out(cmp);
+	      		cmp = cmp * 2;
+	      	}
+	      break;
+
+	    case 2:
+	    	// régime établi
+	    	if (cmp >= commande * 10)   // commande * 10 pour compenser le cadensement de 100ms
+	    	{
+	    		print_log(DEBUG, "MT : arrete commande\n");
+	    		// Arret de la commande
+	    		pwm_out(0);
+	    		cmp = 0;
+	    		isRunning = 0;
+	    		commande = MT_NONE;
+	    		state = 0;
+	    	}
+	    	else
+	    	{
+	    		cmp ++;
+	    	}
+	    break;
+	}
 }
 
-//revolve counterclockwise
-void counterclockwiserotate(void)
-{ 
-  step1();
-  step7();
-  step6();
-  step5();
-  step4();
-  step3();
-  step2();
-  step1();
-}
 
-void step0(void)
+// TODO : dans une version future, retourner un code erreur
+Bool moteur_setCmd(uint8_t value)
 {
-  digitalWrite(IN_A, LOW);
-  digitalWrite(IN_B, LOW);
-  digitalWrite(IN_C, LOW);
-  digitalWrite(IN_D, LOW);
-}
-
-void step1(void)
-{
-  digitalWrite(IN_A, HIGH);
-  digitalWrite(IN_B, LOW);
-  digitalWrite(IN_C, LOW);
-  digitalWrite(IN_D, LOW);
-  delay(2);
-}
-void step2(void)
-{
-  digitalWrite(IN_A, HIGH);
-  digitalWrite(IN_B, HIGH);
-  digitalWrite(IN_C, LOW);
-  digitalWrite(IN_D, LOW);
-  delay(2);
-}
-void step3(void)
-{
-  digitalWrite(IN_A, LOW);
-  digitalWrite(IN_B, HIGH);
-  digitalWrite(IN_C, LOW);
-  digitalWrite(IN_D, LOW);
-  delay(2);
-}
-void step4(void)
-{
-  digitalWrite(IN_A, LOW);
-  digitalWrite(IN_B, HIGH);
-  digitalWrite(IN_C, HIGH);
-  digitalWrite(IN_D, LOW);
-  delay(2);
-}
-void step5(void)
-{
-  digitalWrite(IN_A, LOW);
-  digitalWrite(IN_B, LOW);
-  digitalWrite(IN_C, HIGH);
-  digitalWrite(IN_D, LOW);
-  delay(2);
-}
-void step6(void)
-{
-  digitalWrite(IN_A, LOW);
-  digitalWrite(IN_B, LOW);
-  digitalWrite(IN_C, HIGH);
-  digitalWrite(IN_D, HIGH);
-  delay(2);
-}
-void step7(void)
-{
-  digitalWrite(IN_A, LOW);
-  digitalWrite(IN_B, LOW);
-  digitalWrite(IN_C, LOW);
-  digitalWrite(IN_D, HIGH);
-  delay(2);
-}
-void step8(void)
-{
-  digitalWrite(IN_A, HIGH);
-  digitalWrite(IN_B, LOW);
-  digitalWrite(IN_C, LOW);
-  digitalWrite(IN_D, HIGH);
-  delay(2);
+	if (isRunning == 0)
+	{
+		commande = value;
+		return True;
+	}
+	else
+	{
+		return False;
+	}
 }

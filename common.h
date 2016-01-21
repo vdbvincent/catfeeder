@@ -8,8 +8,13 @@
 #ifndef _COMMON_H_
 #define _COMMON_H_
 
-#define NO_EVENT    -1
+#include <stdio.h>
+#include <stdlib.h>
 
+//#define FAKEDEV
+
+/* Définition des événements */
+#define NO_EVENT    -1
 // Définition des événements boutons
 #define NON_PRESSE  0
 #define ENFONCE     1
@@ -28,27 +33,11 @@
 #define BT_B_PRESSE  6
 #define BT_B_RELACHE 7
 
-// Définition du type bool
-typedef enum 
-{ False = 0, True = 1}
-Bool;
-
-// Définition de la structure clock
-typedef struct
-{
-  char heures;
-  char minutes;
-  char secondes;
-}clock;
-
-// Définition des type pour le log
-typedef enum {ERREUR = 1, INFO = 2, DEBUG = 3} Criticite_e;
-
-typedef struct
-{
-	Criticite_e crit;
-	char * texte;
-} Logs_t;
+#define BOUTON_HAUT   0
+#define BOUTON_BAS    1
+#define BOUTON_GAUCHE 2
+#define BOUTON_DROIT  3
+#define BOUTOU_NONE   4
 
 // Définition des événements moteur
 #define FEDD1  1
@@ -56,5 +45,24 @@ typedef struct
 #define FEED3  3
 #define BEGIN  4
 #define END    5
+
+// Définition des criticité des logs
+#define ERREUR 1
+#define INFO   2
+#define DEBUG  3
+
+
+/* Définition du type bool */
+typedef enum 
+{ False = 0, True = 1}
+Bool;
+
+/* Définition de la structure clock */
+typedef struct
+{
+  char heures;
+  char minutes;
+  char secondes;
+}clock;
 
 #endif /* _COMMON_H_ */

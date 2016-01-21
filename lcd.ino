@@ -160,11 +160,11 @@ Menu_t CLOCK_SEC_MENU =
 // Déclaration du menu alarme
 char * ALARME_MENU_ITEMS[] =
 {
-	"AL 1",
-	"AL 2",
-	"AL 3",
-	"AL 4",
-	"AL 5"
+	"ALARME 1",
+	"ALARME 2",
+	"ALARME 3",
+	"ALARME 4",
+	"ALARME 5"
 };
 Menu_t ALARME_MENU =
 {
@@ -178,13 +178,10 @@ Menu_t ALARME_MENU =
 
 void lcd_setup(void)
 {
-  // Init debug
-  //Serial.begin(9600);
-
   // Chargement du symbole reveil
-  lcd.createChar(0, reveil1);
-  lcd.createChar(1, reveil2);
-  lcd.createChar(2, reveil3);
+  //lcd.createChar(0, reveil1);
+  //lcd.createChar(1, reveil2);
+  //lcd.createChar(2, reveil3);
 
   // set up the LCD's number of columns and rows:
   lcd.begin(16, 2);
@@ -192,7 +189,7 @@ void lcd_setup(void)
   lcd_isInit = True;
 }
 
-Bool lcd_init(void)
+Bool lcd_is_init(void)
 {
   return lcd_isInit;
 }
@@ -210,7 +207,7 @@ void welcomeScreen(void)
   if (lcd_isInit)
   {
     lcd.clear();
-    lcd.print("CatFeeder  v1.0");
+    lcd.print("CatFeeder  v2.1");
   }
 }
 
@@ -230,7 +227,7 @@ void afficheReveil(void)
 	//lcd.write((uint8_t) 1);
 	//lcd.write((uint8_t) 2);
 }
-
+/*
 void lcd_every10ms(void)
 {
   static int cmp = 0;
@@ -266,7 +263,7 @@ void lcd_every10ms(void)
     }
   }
   
-}
+}*/
 
 // Ecran d'acceuil
 void afficheHome(void)

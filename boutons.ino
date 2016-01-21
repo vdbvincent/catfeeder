@@ -3,47 +3,32 @@
  *
  *  Created on: 31 juil. 2015
  *      Author: vincent
+ *  http://modelleisenbahn.triskell.org/spip.php?article59
  */
 #include "boutons.h"
 
-// Constantes
-const int NBMAXVOIES = 4;
-const int BP_G = 0;
-const int BP_B = 1;
-const int BP_D = 2;
-const int BP_H = 3;
+// Fréquence d'appel de la méthode every100ms()
+#define FREQ_SEQ 100
+/*
+une fonction qui retourne en permanence le numéro du poussoir qui a été détecté
+une fonction filtre anti rebond qui cherche a stabiliser le num poussoir sur une durée
+une fonction qui detecte un evenement presse ou relache
+*/
 
-// Variables globales
+/* Variables globales */
+// Delai de filtrage du filtre anti-rebonds
 int filtre = 0;
-CTXT_FILTRE sgContexte[NBMAXVOIES];
+// Port analogique à lire
+const uint8_t ci_ADC0 = MCUBIND_VIRTUALPORT_ADC00;
+const int ci_NBVALADC = 256;
 
 void boutons_setup(int p_delayFiltre_ms)
 {
-    // Init des contextes
-    sgContexte[BP_G].state = NON_PRESSE;
-    sgContexte[BP_G].retEtat = AUCUN_EVENEMENT;
-    sgContexte[BP_G].icpt = 0;
-    sgContexte[BP_D].state = NON_PRESSE;
-    sgContexte[BP_D].retEtat = AUCUN_EVENEMENT;
-    sgContexte[BP_D].icpt = 0;
-    sgContexte[BP_H].state = NON_PRESSE;
-    sgContexte[BP_H].retEtat = AUCUN_EVENEMENT;
-    sgContexte[BP_H].icpt = 0;
-    sgContexte[BP_B].state = NON_PRESSE;
-    sgContexte[BP_B].retEtat = AUCUN_EVENEMENT;
-    sgContexte[BP_B].icpt = 0;
-    // Init boutons
-    //pinMode(BP_G, INPUT_PULLUP);
-    //pinMode(BP_B, INPUT_PULLUP);
-    //pinMode(BP_D, INPUT_PULLUP);
-    //pinMode(BP_H, INPUT_PULLUP);
-
-    
     // Init du filtrage anti-rebond
-    filtre = p_delayFiltre_ms;
+    filtre = p_delayFiltre_ms / FREQ_SEQ;
 }
 
-void sendEvent(char event)
+static void sendEvent(char event)
 {
   if ( ! isFull_btfifo())
   {
@@ -51,156 +36,103 @@ void sendEvent(char event)
   }
 }
 
-
-void boutons_every10ms(void)
+void boutons_every100ms(void)
 {
-
-    static int state = 0;
-  	char etatBp = AUCUN_EVENEMENT;
-
-    //log("test");
-
-    switch(state)
-    {
-        case 0 : etatBp = lireBouton(BP_G); state = 0; break;
-        case 1 : etatBp = lireBouton(BP_D); state = 2; break;
-        case 2 : etatBp = lireBouton(BP_H); state = 3; break;
-        case 3 : etatBp = lireBouton(BP_B); state = 0; break;
-
-    }
-    
-    if (etatBp == EVENEMENT_PRESSE)
-    {
-            log("Bouton PRESSE\n");
-            //sendEvent(BT_H_PRESSE);
-    }
-    else if (etatBp == EVENEMENT_RELACHE)
-    {
-            log("Bouton RELACHE\n");
-            //sendEvent(BT_H_RELACHE);
-    }
-
-#if 0
-        switch(state)
-        {
-            case 0:
-                    // Lecture du bouton gauche
-            	   etatBp = lireBoutonGauche();
-                    if (etatBp == EVENEMENT_PRESSE)
-                    {
-                            //Serial.println("Bouton gauche PRESSE");
-                            sendEvent(BT_G_PRESSE);
-                    }
-                    else if (etatBp == EVENEMENT_RELACHE)
-                    {
-                            //Serial.println("Bouton gauche RELACHE");
-                            sendEvent(BT_G_RELACHE);
-                    }
-                    etatBp = AUCUN_EVENEMENT;
-                    state = 1;
-            break;
-            
-            case 1:
-                    // Lecture du bouton droit
-            	etatBp = lireBoutonDroit();
-            	if (etatBp == EVENEMENT_PRESSE)
-                    {
-                            //Serial.println("Bouton droit PRESSE");
-                            sendEvent(BT_D_PRESSE);
-                    }
-                    else if (etatBp == EVENEMENT_RELACHE)
-                    {
-                            //Serial.println("Bouton droit RELACHE");
-                            sendEvent(BT_D_RELACHE);
-                    }
-                    etatBp = AUCUN_EVENEMENT;
-                    state = 2;
-            break;
-            
-            case 2:
-                    // Lecture du bouton bas
-            	etatBp = lireBoutonBas();
-            	if (etatBp == EVENEMENT_PRESSE)
-                    {
-                            //Serial.println("Bouton bas PRESSE");
-                            sendEvent(BT_B_PRESSE);
-                    }
-                    else if (etatBp == EVENEMENT_RELACHE)
-                    {
-                            //Serial.println("Bouton bas RELACHE");
-                            sendEvent(BT_B_RELACHE);
-                    }
-                    etatBp = AUCUN_EVENEMENT;
-                    state = 3;
-            break;
-            
-            case 3:
-                    // Lecture du bouton haut
-            	etatBp = lireBoutonHaut();
-            	if (etatBp == EVENEMENT_PRESSE)
-                    {
-                            //Serial.println("Bouton haut PRESSE");
-                            sendEvent(BT_H_PRESSE);
-                    }
-                    else if (etatBp == EVENEMENT_RELACHE)
-                    {
-                            //Serial.println("Bouton haut RELACHE");
-                            sendEvent(BT_H_RELACHE);
-                    }
-                    etatBp = AUCUN_EVENEMENT;
-                    state = 0;
-            break;
-        }
-#endif
+	int bouton = BOUTOU_NONE;  // 4 = valeur par défaut, aucun bouton préssé
+	char etatBp = AUCUN_EVENEMENT;
+	etatBp = lireEvenement(&bouton);
+	
+	switch (bouton)
+	{
+		case BOUTON_HAUT:  // Bouton 1
+			if (etatBp == EVENEMENT_PRESSE)
+			{
+				//print_log(DEBUG, "Bouton haut PRESSE\n");
+				sendEvent(BT_H_PRESSE);
+			}
+			else if (etatBp == EVENEMENT_RELACHE)
+			{
+				//print_log(DEBUG, "Bouton haut RELACHE\n");
+				sendEvent(BT_H_RELACHE);
+			}
+		break;
+		
+		case BOUTON_BAS:  // Bouton 2
+			if (etatBp == EVENEMENT_PRESSE)
+			{
+				//print_log(DEBUG, "Bouton bas PRESSE\n");
+				sendEvent(BT_B_PRESSE);
+			}
+			else if (etatBp == EVENEMENT_RELACHE)
+			{
+				//print_log(DEBUG, "Bouton bas RELACHE\n");
+				sendEvent(BT_B_RELACHE);
+			}
+		break;
+		
+		case BOUTON_GAUCHE:  // Bouton 3
+			if (etatBp == EVENEMENT_PRESSE)
+			{
+				//print_log(DEBUG, "Bouton gauche PRESSE\n");
+				sendEvent(BT_G_PRESSE);
+			}
+			else if (etatBp == EVENEMENT_RELACHE)
+			{
+				//print_log(DEBUG, "Bouton gauche RELACHE\n");
+				sendEvent(BT_G_RELACHE);
+			}
+		break;
+		
+		case BOUTON_DROIT:  // Bouton 4
+			if (etatBp == EVENEMENT_PRESSE)
+			{
+				//print_log(DEBUG, "Bouton droit PRESSE\n");
+				sendEvent(BT_D_PRESSE);
+			}
+			else if (etatBp == EVENEMENT_RELACHE)
+			{
+				//print_log(DEBUG, "Bouton droit RELACHE\n");
+				sendEvent(BT_D_RELACHE);
+			}
+		break;
+		
+		default: // Aucun appui
+			if (etatBp != AUCUN_EVENEMENT)
+			{
+				//print_log(DEBUG, "Erreur : evenement apparu sur aucun bouton.\n");
+			}
+		break;
+	}
 }
 
-
-char lireBouton(uint8_t voie)
+/*
+*	Filtre anti rebond
+*/
+static char lireEvenement(int * p_bouton)
 {
-    char state = sgContexte[voie].state;
-    char retEtat = sgContexte[voie].retEtat;
-    int icpt = sgContexte[voie].icpt;
-    int ret = 0;
-    int value = 0;
-        
-    //ret = analogRead(voie);
+    static char state = NON_PRESSE;  // etat de la FSM
+    static char retEtat = AUCUN_EVENEMENT;  // event de retour
+    uint8_t bouton = 4;  // (0->b0 .. 3->b4 4->rien)
+	static uint8_t oldbouton = 4; // mise en mémoire de la lecture précédente
+    static int icpt = 0;  // compteur pour le filtrage
+	char buffer[64];  // buffer pour former les logs
+	 
+	// Lecture de l'entrée analogique
+	bouton = lireBouton();
 
-    switch (voie)
-    {
-        case BP_G:
-          value = MCUBIND_VIRTUALPORT_ADC00;
-          break;
-        case BP_B:
-          value = MCUBIND_VIRTUALPORT_ADC01;
-          break;
-
-        case BP_D:
-          value = MCUBIND_VIRTUALPORT_ADC02;
-          break;
-
-        case BP_H:
-          value = MCUBIND_VIRTUALPORT_ADC03;
-          break;
-
-        //default:
-          // do something
-    }
-
-    ret = mcubind_virtualport_read(value);
-
-
+	// Gestion du filtre
     switch(state)
     {
         case NON_PRESSE:
-            //if (ret < 1)
-            if (ret >= 4)
+			// Ici on attend un appui quelconque
+            if (bouton < 4)
             {
                 retEtat = AUCUN_EVENEMENT;
                 state = ENFONCE;
                 icpt = 0;
-                log("NON_PRESSE -> ENFONCE\n");
+                //print_log(DEBUG, "NON_PRESSE -> ENFONCE\n");
             }
-            else
+            else // ret == 4 signifie valeur par défaut, aucun bouton préssé
             {
                 retEtat = AUCUN_EVENEMENT;
             }
@@ -208,30 +140,30 @@ char lireBouton(uint8_t voie)
 
         case ENFONCE:
             //if (ret < 1)
-            if (ret >= 4)
+			if (oldbouton == bouton)
             {
                 icpt ++;
             }
             //else if (ret >= 1)
-            else if (ret < 4)
+			else
             {
                 state = NON_PRESSE;
-                log("ENFONCE -> NON_PRESSE\n");
+                //print_log(DEBUG, "ENFONCE -> NON_PRESSE\n");
             }
             if (icpt > filtre)
             {
                 state = PRESSE;
-                log("ENFONCE -> PRESSE\n");
+                //print_log(DEBUG, "ENFONCE -> PRESSE\n");
                 retEtat = EVENEMENT_PRESSE;
             }
         break;
 
         case PRESSE:
             //if (ret >= 1)
-            if (ret < 4)
+			if (oldbouton != bouton)
             {
                 state = NON_PRESSE;
-                log("PRESSE -> NON_PRESSE\n");
+                //print_log(DEBUG, "PRESSE -> NON_PRESSE\n");
                 retEtat = EVENEMENT_RELACHE;
             }
             else
@@ -241,254 +173,72 @@ char lireBouton(uint8_t voie)
         break;
     }
 
-    sgContexte[voie].state = state;
-    sgContexte[voie].retEtat = retEtat;
-    sgContexte[voie].icpt = icpt;
+	
+	// Sauvegarde de la valeur du bouton dans le ptr de retour
+	*p_bouton = oldbouton;
+
+	// Sauvegarde de la valeur lue avant
+	oldbouton = bouton;
+	 
+	// Retourner l'événement
     return retEtat;
 }
-#if 0
-char lireBoutonGauche(void)
+
+/*
+*	Lecture de l'entrée analogique et détection du numéro de poussoir
+*/
+static uint16_t lireBouton(void)
 {
-	static char state = NON_PRESSE;
-    static char retEtat = AUCUN_EVENEMENT;
-	int ret = 0;
-	static int icpt = 0;
-        
-	// ret = analogRead(BP_G);
-    ret = mcubind_virtualport_read(BP_G);
+	static uint16_t cmp = 0;
+	uint16_t ret = 0;
+	char buffer[64];
+    
+	// Lecture de l'entrée analogique
+	ret = mcubind_virtualport_read(ci_ADC0);
+    
+    /*if (cmp >= 50)
+    {
+	    sprintf(buffer, "Bouton avant conv : %d\n", ret);
+		print_log(DEBUG, buffer);
+	}*/
 
-	switch(state)
-	{
-		case NON_PRESSE:
-			if (ret < 1)
-			{
-                retEtat = AUCUN_EVENEMENT;
-				state = ENFONCE;
-				icpt = 0;
-                //Serial.println("NON_PRESSE -> ENFONCE");
-			}
-            else
-            {
-                retEtat = AUCUN_EVENEMENT;
-            }
-		break;
+	 
+	// Détection du poussoir
+	// permet de déduire le numéro en valeur entiere du bouton préssé (0->b0 .. 3->b4)
+	ret = (ret + (ci_NBVALADC/2)) / ci_NBVALADC; // valeur lue (0-1023?) + la moitié de l'intervalle divisées par le nombre de valeur dans un intervalle
+	//ret = (double)5 / (1024 * ret);
 
-		case ENFONCE:
-			if (ret < 1)
-			{
-				icpt ++;
-			}
-			else if (ret >= 1)
-			{
-				state = NON_PRESSE;
-                //Serial.println("ENFONCE -> NON_PRESSE");
-			}
-			if (icpt > filtre)
-			{
-				state = PRESSE;
-                //Serial.println("ENFONCE -> PRESSE");
-                retEtat = EVENEMENT_PRESSE;
-			}
-		break;
+	/*if (cmp >= 50)
+    {
+		sprintf(buffer, "Bouton apres conv : %d\n", ret);
+		print_log(DEBUG, buffer);
+		cmp = 0;
+	}*/
 
-		case PRESSE:
-			if (ret >= 1)
-			{
-				state = NON_PRESSE;
-                //Serial.println("PRESSE -> NON_PRESSE");
-                retEtat = EVENEMENT_RELACHE;
-			}
-            else
-            {
-                retEtat = AUCUN_EVENEMENT;
-            }
-		break;
-	}
-
-	return retEtat;
+	cmp ++;
+	return ret;
 }
 
 
-char lireBoutonDroit(void)
+/*
+*  Gestion de la fifo d'événements boutons
+*/
+static void put_btfifo(char event)
 {
-	static char state = NON_PRESSE;
-    static char retEtat = AUCUN_EVENEMENT;
-	static int ret = 0;
-	static int icpt = 0;
-        
-	// ret = analogRead(BP_D);
-    ret = mcubind_virtualport_read(BP_D);
-
-	switch(state)
-	{
-		case NON_PRESSE:
-			if (ret < 1)
-			{
-                retEtat = AUCUN_EVENEMENT;
-				state = ENFONCE;
-				icpt = 0;
-                //Serial.println("NON_PRESSE -> ENFONCE");
-			}
-            else
-            {
-                retEtat = AUCUN_EVENEMENT;
-            }
-		break;
-
-		case ENFONCE:
-			if (ret < 1)
-			{
-				icpt ++;
-			}
-			else if (ret >= 1)
-			{
-				state = NON_PRESSE;
-                //Serial.println("ENFONCE -> NON_PRESSE");
-			}
-			if (icpt > filtre)
-			{
-				state = PRESSE;
-                //Serial.println("ENFONCE -> PRESSE");
-                retEtat = EVENEMENT_PRESSE;
-			}
-		break;
-
-		case PRESSE:
-			if (ret >= 1)
-			{
-				state = NON_PRESSE;
-                //Serial.println("PRESSE -> NON_PRESSE");
-                retEtat = EVENEMENT_RELACHE;
-			}
-            else
-            {
-                retEtat = AUCUN_EVENEMENT;
-            }
-		break;
-	}
-
-	return retEtat;
+  f_boutons.enqueue(event);
 }
 
-char lireBoutonBas(void)
+Bool isEmpty_btfifo(void)
 {
-	static char state = NON_PRESSE;
-    static char retEtat = AUCUN_EVENEMENT;
-	static int ret = 0;
-	static int icpt = 0;
-        
-	//ret = analogRead(BP_B);
-    ret = mcubind_virtualport_read(BP_B);
-
-	switch(state)
-	{
-		case NON_PRESSE:
-			if (ret < 1)
-			{
-                retEtat = AUCUN_EVENEMENT;
-				state = ENFONCE;
-				icpt = 0;
-                //Serial.println("NON_PRESSE -> ENFONCE");
-			}
-            else
-            {
-                retEtat = AUCUN_EVENEMENT;
-            }
-		break;
-
-		case ENFONCE:
-			if (ret < 1)
-			{
-				icpt ++;
-			}
-			else if (ret >= 1)
-			{
-				state = NON_PRESSE;
-                //Serial.println("ENFONCE -> NON_PRESSE");
-			}
-			if (icpt > filtre)
-			{
-				state = PRESSE;
-                //Serial.println("ENFONCE -> PRESSE");
-                retEtat = EVENEMENT_PRESSE;
-			}
-		break;
-
-		case PRESSE:
-			if (ret >= 1)
-			{
-				state = NON_PRESSE;
-                //Serial.println("PRESSE -> NON_PRESSE");
-                retEtat = EVENEMENT_RELACHE;
-			}
-            else
-            {
-                retEtat = AUCUN_EVENEMENT;
-            }
-		break;
-	}
-
-	return retEtat;
+  return (Bool)f_boutons.isEmpty();
 }
 
-char lireBoutonHaut(void)
+char get_btfifo(void)
 {
-	static char state = NON_PRESSE;
-    static char retEtat = AUCUN_EVENEMENT;
-	static int ret = 0;
-	static int icpt = 0;
-        
-	//ret = analogRead(BP_H);
-    ret = mcubind_virtualport_read(BP_H);
-
-	switch(state)
-	{
-		case NON_PRESSE:
-			if (ret < 1)
-			{
-                retEtat = AUCUN_EVENEMENT;
-				state = ENFONCE;
-				icpt = 0;
-                //Serial.println("NON_PRESSE -> ENFONCE");
-			}
-            else
-            {
-                retEtat = AUCUN_EVENEMENT;
-            }
-		break;
-
-		case ENFONCE:
-			if (ret < 1)
-			{
-				icpt ++;
-			}
-			else if (ret >= 1)
-			{
-				state = NON_PRESSE;
-                //Serial.println("ENFONCE -> NON_PRESSE");
-			}
-			if (icpt > filtre)
-			{
-				state = PRESSE;
-                //Serial.println("ENFONCE -> PRESSE");
-                retEtat = EVENEMENT_PRESSE;
-			}
-		break;
-
-		case PRESSE:
-            if (ret >= 1)
-            {
-                state = NON_PRESSE;
-                //Serial.println("PRESSE -> NON_PRESSE");
-                retEtat = EVENEMENT_RELACHE;
-            }
-            else
-            {
-                retEtat = AUCUN_EVENEMENT;
-            }
-		break;
-	}
-
-	return retEtat;
+  return f_boutons.dequeue();
 }
-#endif
+
+Bool isFull_btfifo(void)
+{
+  return (Bool)f_boutons.isFull();
+}
