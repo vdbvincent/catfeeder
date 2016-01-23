@@ -91,7 +91,6 @@ void lcd_every10ms(void);
 
 Bool lcd_is_init(void);
 void lcd_clear(void);
-void lcd_popup(char * texte, uint8_t temps);
 
 // Affiche l'écrand de démarrage
 void welcomeScreen(void);

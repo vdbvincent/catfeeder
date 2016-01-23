@@ -5,6 +5,8 @@
  *      Author: vincent
  *
  *	// TODO : faire des listes chainees et pas des pool en tableau
+ *           tester si le tableau est vide en alarme ou minuteur, inutile
+ *           de chercher a tester chaque alarme, rendre la main
  */
 #include "alarme.h"
 
@@ -107,28 +109,13 @@ void alarme_every1mn(void)
 }
 
 // Méthode permettant de regler une alarme. Retourne 0 en cas d'echec
-char alarme_setAlarme(clock p_al, void (*callback)(void))
+char alarme_setAlarme(clock p_al, uint8_t pos, void (*callback)(void))
 {
-
 	char ret = 0;
-	int i = 0;
-	Bool b_exit = False;
-	// Recherche du premier emplacement libre
-	while ((i < MAX_COUNT_ALARM) && (b_exit == False))
+
+	if (al_pool[pos] == NULL)
 	{
-		if (al_pool[i] == NULL)
-		{
-			b_exit = True;
-		}
-		else
-		{
-			i ++;
-		}
-	}
-	if (b_exit == True)
-	{
-		// Un emplacement vide a été trouvé à i
-		//Minuteur_t * am = malloc(sizeof(Minuteur_t));
+		// Un emplacement vide a été trouvé, creation de l'alarme
 		Alarme_t * al = new Alarme_t();
 		if (al != NULL)
 		{
@@ -136,11 +123,20 @@ char alarme_setAlarme(clock p_al, void (*callback)(void))
 			al->horaire.minutes = p_al.minutes;
 			al->horaire.secondes = p_al.secondes;
 			al->foncteur = callback;
-			al_pool[i] = al;
+			al_pool[pos] = al;
 
 			ret = 1;
 			print_log(DEBUG, "alarme : alarme enclenchee\n");
 		}
+	}
+	else
+	{
+		al_pool[pos]->horaire.heures = p_al.heures;
+		al_pool[pos]->horaire.minutes = p_al.minutes;
+		al_pool[pos]->horaire.secondes = p_al.secondes;
+		al_pool[pos]->foncteur = callback;
+		ret = 1;
+		print_log(DEBUG, "alarme : alarme enclenchee\n");
 	}
 
 	return ret;
@@ -179,4 +175,10 @@ char alarme_setMinuteur(uint32_t p_delai, void (*callback)(void))
 		}
 	}
 	return ret;
+}
+
+
+char * alarme_getAlarme(uint8_t p_selection)
+{
+	return "00:00";
 }

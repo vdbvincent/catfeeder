@@ -9,10 +9,10 @@
 #define _MENU_H_
  
 #include "common.h"
-#include "lcd.h"
 #include "clock.h"
 #include "alarme.h"
 #include "boutons.h"
+#include "lcd.h"
 
 // Définitions des actions MENU
 #define MENU_OK         0
@@ -21,15 +21,18 @@
 #define MENU_EVENT      0
 #define MENU_NO_EVENT   4
 
-void menu_setup(unsigned int p_tempoDem);
-void menu_every10ms(void);
+void menu_setup(unsigned int p_tempoDem = 2);
+void menu_idle(void);
+
+static void menu_affMenu(void);
+
+
+
 
 void clearCmdButtons(void);
 
-void menu_doFeedTheCatEvent(void);
-
 // Méthode permettant de controler la distribution de nourriture. Retourne 0 lorsque c'est fini. 1 sinon.
-char feedTheCat(void);
+//char feedTheCat(void);
 // Méthode permettant de configurer un objet clock
 char setAclock(clock * p_cHorloge);
 

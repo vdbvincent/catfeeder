@@ -12,7 +12,7 @@
 #include "clock.h"
 #include "alarme.h"
 #include "moteur.h"
-//#include "menu.h"
+#include "menu.h"
 
 // Variables globales
 static int c10 = 0 ;
@@ -28,6 +28,7 @@ void setup()
 	alarme_setup();
 	boutons_setup(10);  // init du process bouton avec un delai de filtrage de 10ms
 	moteur_setup();
+	menu_setup(2); // temps du welcom screen de 2s
 }
 
 void loop()
@@ -35,7 +36,8 @@ void loop()
 	static char state = 99;
 	
 	logs_idle();
-
+	menu_idle();
+/*
 	// test du pwm
 	// mise en route sur appui bouton
 	if (isEmpty_btfifo() == False)
@@ -60,7 +62,7 @@ void loop()
 		}
 
 	}
-
+*/
 
 /*
 	switch (state)

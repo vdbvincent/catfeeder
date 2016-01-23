@@ -18,6 +18,7 @@ void init_mcubind(void)
 	init_serial();
 	init_timer1();
 	adc_init();
+	lcd_setup();
 	//pwm_init();  // Fait direct dans pwm_out
 }
 

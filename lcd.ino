@@ -150,12 +150,7 @@ Menu_t CLOCK_MIN_MENU =
   CLOCK_MINSEC_MENU_ITEMS,
   60
 };
-Menu_t CLOCK_SEC_MENU =
-{
-  "Secondes :",
-  CLOCK_MINSEC_MENU_ITEMS,
-  60
-};
+
 
 // Déclaration du menu alarme
 char * ALARME_MENU_ITEMS[] =
@@ -194,20 +189,13 @@ Bool lcd_is_init(void)
   return lcd_isInit;
 }
 
-void lcd_popup(char * texte, uint8_t temps)
-{
-  txt = texte;
-  popup_timeout = temps;
-  popup = 1;
-}
-
 
 void welcomeScreen(void)
 {
   if (lcd_isInit)
   {
     lcd.clear();
-    lcd.print("CatFeeder  v2.1");
+    lcd.print("CatFeeder  v2.0");
   }
 }
 
@@ -227,43 +215,7 @@ void afficheReveil(void)
 	//lcd.write((uint8_t) 1);
 	//lcd.write((uint8_t) 2);
 }
-/*
-void lcd_every10ms(void)
-{
-  static int cmp = 0;
-  // Gestion d'une popup
-  if (popup == 1)
-  {
-    lcd.clear();
-    lcd.setCursor(0,0);
-    lcd.blink();  // Faire clignoter le curseur
-    lcd.print(txt);
-    cmp = 0;
-    popup = 2;
-  }
-  else if (popup == 2)
-  {
-    if (popup_timeout >= 99)
-    {
-      // temps infini
-    }
-    else
-    {
-      if (cmp >= popup_timeout)
-      {
-        
-        lcd.noBlink();
-        lcd.clear();
-        popup = 0;
-      }
-      else
-      {
-        cmp ++;
-      }
-    }
-  }
-  
-}*/
+
 
 // Ecran d'acceuil
 void afficheHome(void)
@@ -329,82 +281,86 @@ Select_t afficheMenu(Menu_t myMenu)
   uint8_t retour = NO_SELECT;
   Select_t ret;
   
-  if (popup != 1)
+  // Afficher le menu désiré
+  lcd.setCursor(0,0);
+  lcd.print(myMenu.titre);
+  lcd.setCursor(0,1);
+  if (myMenu.titre == "Selection alarme") // Gestion d'un cas particulier pour afficher les alarmes
   {
-    // Afficher le menu désiré
-    lcd.setCursor(0,0);
-    lcd.print(myMenu.titre);
-    lcd.setCursor(0,1);
+    lcd.print(alarme_getAlarme(selection));
+  }
+  else
+  {
     lcd.print(myMenu.items[selection]);
-    
-    // Attent d'un événement
-    if ( ! isEmpty_btfifo())
+  }
+  
+  // Attent d'un événement
+  if ( ! isEmpty_btfifo())
+  {
+    char event = get_btfifo();
+    switch(event)
     {
-      char event = get_btfifo();
-      switch(event)
-      {
-        case BT_B_PRESSE:
-          //Serial.println("Bt bas");
-          // choix suivant s'il existe
-          if (selection < (myMenu.nbItem - 1))
-          {
-            // Passe au choix suivant
-            selection ++;
-            // Effacement de la ligne
-            lcd.setCursor(0,1);
-            lcd.print("                ");
-          }
-    		  else
-    		  {
-        		// Revient au premier choix
-        		selection = 0;
-        		// Effacement de la ligne
-            lcd.setCursor(0,1);
-            lcd.print("                ");
-    		  }
-        break;
-        
-        case BT_H_PRESSE:
-          // S'il existe un choix précédent
-          if (selection > 0)
-          {
-            // Passe au choix précédent
-            selection --;
-            // Effacement de la ligne
-            lcd.setCursor(0,1);
-            lcd.print("                ");
-          }
-    		  else
-    		  {
-      			// Va au dernier choix
-      			selection = myMenu.nbItem - 1;
-      			// Effacement de la ligne
-            lcd.setCursor(0,1);
-            lcd.print("                ");
-    		  }
-        break;
-        
-        case BT_D_PRESSE:
-          // Validation du choix
-          retour = SELECT_OK;
-          //selection = 0;
-        break;
-        
-        case BT_G_PRESSE:
-          // Retour en arriere
-          retour = SELECT_CANCEL;;
-          selection = 0;
-        break;
-      }
+      case BT_B_PRESSE:
+        //Serial.println("Bt bas");
+        // choix suivant s'il existe
+        if (selection < (myMenu.nbItem - 1))
+        {
+          // Passe au choix suivant
+          selection ++;
+          // Effacement de la ligne
+          lcd.setCursor(0,1);
+          lcd.print("                ");
+        }
+  		  else
+  		  {
+      		// Revient au premier choix
+      		selection = 0;
+      		// Effacement de la ligne
+          lcd.setCursor(0,1);
+          lcd.print("                ");
+  		  }
+      break;
+      
+      case BT_H_PRESSE:
+        // S'il existe un choix précédent
+        if (selection > 0)
+        {
+          // Passe au choix précédent
+          selection --;
+          // Effacement de la ligne
+          lcd.setCursor(0,1);
+          lcd.print("                ");
+        }
+  		  else
+  		  {
+    			// Va au dernier choix
+    			selection = myMenu.nbItem - 1;
+    			// Effacement de la ligne
+          lcd.setCursor(0,1);
+          lcd.print("                ");
+  		  }
+      break;
+      
+      case BT_D_PRESSE:
+        // Validation du choix
+        retour = SELECT_OK;
+        //selection = 0;
+      break;
+      
+      case BT_G_PRESSE:
+        // Retour en arriere
+        retour = SELECT_CANCEL;;
+        selection = 0;
+      break;
     }
-    
-    ret.selection = selection;
-    ret.retour = retour;
-    
-    if (retour == SELECT_OK)
-    {
-      selection = 0;
-    }
+  }
+  
+  ret.selection = selection;
+  ret.retour = retour;
+  
+  if (retour == SELECT_OK)
+  {
+    selection = 0;
   }
   return ret;
 }

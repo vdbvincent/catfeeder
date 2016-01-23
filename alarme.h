@@ -34,10 +34,13 @@ void alarme_every100ms(void);
 void alarme_every1mn(void);
 
 // Méthode permettant de régler une alarme. Retourne 0 en cas d'échec
-char alarme_setAlarme(clock p_al, void (*callback)(void));
+char alarme_setAlarme(clock p_al, uint8_t pos, void (*callback)(void));
 // Méthode permettant de régler une minuterie. Retourne 0 en cas d'échec
 // delai en secondes
 // callback avec @ d'un char a mettre à 1
 char alarme_setMinuteur(uint32_t p_delai, void (*callback)(void));
+
+// Fonction permettant de retourner l'alarme à l'indice donnée
+char * alarme_getAlarme(uint8_t p_selection);
 
 #endif /* _ALARME_H_ */
