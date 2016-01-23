@@ -177,8 +177,37 @@ char alarme_setMinuteur(uint32_t p_delai, void (*callback)(void))
 	return ret;
 }
 
-
+// TODO :
 char * alarme_getAlarme(uint8_t p_selection)
 {
-	return "00:00";
+	char * c_ret = "";
+
+	if (p_selection < MAX_COUNT_ALARM)
+	{
+		if (al_pool[p_selection] != NULL)
+		{
+			clock myclock = al_pool[p_selection]->horaire;
+			sprintf(c_ret, "%2d:%2d", myclock.heures, myclock.secondes);
+		}
+	}
+
+	return c_ret;
+}
+
+// TODO :
+Bool alarme_delAlarme(uint8_t p_selection)
+{
+	Bool b_return = False;
+
+	if (p_selection < MAX_COUNT_ALARM)
+	{
+		if (al_pool[p_selection] != NULL)
+		{
+			delete al_pool[p_selection];
+			al_pool[p_selection] = NULL;
+			b_return = True;
+		}
+	}
+
+	return b_return;
 }

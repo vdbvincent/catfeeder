@@ -188,11 +188,6 @@ void procGtmp(void)
 }
 
 
-
-
-
-
-
 void clearCmdButtons(void)
 {
   // vider la fifo
@@ -201,8 +196,6 @@ void clearCmdButtons(void)
     get_btfifo();
   }
 }
-
-
 
 // Méthode permettant de configurer un objet clock
 char setAclock(clock * p_cHorloge)

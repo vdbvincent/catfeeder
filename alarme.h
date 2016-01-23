@@ -9,7 +9,6 @@
 #define _ALARME_H_
 
 #include "common.h"
-//#include "menu.h"
 #include "clock.h"
 #include "logs.h"
 
@@ -42,5 +41,8 @@ char alarme_setMinuteur(uint32_t p_delai, void (*callback)(void));
 
 // Fonction permettant de retourner l'alarme à l'indice donnée
 char * alarme_getAlarme(uint8_t p_selection);
+
+// Fonction permettant de supprimer une alarme
+Bool alarme_delAlarme(uint8_t p_selection);
 
 #endif /* _ALARME_H_ */
