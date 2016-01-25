@@ -4,7 +4,7 @@
  *  Created on: 31 juil. 2015
  *      Author: vincent
  *
- *	// TODO : faire des listes chainees et pas des pool en tableau
+ *	// TODO : 
  *           tester si le tableau est vide en alarme ou minuteur, inutile
  *           de chercher a tester chaque alarme, rendre la main
  */
@@ -143,7 +143,7 @@ char alarme_setAlarme(clock p_al, uint8_t pos, void (*callback)(void))
 }
 
 // Méthode permettant de régler une minuterie. Retourne 0 en cas d'échec
-char alarme_setMinuteur(uint32_t p_delai, void (*callback)(void))
+char alarme_setMinuteur(uint16_t p_delai, void (*callback)(void))
 {
 	char ret = 0;
 	int i = 0;

@@ -23,7 +23,7 @@ typedef struct
 // Structure d'un minuteur
 typedef struct
 {
-	uint32_t delai;          // Délai de la minuterie en 100ene de millisecondes
+	uint16_t delai;          // Délai de la minuterie en 100ene de millisecondes
 	void (*foncteur)(void);  // Callback à appeler à l'échéance
 } Minuteur_t;
 

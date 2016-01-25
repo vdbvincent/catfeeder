@@ -11,7 +11,5 @@
 #include "common.h"
 
 void every10ms(void);
-void procAlarme(void);
-void procMinu(void);
 
 #endif /* _CATFEEDER_H_ */

@@ -13,7 +13,7 @@
 char heures = 0;
 char minutes = 0;
 char secondes = 0;
-int millisecondes = 0;
+uint16_t millisecondes = 0;
 uint8_t mb_clockInit = 0;  // Permet de garder en mémoire la mise à l"heure
 
 void clock_setup(void)
@@ -30,7 +30,7 @@ void clock_every100ms(void)
     millisecondes = 0;
     secondes ++;
   }
-  
+
   //  incrément des secondes
   if (secondes >= 60)
   {
@@ -54,6 +54,13 @@ void clock_every100ms(void)
   }
   
   millisecondes += FREQ_SEQ;
+
+#ifdef DEBUG
+  if (secondes == 10)
+  {
+    print_log(DEBUG, "tic\n");
+  }
+#endif
 }
 
 
@@ -67,16 +74,17 @@ clock clock_getClock(void)
   return myclock;
 }
 
-void clock_setClock(clock p_myclock)
+void clock_setClock(clock * p_myclock)
 {
-  heures = p_myclock.heures;
-  minutes = p_myclock.minutes;
-  secondes = p_myclock.secondes;
+  heures = p_myclock->heures;
+  minutes = p_myclock->minutes;
+  secondes = p_myclock->secondes;
   mb_clockInit = 1; // Permet de garder en mémoire la mise à l"heure
-  
+#ifdef DEBUG
   char message[40];
   sprintf(message, "clock : Mise a l'heure : %02d:%02d:%02d\n", heures, minutes, secondes);
   print_log(DEBUG, message);
+#endif
 }
 
 void clock_reset(void)

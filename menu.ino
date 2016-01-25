@@ -30,7 +30,7 @@ static void menu_affMenu(void)
 {
 	static uint8_t state = 0;
 	static Select_t select;
-	clock horloge;
+	clock * horloge;
 	char ret;  // Variable temporaire
 
 	switch (state)
@@ -82,12 +82,16 @@ static void menu_affMenu(void)
 					case 0:
 						// Regler l'horloge
 						state = 5;
+						// Allocation de la struct horloge
+						horloge = new clock();
 						lcd_clear();
 					break;
 
 					case 1:
 						// Régler alarme
 						state = 6;
+						// Allocation de la struct horloge
+						horloge = new clock();
 						lcd_clear();
 					break;
 
@@ -121,11 +125,14 @@ static void menu_affMenu(void)
 		// REGLAGE HORLOGE
 
 		case 5:
-			ret = setAclock(&horloge);
+		// TODO : bug crash ? appel en cascade sur le meme pointeur -> reinit ?
+			ret = setAclock(horloge);
 			if (ret == MENU_OK)
 			{
 				// Mise a jour des données d'horodatage
 				clock_setClock(horloge);
+				// Suppression de la struct horloge
+				delete horloge;
 				// Retour en ecran d'acceuil
 				lcd_clear();
 				state = 2;
@@ -157,12 +164,13 @@ static void menu_affMenu(void)
 
 		case 7:
 			// Appeler SetAclock pour conf une alarme et la stocker dans l'objet alarme à l'indice select.selection
-			ret = setAclock(&horloge);
+			ret = setAclock(horloge);
 			if (ret == MENU_OK)
 			{
 				// Mise a jour des données d'horodatage
-				//manager_setAlarme(horloge, select.selection);
-				//alarme_setAlarme(horloge, select.selection, mycallback); // TODO : appeler une fonction setalarme de la tache manager
+				manager_setAlarme(*horloge, select.selection);
+				// Suppression de la struct horloge
+				delete horloge;
 				// Retour en ecran d'acceuil
 				lcd_clear();
 				state = 2;
@@ -231,6 +239,7 @@ char setAclock(clock * p_cHorloge)
 			lcd_clear();
 			state = 1;
 			retour = MENU_OK;
+			p_cHorloge->secondes = 0;
 		}
 		else if (select.retour == SELECT_CANCEL)
 		{
