@@ -26,7 +26,7 @@ void menu_idle(void);
 
 static void menu_affMenu(void);
 
-
+void procGtmp(void);
 
 
 void clearCmdButtons(void);

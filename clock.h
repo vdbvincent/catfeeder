@@ -20,5 +20,6 @@ void clock_every100ms(void);
 clock clock_getClock(void);
 void clock_setClock(clock p_myclock);
 void clock_reset(void);
+uint8_t clock_isInit(void);
 
 #endif /* _CLOCK_H_ */
