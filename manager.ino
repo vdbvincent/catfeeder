@@ -37,7 +37,7 @@ sinon laisser faire les menus et réagir aux alarmes
 
 void manager_idle(void)
 {
-	if ((clock_isInit() == 0) && (state == 0))
+	if ((state == 0) && (clock_isInit() == 0))
 	{
 		// Si l'heure n'est pas réglée
 		// il doit y avoir 1 distrib MOYEN / 4h

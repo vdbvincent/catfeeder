@@ -4,6 +4,10 @@
  *  Created on: 31 juil. 2015
  *      Author: vincent
  *  http://modelleisenbahn.triskell.org/spip.php?article59
+ *
+ *  // TODO : Attention, plusieurs consommateurs de ressource BT_FIFO ! -> veillez a
+ *  //        ce qu'ils ne consomment pas en meme temps (archi logicielle) : manager et menu
+ *  //        ou mettre en pace un mécanisme de concurrence d'accès (lourd)
  */
 #include "boutons.h"
 

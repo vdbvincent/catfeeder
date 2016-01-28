@@ -28,8 +28,8 @@ typedef struct
 // Structure d'un selection
 typedef struct
 {
-  char selection;
-  char retour;
+  unsigned char selection;
+  unsigned char retour;
 } Select_t;
 
 // Creation du symbole reveil

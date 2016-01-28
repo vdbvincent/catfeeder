@@ -34,7 +34,9 @@ void clearCmdButtons(void);
 // Méthode permettant de controler la distribution de nourriture. Retourne 0 lorsque c'est fini. 1 sinon.
 //char feedTheCat(void);
 // Méthode permettant de configurer un objet clock
-char setAclock(clock * p_cHorloge);
+char setAclock(void);
+
+void raz_horloge(void);
 
 
 #endif /* _MENU_H_ */

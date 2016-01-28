@@ -13,11 +13,6 @@ LiquidCrystal lcd(11,10,9,8,7,6); //liaison 4 bits de données
 // Variable de la FSM
 static Bool lcd_isInit = False;
 
-// Variables popup
-static char popup_timeout = 0;
-static char popup = 0;
-static char * txt;
-
 // Déclaration du menu principal
 char * MAIN_MENU_ITEMS[] = 
 {
@@ -155,20 +150,18 @@ Menu_t CLOCK_MIN_MENU =
 // Déclaration du menu alarme
 char * ALARME_MENU_ITEMS[] =
 {
-	"ALARME 1",
-	"ALARME 2",
-	"ALARME 3",
-	"ALARME 4",
-	"ALARME 5"
+  "ALARME 1",
+  "ALARME 2",
+  "ALARME 3",
+  "ALARME 4",
+  "ALARME 5"
 };
 Menu_t ALARME_MENU =
 {
-	"Selection alarme",
-	ALARME_MENU_ITEMS,
-	5
+  "Selection alarme",
+  ALARME_MENU_ITEMS,
+  5
 };
-
-
 
 
 void lcd_setup(void)
@@ -189,7 +182,6 @@ Bool lcd_is_init(void)
   return lcd_isInit;
 }
 
-
 void welcomeScreen(void)
 {
   if (lcd_isInit)
@@ -204,39 +196,39 @@ void lcd_clear(void)
   if (lcd_isInit)
   {
     lcd.clear();
-    popup_timeout = 0;
   }
 }
 
 void afficheReveil(void)
 {
-	//lcd.setCursor(0,14);		// Affiche sur la fin de la premiere ligne
-	//lcd.write((uint8_t) 0);
-	//lcd.write((uint8_t) 1);
-	//lcd.write((uint8_t) 2);
+  //lcd.setCursor(0,14);    // Affiche sur la fin de la premiere ligne
+  //lcd.write((uint8_t) 0);
+  //lcd.write((uint8_t) 1);
+  //lcd.write((uint8_t) 2);
 }
-
 
 // Ecran d'acceuil
 void afficheHome(void)
 {
   afficheTempsRestant();
   //if (alarmeSetted())  // Si au moins 1 alarme a été définie
-	afficheReveil();
+  //afficheReveil();
   afficheBtMenu();
 }
 void afficheTempsRestant(void)
 {
   lcd.setCursor(0,0); // Curseur en haut à gauche
-  char message[16];
-  char heures[3];
-  char minutes[3];
-  char secondes[3];
+  char message[8];
+  //char heures[3];
+  //char minutes[3];
+  //char secondes[3];
   
   clock heure;
   heure = clock_getClock();
   
+  sprintf(message, "%02d:%02d", heure.heures, heure.minutes);
   
+  /*
   if (heure.secondes < 10)
   {
     sprintf(secondes, "0%d", heure.secondes);
@@ -265,6 +257,7 @@ void afficheTempsRestant(void)
   }
   
   sprintf(message, "%s:%s:%s", heures, minutes, secondes);
+  */
   lcd.print(message);
 }
 void afficheBtMenu(void)
@@ -285,14 +278,7 @@ Select_t afficheMenu(Menu_t myMenu)
   lcd.setCursor(0,0);
   lcd.print(myMenu.titre);
   lcd.setCursor(0,1);
-  if (myMenu.titre == "Selection alarme") // Gestion d'un cas particulier pour afficher les alarmes
-  {
-    lcd.print(alarme_getAlarme(selection));
-  }
-  else
-  {
-    lcd.print(myMenu.items[selection]);
-  }
+  lcd.print(myMenu.items[selection]);
   
   // Attent d'un événement
   if ( ! isEmpty_btfifo())
@@ -311,14 +297,14 @@ Select_t afficheMenu(Menu_t myMenu)
           lcd.setCursor(0,1);
           lcd.print("                ");
         }
-  		  else
-  		  {
-      		// Revient au premier choix
-      		selection = 0;
-      		// Effacement de la ligne
+        else
+        {
+          // Revient au premier choix
+          selection = 0;
+          // Effacement de la ligne
           lcd.setCursor(0,1);
           lcd.print("                ");
-  		  }
+        }
       break;
       
       case BT_H_PRESSE:
@@ -331,14 +317,14 @@ Select_t afficheMenu(Menu_t myMenu)
           lcd.setCursor(0,1);
           lcd.print("                ");
         }
-  		  else
-  		  {
-    			// Va au dernier choix
-    			selection = myMenu.nbItem - 1;
-    			// Effacement de la ligne
+        else
+        {
+          // Va au dernier choix
+          selection = myMenu.nbItem - 1;
+          // Effacement de la ligne
           lcd.setCursor(0,1);
           lcd.print("                ");
-  		  }
+        }
       break;
       
       case BT_D_PRESSE:

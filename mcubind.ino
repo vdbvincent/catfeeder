@@ -127,7 +127,7 @@ void mcubind_virtualport_init(uint8_t virtualPort, uint8_t flagUseAsOutput)
 			case MCUBIND_VIRTUALPORT_D_b0  : DDRD |= (1 << DDD0) ; break ;
 			case MCUBIND_VIRTUALPORT_D_b1  : DDRD |= (1 << DDD1) ; break ;
 			case MCUBIND_VIRTUALPORT_D_b2  : DDRD |= (1 << DDD2) ; break ;
-			case MCUBIND_VIRTUALPORT_D_b3  : DDRD |= (1 << DDD3) ; break; // _BV(PD3) ; break ;
+			case MCUBIND_VIRTUALPORT_D_b3  : DDRD |= (1 << DDD3) ; break ; // _BV(PD3) ; break ;
 			case MCUBIND_VIRTUALPORT_D_b4  : DDRD |= (1 << DDD4) ; break ;
 			case MCUBIND_VIRTUALPORT_D_b5  : DDRD |= (1 << DDD5) ; break ;
 			case MCUBIND_VIRTUALPORT_D_b6  : DDRD |= (1 << DDD6) ; break ;
@@ -148,7 +148,7 @@ void mcubind_virtualport_init(uint8_t virtualPort, uint8_t flagUseAsOutput)
 			case MCUBIND_VIRTUALPORT_D_b0  : DDRD &= ~(1 << DDD0) ; break ;
 			case MCUBIND_VIRTUALPORT_D_b1  : DDRD &= ~(1 << DDD1) ; break ;
 			case MCUBIND_VIRTUALPORT_D_b2  : DDRD &= ~(1 << DDD2) ; break ;
-			case MCUBIND_VIRTUALPORT_D_b3  : DDRD &= ~(1 << DDD3); break; //~_BV(PD3) ; break ;
+			case MCUBIND_VIRTUALPORT_D_b3  : DDRD &= ~(1 << DDD3) ; break ; //~_BV(PD3) ; break ;
 			case MCUBIND_VIRTUALPORT_D_b4  : DDRD &= ~(1 << DDD4) ; break ;
 			case MCUBIND_VIRTUALPORT_D_b5  : DDRD &= ~(1 << DDD5) ; break ;
 			case MCUBIND_VIRTUALPORT_D_b6  : DDRD &= ~(1 << DDD6) ; break ;
@@ -171,7 +171,6 @@ void mcubind_virtualport_init(uint8_t virtualPort, uint8_t flagUseAsOutput)
 
 uint16_t mcubind_virtualport_read(uint8_t virtualPort)
 {
-	// TODO : faire la lecture des ports numeriques
 	switch (virtualPort)
 	{
 		case MCUBIND_VIRTUALPORT_ADC00 : return (adc_lecture(0));
@@ -182,7 +181,20 @@ uint16_t mcubind_virtualport_read(uint8_t virtualPort)
 		case MCUBIND_VIRTUALPORT_ADC05 : return (adc_lecture(5));
 		case MCUBIND_VIRTUALPORT_ADC06 : return (adc_lecture(6));
 
-		case MCUBIND_VIRTUALPORT_D_b3 : return (PIND & (1 << DDD3)); break;
+		case MCUBIND_VIRTUALPORT_D_b0  : return (PIND & (1 << DDD0)); break;
+		case MCUBIND_VIRTUALPORT_D_b1  : return (PIND & (1 << DDD1)); break;
+		case MCUBIND_VIRTUALPORT_D_b2  : return (PIND & (1 << DDD2)); break;
+		case MCUBIND_VIRTUALPORT_D_b3  : return (PIND & (1 << DDD3)); break;
+		case MCUBIND_VIRTUALPORT_D_b4  : return (PIND & (1 << DDD4)); break;
+		case MCUBIND_VIRTUALPORT_D_b5  : return (PIND & (1 << DDD5)); break;
+		case MCUBIND_VIRTUALPORT_D_b6  : return (PIND & (1 << DDD6)); break;
+		case MCUBIND_VIRTUALPORT_D_b7  : return (PINB & (1 << DDD7)); break;
+		case MCUBIND_VIRTUALPORT_B_b8  : return (PINB & (1 << DDB0)); break;
+		case MCUBIND_VIRTUALPORT_B_b9  : return (PINB & (1 << DDB1)); break;
+		case MCUBIND_VIRTUALPORT_B_b10 : return (PINB & (1 << DDB2)); break;
+		case MCUBIND_VIRTUALPORT_B_b11 : return (PINB & (1 << DDB3)); break;
+		case MCUBIND_VIRTUALPORT_B_b12 : return (PINB & (1 << DDB4)); break;
+		case MCUBIND_VIRTUALPORT_B_b13 : return (PINB & (1 << DDB5)); break;
 	}
 
 }
@@ -197,35 +209,44 @@ uint16_t mcubind_virtualport_read(uint8_t virtualPort)
 
 void mcubind_virtualport_write(uint8_t virtualPort, uint8_t value)
 {
-	// TODO : faire pareil pour le port B (8-13)
 	if (value == 1)
 	{
 		switch (virtualPort)
 		{
-			// config du port en I/O (0 = input only)
-			case MCUBIND_VIRTUALPORT_D_b0 : PORTD |= (1 << DDD0) ; break ;
-			case MCUBIND_VIRTUALPORT_D_b1 : PORTD |= (1 << DDD1) ; break ;
-			case MCUBIND_VIRTUALPORT_D_b2 : PORTD |= (1 << DDD2) ; break ;
-			case MCUBIND_VIRTUALPORT_D_b3 : PORTD |= (1 << DDD3) ; break; //_BV(PD3) ; break ;
-			case MCUBIND_VIRTUALPORT_D_b4 : PORTD |= (1 << DDD4) ; break ;
-			case MCUBIND_VIRTUALPORT_D_b5 : PORTD |= (1 << DDD5) ; break ;
-			case MCUBIND_VIRTUALPORT_D_b6 : PORTD |= (1 << DDD6) ; break ;
-			case MCUBIND_VIRTUALPORT_D_b7 : PORTD |= (1 << DDD7) ; break ;
+			case MCUBIND_VIRTUALPORT_D_b0  : PORTD |= (1 << DDD0); break;
+			case MCUBIND_VIRTUALPORT_D_b1  : PORTD |= (1 << DDD1); break;
+			case MCUBIND_VIRTUALPORT_D_b2  : PORTD |= (1 << DDD2); break;
+			case MCUBIND_VIRTUALPORT_D_b3  : PORTD |= (1 << DDD3); break; //_BV(PD3) ; break ;
+			case MCUBIND_VIRTUALPORT_D_b4  : PORTD |= (1 << DDD4); break;
+			case MCUBIND_VIRTUALPORT_D_b5  : PORTD |= (1 << DDD5); break;
+			case MCUBIND_VIRTUALPORT_D_b6  : PORTD |= (1 << DDD6); break;
+			case MCUBIND_VIRTUALPORT_D_b7  : PORTD |= (1 << DDD7); break;
+			case MCUBIND_VIRTUALPORT_B_b8  : PORTB |= (1 << DDB0); break;
+			case MCUBIND_VIRTUALPORT_B_b9  : PORTB |= (1 << DDB1); break;
+			case MCUBIND_VIRTUALPORT_B_b10 : PORTB |= (1 << DDB2); break;
+			case MCUBIND_VIRTUALPORT_B_b11 : PORTB |= (1 << DDB3); break;
+			case MCUBIND_VIRTUALPORT_B_b12 : PORTB |= (1 << DDB4); break;
+			case MCUBIND_VIRTUALPORT_B_b13 : PORTB |= (1 << DDB5); break;
 		}
 	}
 	else
 	{
 		switch (virtualPort)
 		{
-			// config du port en I/O (0 = input only)
-			case MCUBIND_VIRTUALPORT_D_b0 : PORTD &= ~(1 << DDD0) ; break ;
-			case MCUBIND_VIRTUALPORT_D_b1 : PORTD &= ~(1 << DDD1) ; break ;
-			case MCUBIND_VIRTUALPORT_D_b2 : PORTD &= ~(1 << DDD2) ; break ;
-			case MCUBIND_VIRTUALPORT_D_b3 : PORTD &= ~(1 << DDD3) ; break; //~_BV(PD3) ; break ;
-			case MCUBIND_VIRTUALPORT_D_b4 : PORTD &= ~(1 << DDD4) ; break ;
-			case MCUBIND_VIRTUALPORT_D_b5 : PORTD &= ~(1 << DDD5) ; break ;
-			case MCUBIND_VIRTUALPORT_D_b6 : PORTD &= ~(1 << DDD6) ; break ;
-			case MCUBIND_VIRTUALPORT_D_b7 : PORTD &= ~(1 << DDD7) ; break ;
+			case MCUBIND_VIRTUALPORT_D_b0  : PORTD &= ~(1 << DDD0); break;
+			case MCUBIND_VIRTUALPORT_D_b1  : PORTD &= ~(1 << DDD1); break;
+			case MCUBIND_VIRTUALPORT_D_b2  : PORTD &= ~(1 << DDD2); break;
+			case MCUBIND_VIRTUALPORT_D_b3  : PORTD &= ~(1 << DDD3); break; //~_BV(PD3) ; break ;
+			case MCUBIND_VIRTUALPORT_D_b4  : PORTD &= ~(1 << DDD4); break;
+			case MCUBIND_VIRTUALPORT_D_b5  : PORTD &= ~(1 << DDD5); break;
+			case MCUBIND_VIRTUALPORT_D_b6  : PORTD &= ~(1 << DDD6); break;
+			case MCUBIND_VIRTUALPORT_D_b7  : PORTD &= ~(1 << DDD7); break;
+			case MCUBIND_VIRTUALPORT_B_b8  : PORTB &= ~(1 << DDB0); break;
+			case MCUBIND_VIRTUALPORT_B_b9  : PORTB &= ~(1 << DDB1); break;
+			case MCUBIND_VIRTUALPORT_B_b10 : PORTB &= ~(1 << DDB2); break;
+			case MCUBIND_VIRTUALPORT_B_b11 : PORTB &= ~(1 << DDB3); break;
+			case MCUBIND_VIRTUALPORT_B_b12 : PORTB &= ~(1 << DDB4); break;
+			case MCUBIND_VIRTUALPORT_B_b13 : PORTB &= ~(1 << DDB5); break;
 		}
 	}
 }
