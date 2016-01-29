@@ -6,14 +6,16 @@
  */
 #include "menu.h"
 
+// Variables globales
 static unsigned int ui_tempoDem = 2;  // Valeur par défaut 300 = 2s
-
 uint8_t g_tmp = 0;
+clock * horloge;
 
 void menu_setup(unsigned int p_tempoDem)
 {
 	// Configuration de la tempo de l'écran de démarrage
-  ui_tempoDem = p_tempoDem;
+ 	ui_tempoDem = p_tempoDem;
+ 	horloge = new clock();
 }
 
 void menu_idle(void)
@@ -30,25 +32,24 @@ static void menu_affMenu(void)
 {
 	static uint8_t state = 0;
 	static Select_t select;
-	clock * horloge;
 	char ret;  // Variable temporaire
 
 	switch (state)
 	{
-		// ECRAN DEMARRAGE
-		case 0:
+	    // ECRAN DEMARRAGE
+	    case 0:
 	      	welcomeScreen();
 	      	alarme_setMinuteur(ui_tempoDem, &procGtmp); // Affiche pour 2 seconde
-			state = 1;
+		state = 1;
 	      break;
 
 	    case 1:
 	    	if (g_tmp != 0)  // Fin de l'ecran de demarrage
 	    	{
 	    		clearCmdButtons();
-				lcd_clear();
-				clock_reset();
-				state = 2;
+			lcd_clear();
+			clock_reset();
+			state = 2;
 	    	}
 	      	break;
 
@@ -57,17 +58,17 @@ static void menu_affMenu(void)
 	    case 2:
 	    	afficheHome();
 
-			// Attente de l'appuie du bouton gauche
-			if ( ! isEmpty_btfifo())
+		// Attente de l'appuie du bouton gauche
+		if ( ! isEmpty_btfifo())
+		{
+			char event = get_btfifo();
+			if (event == BT_D_PRESSE)
 			{
-				char event = get_btfifo();
-				if (event == BT_D_PRESSE)
-				{
-					// Affiche du menu
-					state = 3;
-					lcd_clear();
-				}
+				// Affiche du menu
+				state = 3;
+				lcd_clear();
 			}
+		}
 	    	break;
 
 
@@ -82,16 +83,14 @@ static void menu_affMenu(void)
 					case 0:
 						// Regler l'horloge
 						state = 5;
-						// Allocation de la struct horloge
-						horloge = new clock();
+						clearHorloge();
 						lcd_clear();
 					break;
 
 					case 1:
 						// Régler alarme
 						state = 6;
-						// Allocation de la struct horloge
-						horloge = new clock();
+						clearHorloge();
 						lcd_clear();
 					break;
 
@@ -212,49 +211,61 @@ char setAclock(clock * p_cHorloge)
 	char retour = MENU_NO_ACTION;
 	static Select_t select;
 	
-	switch (state)
+	if (p_cHorloge == NULL)
 	{
-		case 1:
-		select = afficheMenu(CLOCK_HOUR_MENU);
-
-		if (select.retour == SELECT_OK)
+		retour = MENU_CANCEL;
+	}
+	else
+	{
+		switch (state)
 		{
-			p_cHorloge->heures = select.selection;
-			lcd_clear();
-			state = 2;
+			case 1:
+			select = afficheMenu(CLOCK_HOUR_MENU);
+	
+			if (select.retour == SELECT_OK)
+			{
+				p_cHorloge->heures = select.selection;
+				lcd_clear();
+				state = 2;
+			}
+			else if (select.retour == SELECT_CANCEL)
+			{
+				// retour à l'écran d'acceuil
+				retour = MENU_CANCEL;
+			}
+			break;
+			
+			case 2 :
+			select = afficheMenu(CLOCK_MIN_MENU);
+	
+			if (select.retour == SELECT_OK)
+			{
+				p_cHorloge->minutes = select.selection;
+				lcd_clear();
+				state = 1;
+				retour = MENU_OK;
+				p_cHorloge->secondes = 0;
+			}
+			else if (select.retour == SELECT_CANCEL)
+			{
+				// retour à l'écran précédent
+				lcd_clear();
+				state = 1;
+			}
+			break;
 		}
-		else if (select.retour == SELECT_CANCEL)
-		{
-			// retour à l'écran d'acceuil
-			retour = MENU_CANCEL;
-		}
-		break;
-		
-		case 2 :
-		select = afficheMenu(CLOCK_MIN_MENU);
-
-		if (select.retour == SELECT_OK)
-		{
-			p_cHorloge->minutes = select.selection;
-			lcd_clear();
-			state = 1;
-			retour = MENU_OK;
-			p_cHorloge->secondes = 0;
-		}
-		else if (select.retour == SELECT_CANCEL)
-		{
-			// retour à l'écran précédent
-			lcd_clear();
-			state = 1;
-		}
-		break;
 	}
 	
 	return retour;
 }
 
 
-
+void clearHorloge(void)
+{
+	horloge->heures = 0;
+	horloge->minutes = 0;
+	horloge->secondes = 0;
+}
 
 
 // TODO : a mettre dans un fsm a part qui chapote un peu tou
