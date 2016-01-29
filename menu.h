@@ -35,8 +35,8 @@ void clearCmdButtons(void);
 //char feedTheCat(void);
 // Méthode permettant de configurer un objet clock
 char setAclock(void);
-
-void raz_horloge(void);
+// Permet de remettre à 0 les champs de la structure horloge globale
+void clearHorloge(void);
 
 
 #endif /* _MENU_H_ */
