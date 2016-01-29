@@ -130,8 +130,6 @@ static void menu_affMenu(void)
 			{
 				// Mise a jour des données d'horodatage
 				clock_setClock(horloge);
-				// Suppression de la struct horloge
-				delete horloge;
 				// Retour en ecran d'acceuil
 				lcd_clear();
 				state = 2;
@@ -168,8 +166,6 @@ static void menu_affMenu(void)
 			{
 				// Mise a jour des données d'horodatage
 				manager_setAlarme(*horloge, select.selection);
-				// Suppression de la struct horloge
-				delete horloge;
 				// Retour en ecran d'acceuil
 				lcd_clear();
 				state = 2;
