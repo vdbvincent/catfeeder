@@ -32,6 +32,8 @@ sinon laisser faire les menus et réagir aux alarmes
 	* bouton gauche : petite ration
 	* bouton bas : moyenne ration
 	* bouton droit : grande ration
+
+TODO : doit appeler menu_idle() avec en param les event bouton pour les centraliser ici ?
 */
 
 

@@ -40,16 +40,16 @@ static void menu_affMenu(void)
 	    case 0:
 	      	welcomeScreen();
 	      	alarme_setMinuteur(ui_tempoDem, &procGtmp); // Affiche pour 2 seconde
-		state = 1;
-	      break;
+			state = 1;
+	    break;
 
 	    case 1:
 	    	if (g_tmp != 0)  // Fin de l'ecran de demarrage
 	    	{
 	    		clearCmdButtons();
-			lcd_clear();
-			clock_reset();
-			state = 2;
+				lcd_clear();
+				clock_reset();
+				state = 2;
 	    	}
 	      	break;
 
@@ -58,18 +58,18 @@ static void menu_affMenu(void)
 	    case 2:
 	    	afficheHome();
 
-		// Attente de l'appuie du bouton gauche
-		if ( ! isEmpty_btfifo())
-		{
-			char event = get_btfifo();
-			if (event == BT_D_PRESSE)
+			// Attente de l'appuie du bouton gauche
+			if ( ! isEmpty_btfifo())
 			{
-				// Affiche du menu
-				state = 3;
-				lcd_clear();
+				char event = get_btfifo();
+				if (event == BT_D_PRESSE)
+				{
+					// Affiche du menu
+					state = 3;
+					lcd_clear();
+				}
 			}
-		}
-	    	break;
+		    break;
 
 
 	    // MENU PRINCIPAL
@@ -124,8 +124,8 @@ static void menu_affMenu(void)
 		// REGLAGE HORLOGE
 
 		case 5:
-		// TODO : bug crash ? appel en cascade sur le meme pointeur -> reinit ?
-			ret = setAclock(horloge);
+			// TODO : bug crash ? appel en cascade sur le meme pointeur -> reinit ?
+			ret = setAclock();
 			if (ret == MENU_OK)
 			{
 				// Mise a jour des données d'horodatage
@@ -161,7 +161,7 @@ static void menu_affMenu(void)
 
 		case 7:
 			// Appeler SetAclock pour conf une alarme et la stocker dans l'objet alarme à l'indice select.selection
-			ret = setAclock(horloge);
+			ret = setAclock();
 			if (ret == MENU_OK)
 			{
 				// Mise a jour des données d'horodatage
@@ -201,26 +201,34 @@ void clearCmdButtons(void)
 }
 
 // Méthode permettant de configurer un objet clock
-char setAclock(clock * p_cHorloge)
+// TODO : doit prendre une struct clock en parametre pour que setAlarme s'en serve.
+
+// pour regler les alarmes, il faut faire une fsm a part pour:
+// recup un tableau d'alarme avec leur nombre
+// Appeler une fonction setAlarme dans le menu qui permets d'afficher les différents écran via une fsm
+// appeler une fonction dans le lcd regleTrigger avec en param le tableau d'alarmes
+// Le resultat sera propagé jusque dans la fsm ici avec
+
+char setAclock(void)
 {
-	static char state = 1;
+	static uint8_t state = 0;
 	char retour = MENU_NO_ACTION;
 	static Select_t select;
-	
-	if (p_cHorloge == NULL)
+
+	switch (state)
 	{
-		retour = MENU_CANCEL;
-	}
-	else
-	{
-		switch (state)
-		{
-			case 1:
+		case 0:
+			*horloge = clock_getClock();
+			select = afficheMenu(CLOCK_HOUR_MENU, horloge->heures);
+			state = 1;
+		break;
+
+		case 1:
 			select = afficheMenu(CLOCK_HOUR_MENU);
-	
+			
 			if (select.retour == SELECT_OK)
 			{
-				p_cHorloge->heures = select.selection;
+				horloge->heures = select.selection;
 				lcd_clear();
 				state = 2;
 			}
@@ -228,19 +236,24 @@ char setAclock(clock * p_cHorloge)
 			{
 				// retour à l'écran d'acceuil
 				retour = MENU_CANCEL;
+				state = 0;
 			}
 			break;
 			
-			case 2 :
+		case 2 :
+			select = afficheMenu(CLOCK_MIN_MENU, horloge->minutes);
+			state = 3;
+		break;
+
+		case 3 :
 			select = afficheMenu(CLOCK_MIN_MENU);
-	
 			if (select.retour == SELECT_OK)
 			{
-				p_cHorloge->minutes = select.selection;
+				horloge->minutes = select.selection;
 				lcd_clear();
-				state = 1;
+				state = 0;
 				retour = MENU_OK;
-				p_cHorloge->secondes = 0;
+				horloge->secondes = 0;
 			}
 			else if (select.retour == SELECT_CANCEL)
 			{
@@ -248,10 +261,8 @@ char setAclock(clock * p_cHorloge)
 				lcd_clear();
 				state = 1;
 			}
-			break;
-		}
+		break;
 	}
-	
 	return retour;
 }
 

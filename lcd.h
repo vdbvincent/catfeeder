@@ -101,7 +101,7 @@ void afficheTempsRestant(void);
 void afficheBtMenu(void);
 
 // Affichage du menu
-Select_t afficheMenu(Menu_t myMenu);
+Select_t afficheMenu(Menu_t myMenu, uint8_t select = 255);
 
 // Affichage du symbole de reveil
 void afficheReveil(void);

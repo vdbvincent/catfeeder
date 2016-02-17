@@ -141,7 +141,7 @@ Menu_t CLOCK_HOUR_MENU =
 };
 Menu_t CLOCK_MIN_MENU =
 {
-  "Minutes :",
+  "Minute :",
   CLOCK_MINSEC_MENU_ITEMS,
   60
 };
@@ -268,19 +268,25 @@ void afficheBtMenu(void)
 
 
 // MENU
-Select_t afficheMenu(Menu_t myMenu)
+Select_t afficheMenu(Menu_t myMenu , uint8_t select)
 {
   static uint8_t selection = 0;
   uint8_t retour = NO_SELECT;
   Select_t ret;
   
+  if (select != 255)
+  {
+    // Si une position est demandée, la prendre
+    selection = select;
+  }
+
   // Afficher le menu désiré
   lcd.setCursor(0,0);
   lcd.print(myMenu.titre);
   lcd.setCursor(0,1);
   lcd.print(myMenu.items[selection]);
   
-  // Attent d'un événement
+  // Attente d'un événement
   if ( ! isEmpty_btfifo())
   {
     char event = get_btfifo();

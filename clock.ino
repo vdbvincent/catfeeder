@@ -54,13 +54,6 @@ void clock_every100ms(void)
   }
   
   millisecondes += FREQ_SEQ;
-
-#ifdef DEBUG
-  if (secondes == 10)
-  {
-    print_log(DEBUG, "tic\n");
-  }
-#endif
 }
 
 

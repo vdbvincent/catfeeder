@@ -11,6 +11,7 @@
 #include "common.h"
 #include "logs.h"
 #include "clock.h"
+#include "boutons.h"
 
 void manager_setup(void);
 void manager_idle(void);
