@@ -10,6 +10,9 @@
  
 LiquidCrystal lcd(11,10,9,8,7,6); //liaison 4 bits de données
 
+// Temps d'affichage d'une popup
+static uint8_t m_uiTempoPopup = 2; // 2 secondes
+static Bool m_bPopup = False;
 // Variable de la FSM
 static Bool lcd_isInit = False;
 
@@ -147,23 +150,6 @@ Menu_t CLOCK_MIN_MENU =
 };
 
 
-// Déclaration du menu alarme
-char * ALARME_MENU_ITEMS[] =
-{
-  "ALARME 1",
-  "ALARME 2",
-  "ALARME 3",
-  "ALARME 4",
-  "ALARME 5"
-};
-Menu_t ALARME_MENU =
-{
-  "Selection alarme",
-  ALARME_MENU_ITEMS,
-  5
-};
-
-
 void lcd_setup(void)
 {
   // Chargement du symbole reveil
@@ -208,67 +194,63 @@ void afficheReveil(void)
 }
 
 // Ecran d'acceuil
-void afficheHome(void)
+void afficheHome(uint8_t forced)
 {
-  afficheTempsRestant();
-  //if (alarmeSetted())  // Si au moins 1 alarme a été définie
-  //afficheReveil();
-  afficheBtMenu();
+  afficheHeure(forced);
+  //afficheTempsRestant(forced);
+  afficheBtMenu(forced);
 }
-void afficheTempsRestant(void)
+
+void afficheHeure(uint8_t forced)
 {
-  lcd.setCursor(0,0); // Curseur en haut à gauche
-  char message[8];
-  //char heures[3];
-  //char minutes[3];
-  //char secondes[3];
-  
+  static clock oldheure;
   clock heure;
   heure = clock_getClock();
   
-  sprintf(message, "%02d:%02d", heure.heures, heure.minutes);
-  
-  /*
-  if (heure.secondes < 10)
+  if (forced || (heure.heures != oldheure.heures || heure.minutes != oldheure.minutes))
   {
-    sprintf(secondes, "0%d", heure.secondes);
+    // On affiche l'heure seulement si soit c'est forcé soit l'heure à changé
+    lcd.setCursor(0,0); // Curseur en haut à gauche
+    char message[8];  
+    sprintf(message, "%02d:%02d", heure.heures, heure.minutes);
+    lcd.print(message);
+    oldheure = heure;
   }
-  else
-  {
-    sprintf(secondes, "%2d", heure.secondes);
-  }
-  
-  if (heure.heures < 10)
-  {
-    sprintf(heures, "0%d", heure.heures);
-  }
-  else
-  {
-    sprintf(heures, "%2d", heure.heures);
-  }
-    
-  if (heure.minutes < 10)
-  {
-    sprintf(minutes, "0%d", heure.minutes);
-  }
-  else
-  {
-    sprintf(minutes, "%2d", heure.minutes);
-  }
-  
-  sprintf(message, "%s:%s:%s", heures, minutes, secondes);
-  */
-  lcd.print(message);
 }
-void afficheBtMenu(void)
+/*
+void afficheTempsRestant(uint8_t forced)
 {
-  lcd.setCursor(12,1);
-  lcd.print("menu");
+  static char * oldtxt;
+  char * txt;
+
+  // on  affiche le temps seulement si une alarme est enclenchée
+  if (alarme_getAlarme())
+  {
+    if (forced == 1)
+    {
+       txt = alarme_getNextAlarmeStr();
+       if (strcmp(txt, oldtxt) != 0)
+       {
+          lcd.setCursor(0,1); // Curseur en haut à gauche
+          lcd.print(txt);
+          strcpy(oldtxt, txt);
+       }
+    }
+  }
+}*/
+
+void afficheBtMenu(uint8_t forced)
+{
+  if (forced == 1)
+  {
+    lcd.setCursor(12,1);
+    lcd.print("menu");
+  }
 }
 
 
 // MENU
-Select_t afficheMenu(Menu_t myMenu , uint8_t select)
+Select_t afficheMenu(Menu_t * myMenu , uint8_t select)
 {
   static uint8_t selection = 0;
   uint8_t retour = NO_SELECT;
@@ -280,79 +262,108 @@ Select_t afficheMenu(Menu_t myMenu , uint8_t select)
     selection = select;
   }
 
-  // Afficher le menu désiré
-  lcd.setCursor(0,0);
-  lcd.print(myMenu.titre);
-  lcd.setCursor(0,1);
-  lcd.print(myMenu.items[selection]);
-  
-  // Attente d'un événement
-  if ( ! isEmpty_btfifo())
+  if (m_bPopup == True)
   {
-    char event = get_btfifo();
-    switch(event)
+    ret.selection = selection;
+    ret.retour = retour;
+    return ret;
+  }
+  else
+  {
+    // Afficher le menu désiré7
+    lcd.setCursor(0,0);
+    lcd.print(myMenu->titre);
+    lcd.setCursor(0,1);
+    lcd.print(myMenu->items[selection]);
+    
+    // Attente d'un événement
+    if ( ! isEmpty_btfifo())
     {
-      case BT_B_PRESSE:
-        //Serial.println("Bt bas");
-        // choix suivant s'il existe
-        if (selection < (myMenu.nbItem - 1))
-        {
-          // Passe au choix suivant
-          selection ++;
-          // Effacement de la ligne
-          lcd.setCursor(0,1);
-          lcd.print("                ");
-        }
-        else
-        {
-          // Revient au premier choix
+      char event = get_btfifo();
+      switch(event)
+      {
+        case BT_B_PRESSE:
+          //Serial.println("Bt bas");
+          // choix suivant s'il existe
+          if (selection < (myMenu->nbItem - 1))
+          {
+            // Passe au choix suivant
+            selection ++;
+            // Effacement de la ligne
+            lcd.setCursor(0,1);
+            lcd.print("                ");
+          }
+          else
+          {
+            // Revient au premier choix
+            selection = 0;
+            // Effacement de la ligne
+            lcd.setCursor(0,1);
+            lcd.print("                ");
+          }
+        break;
+        
+        case BT_H_PRESSE:
+          // S'il existe un choix précédent
+          if (selection > 0)
+          {
+            // Passe au choix précédent
+            selection --;
+            // Effacement de la ligne
+            lcd.setCursor(0,1);
+            lcd.print("                ");
+          }
+          else
+          {
+            // Va au dernier choix
+            selection = myMenu->nbItem - 1;
+            // Effacement de la ligne
+            lcd.setCursor(0,1);
+            lcd.print("                ");
+          }
+        break;
+        
+        case BT_D_PRESSE:
+          // Validation du choix
+          retour = SELECT_OK;
+          //selection = 0;
+        break;
+        
+        case BT_G_PRESSE:
+          // Retour en arriere
+          retour = SELECT_CANCEL;;
           selection = 0;
-          // Effacement de la ligne
-          lcd.setCursor(0,1);
-          lcd.print("                ");
-        }
-      break;
-      
-      case BT_H_PRESSE:
-        // S'il existe un choix précédent
-        if (selection > 0)
-        {
-          // Passe au choix précédent
-          selection --;
-          // Effacement de la ligne
-          lcd.setCursor(0,1);
-          lcd.print("                ");
-        }
-        else
-        {
-          // Va au dernier choix
-          selection = myMenu.nbItem - 1;
-          // Effacement de la ligne
-          lcd.setCursor(0,1);
-          lcd.print("                ");
-        }
-      break;
-      
-      case BT_D_PRESSE:
-        // Validation du choix
-        retour = SELECT_OK;
-        //selection = 0;
-      break;
-      
-      case BT_G_PRESSE:
-        // Retour en arriere
-        retour = SELECT_CANCEL;;
-        selection = 0;
-      break;
+        break;
+      }
     }
+    
+    ret.selection = selection;
+    ret.retour = retour;
+    
+    if (retour == SELECT_OK)
+    {
+      selection = 0;
+    }
+    return ret;
+
   }
-  
-  ret.selection = selection;
-  ret.retour = retour;
-  
-  if (retour == SELECT_OK)
-  {
-    selection = 0;
-  }
-  return ret;
+}
+
+// GESTION POPUP
+void lcd_popup(const char * p_msg)
+{
+/*
+declencher une minuterie de 2s et afficher le texte
+bloquer la fonction affichemenu le temps de la popup
+et ds la callback tout remettre normal
+*/
+  lcd.print(p_msg);
+  alarme_setMinuteur((uint16_t)m_uiTempoPopup, &procPopup); // Affiche pour 2 seconde
+  m_bPopup = True;
+}
+
+void procPopup(void)
+{
+  lcd.clear();
+  m_bPopup = False;
 }

@@ -36,6 +36,11 @@ void clock_every100ms(void)
   {
     secondes = 0;
     minutes ++;
+    #ifdef DEBUG
+    char message[10];
+    sprintf(message, "%02d:%02d:%02d\n", heures, minutes, secondes);
+    print_log(DEBUG, message);
+    #endif
   }
   
   // incrément des minutes

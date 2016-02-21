@@ -7,16 +7,19 @@
  *	// TODO : 
  *           tester si le tableau est vide en alarme ou minuteur, inutile
  *           de chercher a tester chaque alarme, rendre la main
+ *
+ *				 gerer les alarmes par une liste chainée
+ * 			 retourner un pointeur sur le premier element dans get alarme
+ *           ne pas prendre d'indice pour creer l'alarmes		
+ *
  */
 #include "alarme.h"
 
-// Nombre max d'alarme configurable
-#define MAX_COUNT_ALARM 5
-// Nombre de minuterie configurable - Estimer la meilleur taille dans le rapport utilité/taille utilisée
-#define MAX_COUNT_MINUT 5
 
 // Variables globales
-static Alarme_t * al_pool[MAX_COUNT_ALARM];
+//static Alarme_t * al_pool[MAX_COUNT_ALARM];
+static Alarme_t * al_first;
+
 static Minuteur_t * mi_pool[MAX_COUNT_MINUT];
 static Bool mb_AlarmeOff = True;
 static Bool mb_MinutOff = True;
@@ -25,10 +28,11 @@ void alarme_setup(void)
 {
 	int i;
 	// Init de la banque d'alarmes
-	for (i = 0; i < MAX_COUNT_ALARM; i++)
-	{
-		al_pool[i] = NULL;
-	}
+	//for (i = 0; i < MAX_COUNT_ALARM; i++)
+	//{
+	//	al_pool[i] = NULL;
+	//}
+	al_first = NULL;
 	
 	// Init de la banque de minuteries à NULL
 	for (i = 0; i < MAX_COUNT_MINUT; i++)
@@ -82,62 +86,60 @@ void alarme_every100ms(void)
 void alarme_every1mn(void)
 {
 	// vérifier toutes les minutes si une alarme déclenche
-	// Si plusieurs alarmes déclenchent en meme temps,
-	// une seule distribution sera effectuée
 
 	uint8_t i;
 	clock heure_courante;
+	Alarme_t * al_tmp = al_first;
 
 	heure_courante = clock_getClock();
-
-	for (i = 0; i < MAX_COUNT_ALARM; i++)
+	
+	while (al_tmp != NULL)
 	{
-		// Tester le pointeur
-		if (al_pool[i] != NULL)
+		if (al_tmp->horaire.heures == heure_courante.heures
+		 && al_tmp->horaire.minutes == heure_courante.minutes)
 		{
-			// Tester le temps restant
-			if (al_pool[i]->horaire.heures == heure_courante.heures
-				 && al_pool[i]->horaire.minutes == heure_courante.minutes)
-				 //&& al_pool[i]->horaire.secondes == heure_courante.secondes)
-			{
-				print_log(DEBUG, "alarme : declenchement d'une alarme\n");
-				al_pool[i]->foncteur();
-			}
+			print_log(DEBUG, "alarme : declenchement d'une alarme\n");
+			al_tmp->foncteur();
 		}
+		al_tmp = al_tmp->suivant;
 	}
-
 }
 
 // Méthode permettant de regler une alarme. Retourne 0 en cas d'echec
-char alarme_setAlarme(clock p_al, uint8_t pos, void (*callback)(void))
+char alarme_setAlarme(clock p_al, void (*callback)(void))
 {
 	char ret = 0;
-
-	if (al_pool[pos] == NULL)
+	Alarme_t * al_tmp = NULL;
+	
+	// Création de la nouvelle alarme
+	Alarme_t * new_al = NULL;
+	new_al = new Alarme_t();
+	
+	new_al->horaire.heures = p_al.heures;
+	new_al->horaire.minutes = p_al.minutes;
+	new_al->horaire.secondes = p_al.secondes;
+	new_al->foncteur = callback;
+	new_al->suivant = NULL;
+	
+	// Ajout de l'alarme
+	al_tmp = al_first;
+	if (al_tmp == NULL)
 	{
-		// Un emplacement vide a été trouvé, creation de l'alarme
-		Alarme_t * al = new Alarme_t();
-		if (al != NULL)
-		{
-			al->horaire.heures = p_al.heures;
-			al->horaire.minutes = p_al.minutes;
-			al->horaire.secondes = p_al.secondes;
-			al->foncteur = callback;
-			al_pool[pos] = al;
-
-			ret = 1;
-			print_log(DEBUG, "alarme : alarme enclenchee\n");
-		}
+		// Ajout de la premiere alarme
+		al_first = new_al;
 	}
 	else
 	{
-		al_pool[pos]->horaire.heures = p_al.heures;
-		al_pool[pos]->horaire.minutes = p_al.minutes;
-		al_pool[pos]->horaire.secondes = p_al.secondes;
-		al_pool[pos]->foncteur = callback;
-		ret = 1;
-		print_log(DEBUG, "alarme : alarme enclenchee\n");
+		while(al_tmp->suivant != NULL)
+		{
+			al_tmp = al_tmp->suivant;
+		}
+		// ici al_tmp pointe sur le dernier element
+		al_tmp->suivant = new_al;
 	}
+
+	ret = 1;
+	print_log(DEBUG, "alarme : alarme enclenchee\n");
 
 	return ret;
 }
@@ -177,37 +179,64 @@ char alarme_setMinuteur(uint16_t p_delai, void (*callback)(void))
 	return ret;
 }
 
-// TODO :
-char * alarme_getAlarme(uint8_t p_selection)
+Alarme_t * alarme_getAlarme(void)
 {
-	char * c_ret = "";
-
-	if (p_selection < MAX_COUNT_ALARM)
-	{
-		if (al_pool[p_selection] != NULL)
-		{
-			clock myclock = al_pool[p_selection]->horaire;
-			sprintf(c_ret, "%2d:%2d", myclock.heures, myclock.secondes);
-		}
-	}
-
-	return c_ret;
+	return al_first;
 }
 
-// TODO :
+
+// Fonction permettant de supprimer une alarme en fonction
+// de sa position dans la liste chainée
 Bool alarme_delAlarme(uint8_t p_selection)
 {
-	Bool b_return = False;
-
-	if (p_selection < MAX_COUNT_ALARM)
+	Bool b_return = True;
+	uint8_t indice = 0;
+	Alarme_t * al_tmp = al_first;
+	Alarme_t * al_tmp_old = al_tmp;
+	
+	if (al_tmp == NULL)
 	{
-		if (al_pool[p_selection] != NULL)
-		{
-			delete al_pool[p_selection];
-			al_pool[p_selection] = NULL;
-			b_return = True;
-		}
+		// La liste est vide, rien a supprimer
+		b_return = False;
 	}
 
+	if (b_return == True)
+	{
+		if (p_selection == 0)
+		{
+			// Dans le cas particulier de supprimer le premier element
+			al_first = al_first->suivant;
+			delete al_tmp;
+			al_tmp = NULL;
+		}
+		else
+		{
+			// Sinon chercher le bon élément
+			while (al_tmp != NULL && indice < p_selection)
+			{
+				al_tmp_old = al_tmp;  // Se souvenir de l'élément précédent
+				al_tmp = al_tmp->suivant;
+				indice ++;
+			}
+			if (al_tmp == NULL)
+			{
+				b_return = False;
+			}
+			
+			if (b_return == True)
+			{
+				// ici on a trouvé notre alarme pointée par al_tmp
+				al_tmp_old->suivant = al_tmp->suivant;  // Shunter al_tmp
+				delete al_tmp;                          // Supprimer al_tmp
+				al_tmp = NULL;
+			}
+		}
+	}
 	return b_return;
 }
+
+/*
+char * alarme_getNextAlarmeStr(void)
+{
+	// Fonction retournant un char * de la prochaine alarme à peter
+}*/

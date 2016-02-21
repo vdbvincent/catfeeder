@@ -16,7 +16,7 @@
 void manager_setup(void);
 void manager_idle(void);
 
-void manager_setAlarme(clock p_horloge, uint8_t p_selection);
+void manager_setAlarme(clock p_horloge);
 
 void manager_procAlarme(void);
 void manager_procMinut(void);

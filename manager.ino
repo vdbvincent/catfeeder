@@ -50,9 +50,9 @@ void manager_idle(void)
 
 }
 
-void manager_setAlarme(clock p_horloge, uint8_t p_selection)
+void manager_setAlarme(clock p_horloge)
 {
-	alarme_setAlarme(p_horloge, p_selection, &manager_procAlarme);
+	alarme_setAlarme(p_horloge, &manager_procAlarme);
 }
 
 void manager_procAlarme(void)
@@ -62,6 +62,7 @@ void manager_procAlarme(void)
 	print_log(DEBUG, "manager : grande  distrib OK\n");
 #endif
 	moteur_setCmd(MT_GRAND);
+	// si le lcd est allumé, faire apparaitre une popup
 }
 
 void manager_procMinut(void)

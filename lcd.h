@@ -9,7 +9,7 @@
  
 #include "common.h"
 #include "clock.h"
-//#include "alarme.h"
+#include "alarme.h"
 
 // Définitions
 #define SELECT_BACK    0
@@ -20,9 +20,9 @@
 // Structure d'un menu
 typedef struct
 {
-  const char * titre;   // Titre du menu
+  char * titre;   // Titre du menu
   char ** items;  // Tableau de choix du menu
-  const uint8_t nbItem; // Nombre de choix possible
+  uint8_t nbItem; // Nombre de choix possible
 } Menu_t;
 
 // Structure d'un selection
@@ -96,14 +96,19 @@ void lcd_clear(void);
 void welcomeScreen(void);
 
 // Affiche de l'écran d'acceuil
-void afficheHome(void);
-void afficheTempsRestant(void);
-void afficheBtMenu(void);
+void afficheHome(uint8_t forced = 0);
+void afficheHeure(uint8_t forced = 0);
+//void afficheTempsRestant(uint8_t forced = 0);
+void afficheBtMenu(uint8_t forced = 0);
 
 // Affichage du menu
-Select_t afficheMenu(Menu_t myMenu, uint8_t select = 255);
+Select_t afficheMenu(Menu_t * myMenu, uint8_t select = 255);
 
 // Affichage du symbole de reveil
 void afficheReveil(void);
+
+// Gestion du popup
+void lcd_popup(const char * p_msg);
+void procPopup(void); // callback
 
 #endif /* _LCD_H_ */
