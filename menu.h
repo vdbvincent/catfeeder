@@ -13,6 +13,7 @@
 #include "alarme.h"
 #include "boutons.h"
 #include "lcd.h"
+#include "moteur.h"
 
 // Définitions des actions MENU
 #define MENU_OK         0
