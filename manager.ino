@@ -13,7 +13,6 @@ uint16_t ui_tempoDist = 60;
 #else
 uint16_t ui_tempoDist = 14400;
 #endif
-static uint8_t state = 0;
 
 void manager_setup(void)
 {
@@ -33,20 +32,50 @@ sinon laisser faire les menus et réagir aux alarmes
 	* bouton bas : moyenne ration
 	* bouton droit : grande ration
 
-TODO : doit appeler menu_idle() avec en param les event bouton pour les centraliser ici ?
+TODO : doit appeler menu_idle() avec en param les event bouton pour les centraliser ici
+
+le lcd doit avoir une fonction on() et off() pr piloter le lcd
+digitalWrite(PinLCDBacklight, LOW); // Retro-éclairage éteint
+//lcd.noDisplay(); // désactive l'affichage texte
+
+au début faut laisser faire, genre attendre 5 minutes
+ensuite soit l'utilisateur n'a pas config horloge + alarme en config 2 ou 3 par défaut et
+le signaler sur l'écran avec un symbole de mode par defaut ou un message.
+
+pour le moment le besoin :
+eteindre l'écran et gérer les boutons.
 */
 
 
 void manager_idle(void)
 {
-	if ((state == 0) && (clock_isInit() == 0))
+	static uint8_t state = 0;
+	char event_bt = NO_EVENT;
+	
+	/*if ( ! isEmpty_btfifo())
+	{
+		event = get_btfifo();
+	}
+	menu_idle(event);*/
+	
+	switch (state)
+	{
+		case 0:
+			// surveiller
+		break;
+		
+		case 1:
+		break;
+	}
+	
+	/*if ((state == 0) && (clock_isInit() == 0))
 	{
 		// Si l'heure n'est pas réglée
 		// il doit y avoir 1 distrib MOYEN / 4h
 		print_log(DEBUG, "manager : distrib prevue dans 60s\n");
 		alarme_setMinuteur(ui_tempoDist, &procGtmp);
 		state = 1;
-	}
+	}*/
 
 }
 
