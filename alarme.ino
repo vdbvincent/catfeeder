@@ -18,7 +18,7 @@
 
 // Variables globales
 static Alarme_t * al_first = NULL;  // Toujours init la liste à NULL sinon peut etre considérée comme ayant au moins 1 element
-static llist * ma_liste = NULL;
+static llist * ma_liste = NULL;  // TODO : utiliser la linked list
 
 static Minuteur_t * mi_pool[MAX_COUNT_MINUT];
 static Bool mb_AlarmeOff = True;
