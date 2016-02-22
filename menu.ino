@@ -272,7 +272,6 @@ char setAnAlarm(void)
 	Alarme_t * pt_al_tmp = NULL;
 	char txt[8];
 	char * montitre;
-	char * alitem;
 	char ret = 0; // variable temporaire
 
 	switch (state)
@@ -306,7 +305,7 @@ char setAnAlarm(void)
 			while (pt_al_tmp)
 			{
 				// Allocation d'une chaine pour un item
-				alitem = char*)malloc(16);
+				char * alitem = (char*)malloc(16);
 				sprintf(alitem, "%02d:%02d", pt_al_tmp->horaire.heures, pt_al_tmp->horaire.minutes);
 				item[nbAl] = alitem,
 				
