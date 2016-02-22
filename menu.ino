@@ -199,7 +199,7 @@ char giveFood(void)
 				moteur_setCmd(MT_GRAND);
 			break;
 		}
-		lcd_popup("please wait ...");
+		lcd_popup("feeding ...");
 	}
 	else if (select.retour == SELECT_CANCEL)
 	{
@@ -290,15 +290,16 @@ char setAnAlarm(void)
 
 	static Menu_t * al_menu ;//= {"Regler alarme", item, 0};
 	
-	static Alarme_t * pt_al = NULL;
+	Alarme_t * pt_al = NULL;
 	static uint8_t nbAl = 0;
 	
 	static clock * pclk = NULL;
 	
 	Alarme_t * pt_al_tmp = NULL;
-	char txt[8];
+	char txt[11];
 	char * montitre;
 	char ret = 0; // variable temporaire
+	char * alitem;
 
 	switch (state)
 	{
@@ -331,9 +332,10 @@ char setAnAlarm(void)
 			while (pt_al_tmp)
 			{
 				// Allocation d'une chaine pour un item
-				char * alitem = (char*)malloc(16);
+				alitem = (char*)malloc(6);
 				sprintf(alitem, "%02d:%02d", pt_al_tmp->horaire.heures, pt_al_tmp->horaire.minutes);
-				item[nbAl] = alitem,
+				item[nbAl] = alitem;
+				alitem = NULL;
 				
 				//sprintf(txt, "%02d:%02d", pt_al_tmp->horaire.heures, pt_al_tmp->horaire.minutes);
 				// Allouer la chaine et l'ajouter
@@ -342,8 +344,8 @@ char setAnAlarm(void)
 				//item[nbAl][5] = 0;  // ajouter le \0 terminal
 
 				// log
-				sprintf(txt, "al : %02d:%02d\n", pt_al_tmp->horaire.heures, pt_al_tmp->horaire.minutes);
-				print_log(DEBUG, txt);
+				//sprintf(txt, "al : %02d:%02d\n", pt_al_tmp->horaire.heures, pt_al_tmp->horaire.minutes);
+				//print_log(DEBUG, txt);
 
 				nbAl ++;
 				pt_al_tmp = pt_al_tmp->suivant;
@@ -462,6 +464,11 @@ char setAnAlarm(void)
 				// Réglage annulé par l'utilisateur. Retour au menu
 				lcd_clear();
 				state = 1;
+				if (pclk != NULL)
+				{
+					delete pclk;
+					pclk = NULL;
+				}
 			}
 		break;
 
@@ -479,15 +486,21 @@ char setAnAlarm(void)
 				}
 			}
 			free(item);
+			item = NULL;
 			// Désallouer le titre
 			free(montitre);
+			montitre = NULL;
 			// Désallouer le menu
 			free(al_menu);
-
+			al_menu = NULL;
 
 			nbAl = 0;
 			pt_al = NULL;
-			pclk = NULL;
+			if (pclk != NULL)
+			{
+				delete pclk;
+				pclk = NULL;
+			}
 		break;
 	}
 	
@@ -500,56 +513,3 @@ void clearHorloge(void)
 	horloge->minutes = 0;
 	horloge->secondes = 0;
 }
-
-
-// TODO : a mettre dans un fsm a part qui chapote un peu tou
-
-/*
-// Méthode permettant de controler la distribution de nourriture. Retourne 0 lorsque c'est fini. 1 sinon.
-char feedTheCat(void)
-{
-  static char state = 0;
-  static char event = NO_EVENT;
-  char retour = MENU_EVENT;
-  
-  switch (state)
-  {
-    case 0:
-      // Envoyer un evenement de nourriture au moteur
-      if ( ! isFull_mtfifo())
-      {
-      	lcd_clear();
-        put_mtfifo(1); // TODO :
-        lcd_popup("WAIT FOR START", 99);
-        state = 1;
-      }
-      else
-      {
-        lcd_popup("ERROR FEEDING", 1); // 2sec  // TODO :
-      }
-    break;
-    
-    case 1:
-      // Attente du demarrage du moteur
-      if ( ! isEmpty_lcdfifo())
-      {
-        event = get_lcdfifo();
-        if (event == BEGIN)
-        {
-          lcd_clear();
-          lcd_popup("Please wait ...", 99);
-        }
-        if (event == END)
-        {
-          lcd_clear();
-
-          state = 0;
-          clearCmdButtons(); // Nettoyer la fifo d'evenement bouttons pour virer les parasites
-          retour = MENU_NO_EVENT;
-        }
-      }
-    break;
-  }
-
-  return retour;
-}*/

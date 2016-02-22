@@ -11,7 +11,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define DEBUG
+//#define DEBUG
 
 /* Définition des événements */
 #define NO_EVENT    -1

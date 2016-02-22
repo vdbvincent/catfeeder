@@ -14,6 +14,8 @@ uint16_t ui_tempoDist = 60;
 uint16_t ui_tempoDist = 14400;
 #endif
 
+static uint8_t state = 0;
+
 void manager_setup(void)
 {
 
@@ -49,7 +51,7 @@ eteindre l'écran et gérer les boutons.
 
 void manager_idle(void)
 {
-	static uint8_t state = 0;
+	static uint8_t etat = 0;
 	char event_bt = NO_EVENT;
 	
 	/*if ( ! isEmpty_btfifo())
@@ -58,7 +60,7 @@ void manager_idle(void)
 	}
 	menu_idle(event);*/
 	
-	switch (state)
+	switch (etat)
 	{
 		case 0:
 			// surveiller

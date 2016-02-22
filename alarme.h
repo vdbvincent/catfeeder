@@ -27,7 +27,7 @@ struct Alarme_t
 };
 
 // Définition du type linked list
-typedef Alarme_t * llist;
+//typedef Alarme_t * llist;
 
 // Structure d'un minuteur
 typedef struct

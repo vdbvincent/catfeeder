@@ -357,8 +357,10 @@ declencher une minuterie de 2s et afficher le texte
 bloquer la fonction affichemenu le temps de la popup
 et ds la callback tout remettre normal
 */
+  lcd.clear();
+  lcd.setCursor(0,0);
   lcd.print(p_msg);
-  alarme_setMinuteur((uint16_t)m_uiTempoPopup, &procPopup); // Affiche pour 2 seconde
+  alarme_setMinuteur((uint16_t)m_uiTempoPopup, &procPopup); // Affiche pour 2 secondes
   m_bPopup = True;
 }
 

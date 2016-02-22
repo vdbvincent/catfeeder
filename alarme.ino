@@ -18,11 +18,10 @@
 
 // Variables globales
 static Alarme_t * al_first = NULL;  // Toujours init la liste à NULL sinon peut etre considérée comme ayant au moins 1 element
-static llist * ma_liste = NULL;  // TODO : utiliser la linked list
+//static llist * ma_liste = NULL;  // TODO : utiliser la linked list
 
 static Minuteur_t * mi_pool[MAX_COUNT_MINUT];
-static Bool mb_AlarmeOff = True;
-static Bool mb_MinutOff = True;
+static uint8_t m_nbMin = 0;
 
 void alarme_setup(void)
 {
@@ -48,7 +47,7 @@ void alarme_every100ms(void)
 	uint8_t i = 0;
 	
 	// Gestion de l'alarme
-	// 1minute = 60 secondes = 60000ms = 600 100ms
+	// 1minute = 60 secondes = 60000ms = 600.100ms
 	if (cmp_100ms >= 600)
 	{
 		alarme_every1mn();
@@ -60,24 +59,29 @@ void alarme_every100ms(void)
 	}
 	
 	// Gestion de la minuterie
-	for (i = 0; i < MAX_COUNT_MINUT; i++)
+	if (m_nbMin > 0)  // m_nbMin représente le nb de minuteurs
 	{
-		// Tester le pointeur
-		if (mi_pool[i] != NULL)
+		for (i = 0; i < MAX_COUNT_MINUT; i++)
 		{
-			// Tester le temps restant
-			if (mi_pool[i]->delai > 0)
+			// Tester le pointeur
+			if (mi_pool[i] != NULL)
 			{
-				// Décrementer le délai
-				mi_pool[i]->delai --;
-			}
-			else
-			{
-				print_log(DEBUG, "alarme : declenchement d'un minuteur\n");
-				// La minuterie est arrivée à expiration, déclencher le callback
-				(*mi_pool[i]->foncteur)();
-				delete mi_pool[i];
-				mi_pool[i] = NULL;
+				// Tester le temps restant
+				if (mi_pool[i]->delai > 0)
+				{
+					// Décrementer le délai
+					mi_pool[i]->delai --;
+				}
+				else
+				{
+					print_log(DEBUG, "alarme : declenchement d'un minuteur\n");
+					// La minuterie est arrivée à expiration, déclencher le callback
+					(*mi_pool[i]->foncteur)();
+					delete mi_pool[i];
+					if (m_nbMin > 0)
+						m_nbMin --;
+					mi_pool[i] = NULL;
+				}
 			}
 		}
 	}
@@ -89,7 +93,8 @@ void alarme_every1mn(void)
 
 	uint8_t i;
 	clock heure_courante;
-	Alarme_t * al_tmp = al_first;
+	Alarme_t * al_tmp = NULL;
+	al_tmp = al_first;
 
 	heure_courante = clock_getClock();
 	
@@ -169,9 +174,10 @@ char alarme_setMinuteur(uint16_t p_delai, void (*callback)(void))
 		Minuteur_t * am = new Minuteur_t();
 		if (am != NULL)
 		{
-			am->delai = p_delai * 10;  // délai x 10 car pas de 100ms
+			am->delai = p_delai * 10;  // délai en sec x 10 car pas de 100ms
 			am->foncteur = callback;
 			mi_pool[i] = am;
+			m_nbMin ++;
 			ret = 1;
 			print_log(DEBUG, "alarme : minuteur enclenche\n");
 		}
@@ -220,7 +226,7 @@ Bool alarme_delAlarme(uint8_t p_selection)
 			}
 			if (indice != p_selection) // on a pas trouvé le bon indice
 			{
-				b_return = false;
+				b_return = False;
 			}
 			else
 			{
@@ -254,9 +260,3 @@ Bool alarme_delAlarme(uint8_t p_selection)
 	}
 	return b_return;
 }
-
-/*
-char * alarme_getNextAlarmeStr(void)
-{
-	// Fonction retournant un char * de la prochaine alarme à peter
-}*/
