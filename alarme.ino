@@ -17,8 +17,8 @@
 
 
 // Variables globales
-//static Alarme_t * al_pool[MAX_COUNT_ALARM];
-static Alarme_t * al_first;
+static Alarme_t * al_first = NULL;  // Toujours init la liste à NULL sinon peut etre considérée comme ayant au moins 1 element
+static llist * ma_liste = NULL;
 
 static Minuteur_t * mi_pool[MAX_COUNT_MINUT];
 static Bool mb_AlarmeOff = True;
@@ -212,7 +212,27 @@ Bool alarme_delAlarme(uint8_t p_selection)
 		else
 		{
 			// Sinon chercher le bon élément
-			while (al_tmp != NULL && indice < p_selection)
+			while (al_tmp->suivant != NULL && indice < p_selection)
+			{
+				al_tmp_old = al_tmp;
+				al_tmp = al_tmp->suivant;
+				indice ++;
+			}
+			if (indice != p_selection) // on a pas trouvé le bon indice
+			{
+				b_return = false;
+			}
+			else
+			{
+				// ici on a trouvé notre alarme pointée par al_tmp
+				// Au pire on est sur le dernier élément non null car la cond de sortie est elem->suivant
+				// Au mieux on est sur le premier non null;
+				// al_tmp_old pointe sur l'élément -1 au mieux, au pire, si c'est le premier, il pointe sur le premier element comme al_tmp
+				al_tmp_old = al_tmp->suivant;
+				delete al_tmp;
+				al_tmp = NULL;
+			}
+			/*while (al_tmp != NULL && indice < p_selection)
 			{
 				al_tmp_old = al_tmp;  // Se souvenir de l'élément précédent
 				al_tmp = al_tmp->suivant;
@@ -229,7 +249,7 @@ Bool alarme_delAlarme(uint8_t p_selection)
 				al_tmp_old->suivant = al_tmp->suivant;  // Shunter al_tmp
 				delete al_tmp;                          // Supprimer al_tmp
 				al_tmp = NULL;
-			}
+			}*/
 		}
 	}
 	return b_return;
