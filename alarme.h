@@ -18,12 +18,16 @@
 #define MAX_COUNT_MINUT 5
 
 // Structure d'une alarme
-typedef struct Alarme_t
+typedef struct Alarme_t Alarme_t;
+struct Alarme_t
 {
 	clock horaire;           // structure contenant l'heure de déclenchement
 	void (*foncteur)(void);  // Callback à appeler à l'échéance
-	Alarme_t * suivant;
-} ;
+	struct Alarme_t * suivant;
+};
+
+// Définition du type linked list
+typedef Alarme_t * llist;
 
 // Structure d'un minuteur
 typedef struct
