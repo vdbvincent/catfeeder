@@ -117,12 +117,12 @@ static void menu_affMenu(void)
 
 		// DONNER A MANGER
 
-		case 4:  // TODO : envoyer un ordre au manager et avant demander la quantité dans le menu
-			//if (feedTheCat() == MENU_NO_EVENT)
-			//{
-				// Lorsque la distribution est terminée, aller en 2
+		case 4:
+			if (giveFood() != MENU_NO_ACTION)
+			{
+				lcd_clear();
 				state = 2;
-			//}
+			}
 		break;
 		
 		// REGLAGE HORLOGE
@@ -181,7 +181,7 @@ char giveFood(void)
 	char retour = MENU_NO_ACTION;
 	static Select_t select;
 	
-	select = afficheMenu(&FOOD_MENU);
+	select = afficheMenu(&FEED_MENU);
 	if (select.retour == SELECT_OK)
 	{
 		// Select.selection contient l'indice sur la quantité
@@ -199,6 +199,7 @@ char giveFood(void)
 				moteur_setCmd(MT_GRAND);
 			break;
 		}
+		lcd_popup("please wait ...");
 	}
 	else if (select.retour == SELECT_CANCEL)
 	{
