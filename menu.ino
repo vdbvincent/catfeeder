@@ -175,15 +175,44 @@ void clearCmdButtons(void)
   }
 }
 
+
+char giveFood(void)
+{
+	static uint8_t state = 0;
+	char retour = MENU_NO_ACTION;
+	static Select_t select;
+	
+	switch (state)
+	{
+		case 0:
+			select = afficheMenu(&FOOD_MENU);
+			if (select.retour == SELECT_OK)
+			{
+				// Select.selection contient l'indice sur la quantité
+				switch(select.selection)
+				{
+					case 0:
+						
+					break;
+					
+					case 1:
+					break;
+					
+					case 2:
+					break;
+				}
+			}
+			else if (select.retour == SELECT_CANCEL)
+			{
+				// retour à l'écran d'acceuil
+				retour = MENU_CANCEL;
+				state = 0;
+			}
+		break;
+	return retour;
+}
+
 // Méthode permettant de configurer un objet clock
-// TODO : doit prendre une struct clock en parametre pour que setAlarme s'en serve en faculatif
-
-// pour regler les alarmes, il faut faire une fsm a part pour:
-// recup un tableau d'alarme avec leur nombre
-// Appeler une fonction setAlarme dans le menu qui permets d'afficher les différents écran via une fsm
-// appeler une fonction dans le lcd regleTrigger avec en param le tableau d'alarmes
-// Le resultat sera propagé jusque dans la fsm ici avec
-
 char setAclock(clock * p_clock)
 {
 	static uint8_t state = 0;
