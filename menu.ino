@@ -178,37 +178,33 @@ void clearCmdButtons(void)
 
 char giveFood(void)
 {
-	static uint8_t state = 0;
 	char retour = MENU_NO_ACTION;
 	static Select_t select;
 	
-	switch (state)
+	select = afficheMenu(&FOOD_MENU);
+	if (select.retour == SELECT_OK)
 	{
-		case 0:
-			select = afficheMenu(&FOOD_MENU);
-			if (select.retour == SELECT_OK)
-			{
-				// Select.selection contient l'indice sur la quantité
-				switch(select.selection)
-				{
-					case 0:
-						
-					break;
-					
-					case 1:
-					break;
-					
-					case 2:
-					break;
-				}
-			}
-			else if (select.retour == SELECT_CANCEL)
-			{
-				// retour à l'écran d'acceuil
-				retour = MENU_CANCEL;
-				state = 0;
-			}
-		break;
+		// Select.selection contient l'indice sur la quantité
+		switch(select.selection)
+		{
+			case 0:
+				moteur_setCmd(MT_PETIT);
+			break;
+			
+			case 1:
+				moteur_setCmd(MT_MOYEN);
+			break;
+			
+			case 2:
+				moteur_setCmd(MT_GRAND);
+			break;
+		}
+	}
+	else if (select.retour == SELECT_CANCEL)
+	{
+		// retour à l'écran d'acceuil
+		retour = MENU_CANCEL;
+	}
 	return retour;
 }
 
