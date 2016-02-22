@@ -272,6 +272,7 @@ char setAnAlarm(void)
 	Alarme_t * pt_al_tmp = NULL;
 	char txt[8];
 	char * montitre;
+	char * alitem;
 	char ret = 0; // variable temporaire
 
 	switch (state)
@@ -304,15 +305,19 @@ char setAnAlarm(void)
 			pt_al_tmp = pt_al;
 			while (pt_al_tmp)
 			{
-				sprintf(txt, "%02d:%02d", pt_al_tmp->horaire.heures, pt_al_tmp->horaire.minutes);
+				// Allocation d'une chaine pour un item
+				alitem = char*)malloc(16);
+				sprintf(alitem, "%02d:%02d", pt_al_tmp->horaire.heures, pt_al_tmp->horaire.minutes);
+				item[nbAl] = alitem,
 				
+				//sprintf(txt, "%02d:%02d", pt_al_tmp->horaire.heures, pt_al_tmp->horaire.minutes);
 				// Allouer la chaine et l'ajouter
-				item[nbAl] = (char *)malloc(16);
-				strncpy(item[nbAl], txt, 6);
-				item[nbAl][5] = 0;  // ajouter le \0 terminal
+				//item[nbAl] = (char *)malloc(16);
+				//strncpy(item[nbAl], txt, 6);
+				//item[nbAl][5] = 0;  // ajouter le \0 terminal
 
 				// log
-				sprintf(txt, "%02d:%02d\n", pt_al_tmp->horaire.heures, pt_al_tmp->horaire.minutes);
+				sprintf(txt, "al : %02d:%02d\n", pt_al_tmp->horaire.heures, pt_al_tmp->horaire.minutes);
 				print_log(DEBUG, txt);
 
 				nbAl ++;
