@@ -90,7 +90,8 @@ void alarme_every1mn(void)
 		 && al_tmp->horaire.minutes == heure_courante.minutes)
 		{
 			print_log(DEBUG, "alarme : declenchement d'une alarme\n");
-			al_tmp->foncteur();
+			//al_tmp->foncteur();
+			(*al_tmp->foncteur)();
 		}
 		al_tmp = al_tmp->suivant;
 	}
