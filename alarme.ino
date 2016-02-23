@@ -4,14 +4,6 @@
  *  Created on: 31 juil. 2015
  *      Author: vincent
  *
- *	// TODO : 
- *           tester si le tableau est vide en alarme ou minuteur, inutile
- *           de chercher a tester chaque alarme, rendre la main
- *
- *				 gerer les alarmes par une liste chainée
- * 			 retourner un pointeur sur le premier element dans get alarme
- *           ne pas prendre d'indice pour creer l'alarmes		
- *
  */
 #include "alarme.h"
 
@@ -26,11 +18,6 @@ static uint8_t m_nbMin = 0;
 void alarme_setup(void)
 {
 	int i;
-	// Init de la banque d'alarmes
-	//for (i = 0; i < MAX_COUNT_ALARM; i++)
-	//{
-	//	al_pool[i] = NULL;
-	//}
 	al_first = NULL;
 	
 	// Init de la banque de minuteries à NULL
@@ -90,7 +77,6 @@ void alarme_every100ms(void)
 void alarme_every1mn(void)
 {
 	// vérifier toutes les minutes si une alarme déclenche
-
 	uint8_t i;
 	clock heure_courante;
 	Alarme_t * al_tmp = NULL;
