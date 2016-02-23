@@ -20,10 +20,6 @@ void menu_setup(unsigned int p_tempoDem)
 
 void menu_idle(void)
 {
-	// TODO : gerer les popup
-	
-	// TODO : gerer les cas dégradés : faire clignoter le menu
-	
 	// Gestion de l'affichage des menus
 	menu_affMenu();
 }
@@ -47,9 +43,9 @@ static void menu_affMenu(void)
 	    	if (g_tmp != 0)  // Fin de l'ecran de demarrage
 	    	{
 	    		clearCmdButtons();
-				lcd_clear();
-				clock_reset();
-				state = 2;
+			lcd_clear();
+			clock_reset();
+			state = 2;
 	    	}
 	      	break;
 
@@ -187,17 +183,9 @@ char giveFood(void)
 		// Select.selection contient l'indice sur la quantité
 		switch(select.selection)
 		{
-			case 0:
-				moteur_setCmd(MT_PETIT);
-			break;
-			
-			case 1:
-				moteur_setCmd(MT_MOYEN);
-			break;
-			
-			case 2:
-				moteur_setCmd(MT_GRAND);
-			break;
+			case 0: moteur_setCmd(MT_PETIT); break;
+			case 1:	moteur_setCmd(MT_MOYEN); break;
+			case 2:	moteur_setCmd(MT_GRAND); break;
 		}
 		lcd_popup("feeding ...");
 	}
