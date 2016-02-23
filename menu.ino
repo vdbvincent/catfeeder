@@ -276,7 +276,7 @@ char setAnAlarm(void)
 	static char ** item;
 	//item = (char**)tabitem;
 
-	static Menu_t * al_menu ;//= {"Regler alarme", item, 0};
+	static Menu_t * al_menu ;
 	
 	Alarme_t * pt_al = NULL;
 	static uint8_t nbAl = 0;
@@ -297,8 +297,20 @@ char setAnAlarm(void)
 			
 			// Allouer le menu
 			al_menu = (Menu_t*)malloc(sizeof(Menu_t));
+			if (al_menu == NULL)
+			{
+				state = 99;
+				retour = MENU_CANCEL;
+				break;
+			}
 			// Allouer une chaine pour le titre
 			montitre = (char*)malloc(16);
+			if (montitre == NULL)
+			{
+				state = 99;
+				retour = MENU_CANCEL;
+				break;
+			}
 			sprintf(montitre, "Regler alarme");
 
 			// Accrocher le titre dans le menu
@@ -307,8 +319,20 @@ char setAnAlarm(void)
 			nbAl = 0;
 			// Allouer le tableau
 			item = (char **)malloc((MAX_COUNT_ALARM + 1) * sizeof(char *));
+			if (item == NULL)
+			{
+				state = 99;
+				retour = MENU_CANCEL;
+				break;
+			}
 			// Allouer la premiere chaine et l'ajouter
 			item[nbAl] = (char *)malloc(16);
+			if (item[nbAl] == NULL)
+			{
+				state = 99;
+				retour = MENU_CANCEL;
+				break;
+			}
 			sprintf(txt, "Ajouter");
 			strncpy(item[nbAl], txt, 8);
 			item[nbAl][7] = 0;  // ajouter le \0 terminal
@@ -321,6 +345,12 @@ char setAnAlarm(void)
 			{
 				// Allocation d'une chaine pour un item
 				alitem = (char*)malloc(6);
+				if (alitem == NULL)
+				{
+					state = 99;
+					retour = MENU_CANCEL;
+					break;
+				}
 				sprintf(alitem, "%02d:%02d", pt_al_tmp->horaire.heures, pt_al_tmp->horaire.minutes);
 				item[nbAl] = alitem;
 				alitem = NULL;
