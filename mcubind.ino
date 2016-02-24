@@ -353,6 +353,7 @@ static void pwm_init(void)
 /*                                                                         */
 /***************************************************************************/
 
+// TODO : arranger tout ca pour gerer tous les pwm
 static void pwm_out(uint8_t pwm)
 {
 	// set prescaler to 8 and start pwm
@@ -375,5 +376,4 @@ static void pwm_out(uint8_t pwm)
 		TCCR2A = 0x00;
 		flag = 0;
 	}
-
 }

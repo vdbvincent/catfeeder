@@ -8,7 +8,7 @@
 #include "manager.h"
 
 // Tempo de 4 heures
-#ifdef DEBUG
+#ifdef MDEBUG
 uint16_t ui_tempoDist = 60;
 #else
 uint16_t ui_tempoDist = 14400;
@@ -46,6 +46,8 @@ le signaler sur l'écran avec un symbole de mode par defaut ou un message.
 
 pour le moment le besoin :
 eteindre l'écran et gérer les boutons.
+
+// TODO : appeler un menu_reset() pour réinit de toutes les variables sur fermeture ecran
 */
 
 
@@ -89,7 +91,7 @@ void manager_setAlarme(clock p_horloge)
 void manager_procAlarme(void)
 {
 	// faire tourner le moteur
-#ifdef DEBUG
+#ifdef MDEBUG
 	print_log(DEBUG, "manager : grande  distrib OK\n");
 #endif
 	moteur_setCmd(MT_GRAND);
@@ -101,7 +103,7 @@ void manager_procMinut(void)
 	if (state == 1)
 	{
 		// faire tourner le moteur
-#ifdef DEBUG
+#ifdef MDEBUG
 		print_log(DEBUG, "manager : petite distrib NON OK\n");
 #endif
 		moteur_setCmd(MT_PETIT);

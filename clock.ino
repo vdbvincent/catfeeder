@@ -36,7 +36,7 @@ void clock_every100ms(void)
   {
     secondes = 0;
     minutes ++;
-    #ifdef DEBUG
+    #ifdef MDEBUG
     char message[10];
     sprintf(message, "%02d:%02d:%02d\n", heures, minutes, secondes);
     print_log(DEBUG, message);
@@ -78,7 +78,7 @@ void clock_setClock(clock * p_myclock)
   minutes = p_myclock->minutes;
   secondes = p_myclock->secondes;
   mb_clockInit = 1; // Permet de garder en mémoire la mise à l"heure
-#ifdef DEBUG
+#ifdef MDEBUG
   char message[40];
   sprintf(message, "clock : Mise a l'heure : %02d:%02d:%02d\n", heures, minutes, secondes);
   print_log(DEBUG, message);

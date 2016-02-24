@@ -18,17 +18,16 @@ void logs_setup(void)
 
 void logs_idle(void)
 {
-	static clock mycl;
+	clock mycl;
 	// regarder si on a qlq chose dans la fifo de log
 	// puis l'envoyer sur la ls
 	int i = 0;
 	Logs_t objLog;
 	char buffer[MAX_SIZE_LOG+11];
 
-	sprintf(buffer, "");
-
 	if (! f_log.isEmpty())
 	{
+		sprintf(buffer, "");
 		objLog = f_log.pop();
 
 		mycl = clock_getClock();

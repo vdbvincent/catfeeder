@@ -11,7 +11,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-//#define DEBUG
+//#define MDEBUG
 
 /* Définition des événements */
 #define NO_EVENT    -1
@@ -60,9 +60,9 @@ Bool;
 /* Définition de la structure clock */
 typedef struct
 {
-  char heures;
-  char minutes;
-  char secondes;
+  uint8_t heures;
+  uint8_t minutes;
+  uint8_t secondes;
 }clock;
 
 #endif /* _COMMON_H_ */

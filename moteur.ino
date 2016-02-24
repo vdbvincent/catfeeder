@@ -28,7 +28,9 @@ void moteur_every100ms(void)
 	      	// Attente d'une commande
 			if (commande != MT_NONE)
 			{
+				#ifdef MDEBUG
 				print_log(DEBUG, "MT : commande captee\n");
+				#endif
 				isRunning = 1;
 				cmp = 4;	// valeur de 4 pour démarrer le calcul de la rampe
 				state = 1;
@@ -42,7 +44,9 @@ void moteur_every100ms(void)
 	      		cmp = 0;
 	      		state = 2;
 	      		pwm_out(DUTYCYCLE);
+	      		#ifdef MDEBUG
 	      		print_log(DEBUG, "MT : rampe finie\n");
+	      		#endif
 	      	}
 	      	else
 	      	{
@@ -56,7 +60,9 @@ void moteur_every100ms(void)
 	    	// régime établi
 	    	if (cmp >= commande * 10)   // commande * 10 pour compenser le cadensement de 100ms
 	    	{
+	    		#ifdef MDEBUG
 	    		print_log(DEBUG, "MT : arrete commande\n");
+	    		#endif
 	    		// Arret de la commande
 	    		pwm_out(0);
 	    		cmp = 0;
