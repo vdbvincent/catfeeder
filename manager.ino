@@ -91,7 +91,7 @@ void manager_setAlarme(clock p_horloge)
 void manager_procAlarme(void)
 {
 	// faire tourner le moteur
-#ifdef MDEBUG
+#ifdef MDEBUG1
 	print_log(DEBUG, "manager : grande  distrib OK\n");
 #endif
 	moteur_setCmd(MT_GRAND);

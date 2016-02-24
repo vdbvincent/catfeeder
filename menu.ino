@@ -218,10 +218,6 @@ char setAclock(clock * p_clock)
 				horloge->heures = p_clock->heures;
 				horloge->minutes = p_clock->minutes;
 				horloge->secondes = p_clock->secondes;
-				//*horloge = *p_clock;  // Copie du pointeur p_clock dans horloge. horloge pointe direct sur la struct clock de setAnAlarm
-				char message[40];
-				sprintf(message, "Aclock : %02d:%02d:%02d\n", p_clock->heures, p_clock->minutes, p_clock->secondes);
-  				print_log(DEBUG, message);
 			}
 			select = afficheMenu(&CLOCK_HOUR_MENU, horloge->heures);
 			state = 1;
@@ -272,7 +268,6 @@ char setAclock(clock * p_clock)
 
 
 // retourne MENU_NO_ACTION, MENU_CANCEL, MENU_OK
-// TODO : essayer avec un max de 4 alarmes, on a peut etre plus de place
 char setAnAlarm(void)
 {
 	static uint8_t state = 0;
@@ -442,8 +437,8 @@ char setAnAlarm(void)
 		
 		// on a le numéro de selection, il faut récupérer la bonne alarme.
 		// faut parcourir la liste chainée en comptant le nombre d'objets
-	// BUG BUG BUG
-		pt_al_tmp = pt_al;
+		pt_al_tmp = alarme_getAlarme();
+
 		ret = select.selection;
 		ret --; // supprimer l'indice du "ajouter"
 		while (ret > 0 && pt_al_tmp != NULL)
@@ -452,12 +447,12 @@ char setAnAlarm(void)
 			ret --;
 		}
 		
-		if (pt_al_tmp == NULL)
+		if (pt_al_tmp == NULL || pt_al == NULL)
 		{
 			// erreur d'indice détectée
 			state = 99;
 			tmpret = MENU_CANCEL;
-
+			lcd_popup("pt_al null");
 		}
 		else
 		{
@@ -466,10 +461,6 @@ char setAnAlarm(void)
 			pclk->minutes = pt_al_tmp->horaire.minutes;
 			
 			ret = setAclock(pclk);
-			
-			char message[40];
-			sprintf(message, "AnAlarm : %02d:%02d:%02d\n", pclk->heures, pclk->minutes, pclk->secondes);
-  			print_log(DEBUG, message);
 			free(pclk);
 
 			state = 5;

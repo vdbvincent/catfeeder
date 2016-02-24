@@ -92,12 +92,16 @@ void alarme_every1mn(void)
 
 	heure_courante = clock_getClock();
 	
+	// BUG : l'alarme se declenche plusieurs fois pendant la meme seconde
+	// booleen de controle ? comment le reset ?
+	// TODO : enlever le controle de la seconde ?
 	while (al_tmp != NULL)
 	{
 		if (al_tmp->horaire.heures == heure_courante.heures
-		 && al_tmp->horaire.minutes == heure_courante.minutes)
+		 && al_tmp->horaire.minutes == heure_courante.minutes
+		 && al_tmp->horaire.secondes == heure_courante.secondes)
 		{
-			#ifdef MDEBUG
+			#ifdef MDEBUG1
 			print_log(DEBUG, "alarme : declenchement d'une alarme\n");
 			#endif
 			(*al_tmp->foncteur)();

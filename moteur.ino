@@ -28,7 +28,7 @@ void moteur_every100ms(void)
 	      	// Attente d'une commande
 			if (commande != MT_NONE)
 			{
-				#ifdef MDEBUG
+				#ifdef MDEBUG1
 				print_log(DEBUG, "MT : commande captee\n");
 				#endif
 				isRunning = 1;
@@ -60,7 +60,7 @@ void moteur_every100ms(void)
 	    	// régime établi
 	    	if (cmp >= commande * 10)   // commande * 10 pour compenser le cadensement de 100ms
 	    	{
-	    		#ifdef MDEBUG
+	    		#ifdef MDEBUG1
 	    		print_log(DEBUG, "MT : arrete commande\n");
 	    		#endif
 	    		// Arret de la commande
