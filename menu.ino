@@ -265,6 +265,7 @@ char setAclock(clock * p_clock)
 
 
 // retourne MENU_NO_ACTION, MENU_CANCEL, MENU_OK
+// TODO : essayer avec un max de 4 alarmes, on a peut etre plus de place
 char setAnAlarm(void)
 {
 	static uint8_t state = 0;
