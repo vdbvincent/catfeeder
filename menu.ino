@@ -271,11 +271,7 @@ char setAnAlarm(void)
 	static Select_t select;
 	char retour = MENU_NO_ACTION;
 	
-	//static char * tabitem[MAX_COUNT_ALARM + 1];
-	//static char * tabitem;
 	static char ** item;
-	//item = (char**)tabitem;
-
 	static Menu_t * al_menu ;
 	
 	Alarme_t * pt_al = NULL;
@@ -288,6 +284,10 @@ char setAnAlarm(void)
 	char * montitre;
 	char ret = 0; // variable temporaire
 	char * alitem;
+	
+	// DEBUG
+	static char premierpassage = 0;
+	static uint8_t debugcmp = 0;
 
 	switch (state)
 	{
@@ -355,12 +355,6 @@ char setAnAlarm(void)
 				item[nbAl] = alitem;
 				alitem = NULL;
 				
-				//sprintf(txt, "%02d:%02d", pt_al_tmp->horaire.heures, pt_al_tmp->horaire.minutes);
-				// Allouer la chaine et l'ajouter
-				//item[nbAl] = (char *)malloc(16);
-				//strncpy(item[nbAl], txt, 6);
-				//item[nbAl][5] = 0;  // ajouter le \0 terminal
-
 				// log
 				//sprintf(txt, "al : %02d:%02d\n", pt_al_tmp->horaire.heures, pt_al_tmp->horaire.minutes);
 				//print_log(DEBUG, txt);
@@ -371,7 +365,25 @@ char setAnAlarm(void)
 			al_menu->nbItem = nbAl;
 			al_menu->items = item;
 
-			state = 1;
+			if (premierpassage < 5)  // on se laisse 5 parametrage d'al avant de rentrer en debug
+			{
+				state = 1;
+				premierpassage ++;
+			}
+			else
+			{
+				state = 98; // Etat d'attente
+			}
+			
+		break;
+		
+		case 98:
+			// Etat d'attente pour vérifier si c'est l'état 0 qui fait crasher
+			if (debugcmp >= 1000)
+				state = 1:
+				debugcmp = 0;
+			else
+				debugcmp ++;
 		break;
 		
 		case 1:
