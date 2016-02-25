@@ -19,14 +19,14 @@ static Bool lcd_isInit = False;
 // Déclaration du menu principal
 char * MAIN_MENU_ITEMS[] = 
 {
-  "Regler horloge",
-  "Regler alarme",
-  "Donner a manger"
+  F("Regler horloge"),
+  F("Regler alarme"),
+  F("Donner a manger")
 };
 
 Menu_t MAIN_MENU = 
 {
-  "Menu principal",
+  F("Menu principal"),
   MAIN_MENU_ITEMS,
   3
 };
@@ -34,13 +34,13 @@ Menu_t MAIN_MENU =
 // Déclaration du menu Donner a manger
 char * FEED_MENU_ITEMS[] =
 {
-  "1/2 portion",
-  "1 portion",
-  "2 portions"
+  F("1/2 portion)",
+  F("1 portion)",
+  F("2 portions)"
 };
 Menu_t FEED_MENU = 
 {
-  "Choisir quantite",
+  F("Choisir quantite"),
   FEED_MENU_ITEMS,
   3
 };
@@ -48,103 +48,103 @@ Menu_t FEED_MENU =
 // Déclaration du menu reglage heure
 char * CLOCK_HOUR_MENU_ITEMS[] =
 {
-  "00",
-  "01",
-  "02",
-  "03",
-  "04",
-  "05",
-  "06",
-  "07",
-  "08",
-  "09",
-  "10",
-  "11",
-  "12",
-  "13",
-  "14",
-  "15",
-  "16",
-  "17",
-  "18",
-  "19",
-  "20",
-  "21",
-  "22",
-  "23"
+  F("00"),
+  F("01"),
+  F("02"),
+  F("03"),
+  F("04"),
+  F("05"),
+  F("06"),
+  F("07"),
+  F("08"),
+  F("09"),
+  F("10"),
+  F("11"),
+  F("12"),
+  F("13"),
+  F("14"),
+  F("15"),
+  F("16"),
+  F("17"),
+  F("18"),
+  F("19"),
+  F("20"),
+  F("21"),
+  F("22"),
+  F("23")
 };
 char * CLOCK_MINSEC_MENU_ITEMS[] =
 {
-  "00",
-  "01",
-  "02",
-  "03",
-  "04",
-  "05",
-  "06",
-  "07",
-  "08",
-  "09",
-  "10",
-  "11",
-  "12",
-  "13",
-  "14",
-  "15",
-  "16",
-  "17",
-  "18",
-  "19",
-  "20",
-  "21",
-  "22",
-  "23",
-  "24",
-  "25",
-  "26",
-  "27",
-  "28",
-  "29",
-  "30",
-  "31",
-  "32",
-  "33",
-  "34",
-  "35",
-  "36",
-  "37",
-  "38",
-  "39",
-  "40",
-  "41",  
-  "42",
-  "43",
-  "44",
-  "45",
-  "46",
-  "47",
-  "48",
-  "49",
-  "50",
-  "51",
-  "52",
-  "53",
-  "54",
-  "55",
-  "56",
-  "57",
-  "58",
-  "59"
+  F("00"),
+  F("01"),
+  F("02"),
+  F("03"),
+  F("04"),
+  F("05"),
+  F("06"),
+  F("07"),
+  F("08"),
+  F("09"),
+  F("10"),
+  F("11"),
+  F("12"),
+  F("13"),
+  F("14"),
+  F("15"),
+  F("16"),
+  F("17"),
+  F("18"),
+  F("19"),
+  F("20"),
+  F("21"),
+  F("22"),
+  F("23"),
+  F("24"),
+  F("25"),
+  F("26"),
+  F("27"),
+  F("28"),
+  F("29"),
+  F("30"),
+  F("31"),
+  F("32"),
+  F("33"),
+  F("34"),
+  F("35"),
+  F("36"),
+  F("37"),
+  F("38"),
+  F("39"),
+  F("40"),
+  F("41"),  
+  F("42"),
+  F("43"),
+  F("44"),
+  F("45"),
+  F("46"),
+  F("47"),
+  F("48"),
+  F("49"),
+  F("50"),
+  F("51"),
+  F("52"),
+  F("53"),
+  F("54"),
+  F("55"),
+  F("56"),
+  F("57"),
+  F("58"),
+  F("59")
 };
 Menu_t CLOCK_HOUR_MENU =
 {
-  "Heure :",
+  F("Heure :"),
   CLOCK_HOUR_MENU_ITEMS,
   24
 };
 Menu_t CLOCK_MIN_MENU =
 {
-  "Minute :",
+  F("Minute :"),
   CLOCK_MINSEC_MENU_ITEMS,
   60
 };
@@ -173,7 +173,7 @@ void welcomeScreen(void)
   if (lcd_isInit)
   {
     lcd.clear();
-    lcd.print("CatFeeder  v2.0");
+    lcd.print(F("CatFeeder  v2.0"));
   }
 }
 
@@ -244,7 +244,7 @@ void afficheBtMenu(uint8_t forced)
   if (forced == 1)
   {
     lcd.setCursor(12,1);
-    lcd.print("menu");
+    lcd.print(F("menu"));
   }
 }
 
@@ -283,7 +283,6 @@ Select_t afficheMenu(Menu_t * myMenu , uint8_t select)
       switch(event)
       {
         case BT_B_PRESSE:
-          //Serial.println("Bt bas");
           // choix suivant s'il existe
           if (selection < (myMenu->nbItem - 1))
           {
