@@ -14,18 +14,18 @@ uint16_t ui_tempoDist = 60;
 uint16_t ui_tempoDist = 14400;
 #endif
 
-static uint8_t state = 0;
+#define MAX_CMP  600 // 600 car on est appelé toutes les 100ms et on veut 1 minute
+
 
 void manager_setup(void)
 {
-
+	// Configurer le port en sortie
+	// Allumer l'écran
 }
 
 
 /*
 TODO :
-- si l'heure n'a pas été réglé, partir en cas dégradé
-sinon laisser faire les menus et réagir aux alarmes
 - eteindre le LCD apres 1 minute d'inactivité
 - Donner l'ordre au menu de clignoter si l'heure n'est pas réglée
 - Quand l'ecran est eteind :
@@ -38,49 +38,91 @@ TODO : doit appeler menu_idle() avec en param les event bouton pour les centrali
 
 le lcd doit avoir une fonction on() et off() pr piloter le lcd
 digitalWrite(PinLCDBacklight, LOW); // Retro-éclairage éteint
-//lcd.noDisplay(); // désactive l'affichage texte
-
-au début faut laisser faire, genre attendre 5 minutes
-ensuite soit l'utilisateur n'a pas config horloge + alarme en config 2 ou 3 par défaut et
-le signaler sur l'écran avec un symbole de mode par defaut ou un message.
 
 pour le moment le besoin :
 eteindre l'écran et gérer les boutons.
 
 // TODO : appeler un menu_reset() pour réinit de toutes les variables sur fermeture ecran
+le manager doit etre appeler tout les 100ms
+il doit verifier si la fifo bouton est vide ou pas
+si elle est vide commencer a compter le temps
+a chaque evenement, il doit reset son compteur
+si le compteur arrive à 1 minute, demander au menu de se couper. Menu appelera egalement un lcd_off() pour eteindre l'écran
+le manager rentre dans un etat d'attente d'evenement de boutons, le menu n'est plus appelé (shunt dans menu_idle())
+il doit veiller sur les events (fifo.front())
+si appuie bouton droit, demander au menu de se remettre en route et de rallumer l'écran.
 */
 
 
-void manager_idle(void)
+void manager_100ms(void)
 {
 	static uint8_t etat = 0;
+	static uint8_t cmp = 0;
 	char event_bt = NO_EVENT;
 	
 	/*if ( ! isEmpty_btfifo())
 	{
 		event = get_btfifo();
-	}
-	menu_idle(event);*/
+	}*/
+	
 	
 	switch (etat)
 	{
 		case 0:
-			// surveiller
+			// Allumer le menu
+			menu_on();
+			state = 1;
 		break;
 		
 		case 1:
+			if (isEmpty_btfifo())  // Si aucune action
+			{
+				state = 2;
+				cmp = 0;
+			}
+		break;
+		
+		case 2:
+			// Compter le temps
+			if (! isEmpty_btfifo())
+			{
+				// Une action a été enregistrée
+				cmp = 0;
+				state = 1;
+			}
+			else if (cmp >= MAX_CMP)
+			{
+				// Partir en mode sommeil
+			}
+			else
+			{
+				cmp ++;
+			}
+		break;
+		
+		case 3:
+			// Surveiller l'appuie d'un bouton et rallumer l'ecran
+			if (event != NO_EVENT)
+			{
+				state = 0;
+			}
+		break;
+		
+		case 10:
+			// Surveiller l'inactivité
+			if (event == NO_EVENT)
+			{
+				// Déclencher un minuteur
+				state = 2;
+			}
+		break;
+		
+		case 20:
+			// Attendre le déclenchement d'un muinuteur
+			
+			// ou si appui bouton enlever le minuteur et repartie en état 1 ?
 		break;
 	}
-	
-	/*if ((state == 0) && (clock_isInit() == 0))
-	{
-		// Si l'heure n'est pas réglée
-		// il doit y avoir 1 distrib MOYEN / 4h
-		print_log(DEBUG, "manager : distrib prevue dans 60s\n");
-		alarme_setMinuteur(ui_tempoDist, &procGtmp);
-		state = 1;
-	}*/
-
 }
 
 void manager_setAlarme(clock p_horloge)
