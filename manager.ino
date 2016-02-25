@@ -92,7 +92,7 @@ void manager_procAlarme(void)
 {
 	// faire tourner le moteur
 #ifdef MDEBUG1
-	print_log(DEBUG, "manager : grande  distrib OK\n");
+	print_log(DEBUG, F("manager : grande  distrib OK\n"));
 #endif
 	moteur_setCmd(MT_GRAND);
 	// si le lcd est allumé, faire apparaitre une popup
@@ -104,7 +104,7 @@ void manager_procMinut(void)
 	{
 		// faire tourner le moteur
 #ifdef MDEBUG
-		print_log(DEBUG, "manager : petite distrib NON OK\n");
+		print_log(DEBUG, F("manager : petite distrib NON OK\n"));
 #endif
 		moteur_setCmd(MT_PETIT);
 	}
