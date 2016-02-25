@@ -39,11 +39,22 @@ void alarme_every100ms(void)
 	// 1minute = 60 secondes = 60000ms = 600.100ms
 	
 	// BUG BUG BUG Appeler avec un static tous les 1min
+	
 	if (cmp_100ms == 0)
 	{
 		alarme_every1mn();
 	}
-	else if (cmp_100ms >= 600)
+	cmp_100ms ++;  // incrementer le compteur
+	if (cmp_100ms >= 600)
+	{
+		cmp_100ms = 0;
+	}
+	
+	/*if (cmp_100ms == 0)
+	{
+		alarme_every1mn();
+	}
+	if (cmp_100ms >= 600)
 	{
 		//alarme_every1mn();
 		cmp_100ms = 0;
@@ -51,7 +62,7 @@ void alarme_every100ms(void)
 	else
 	{
 		cmp_100ms ++;
-	}
+	}*/
 	
 	// Gestion de la minuterie
 	if (m_nbMin > 0)  // m_nbMin représente le nb de minuteurs
