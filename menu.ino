@@ -188,7 +188,7 @@ char giveFood(void)
 			case 1:	moteur_setCmd(MT_MOYEN); break;
 			case 2:	moteur_setCmd(MT_GRAND); break;
 		}
-		lcd_popup("feeding ...");
+		lcd_popup(F("feeding ..."));
 	}
 	else if (select.retour == SELECT_CANCEL)
 	{
@@ -312,7 +312,7 @@ char setAnAlarm(void)
 				retour = MENU_CANCEL;
 				break;
 			}
-			sprintf(montitre, "Regler alarme");
+			sprintf(montitre, F("Regler alarme"));
 
 			// Accrocher le titre dans le menu
 			al_menu->titre = montitre;
@@ -334,7 +334,7 @@ char setAnAlarm(void)
 				retour = MENU_CANCEL;
 				break;
 			}
-			sprintf(txt, "Ajouter");
+			sprintf(txt, F("Ajouter"));
 			strncpy(item[nbAl], txt, 8);
 			item[nbAl][7] = 0;  // ajouter le \0 terminal
 
@@ -381,7 +381,7 @@ char setAnAlarm(void)
 					// Ajouter une nouvelle alarme
 					if (nbAl >= MAX_COUNT_ALARM + 1)  // +1 pour prendre en compte l'indice du 'ajouter'
 					{
-						lcd_popup("Ajout interdit");
+						lcd_popup(F("Ajout interdit"));
 					}
 					else
 					{
@@ -412,7 +412,7 @@ char setAnAlarm(void)
 			{
 				if (horloge->heures == 0 && horloge->minutes == 0)
 				{
-					lcd_popup("Ajout interdit");
+					lcd_popup(F("Ajout interdit"));
 					state = 1;
 				}
 				else
@@ -452,7 +452,7 @@ char setAnAlarm(void)
 			// erreur d'indice détectée
 			state = 99;
 			tmpret = MENU_CANCEL;
-			lcd_popup("pt_al null");
+			lcd_popup(F("pt_al null"));
 		}
 		else
 		{
