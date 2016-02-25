@@ -199,30 +199,14 @@ static uint16_t lireBouton(void)
     
 	// Lecture de l'entrée analogique
 	ret = mcubind_virtualport_read(ci_ADC0);
-    
-    /*if (cmp >= 50)
-    {
-	    sprintf(buffer, "Bouton avant conv : %d\n", ret);
-		print_log(DEBUG, buffer);
-	}*/
 
-	 
 	// Détection du poussoir
 	// permet de déduire le numéro en valeur entiere du bouton préssé (0->b0 .. 3->b4)
 	ret = (ret + (ci_NBVALADC/2)) / ci_NBVALADC; // valeur lue (0-1023?) + la moitié de l'intervalle divisées par le nombre de valeur dans un intervalle
-	//ret = (double)5 / (1024 * ret);
-
-	/*if (cmp >= 50)
-    {
-		sprintf(buffer, "Bouton apres conv : %d\n", ret);
-		print_log(DEBUG, buffer);
-		cmp = 0;
-	}*/
 
 	cmp ++;
 	return ret;
 }
-
 
 /*
 *  Gestion de la fifo d'événements boutons
