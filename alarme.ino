@@ -37,6 +37,8 @@ void alarme_every100ms(void)
 	
 	// Gestion de l'alarme
 	// 1minute = 60 secondes = 60000ms = 600.100ms
+	
+	// BUG BUG BUG Appeler avec un static tous les 1min
 	if (cmp_100ms == 0)
 	{
 		alarme_every1mn();
@@ -68,7 +70,7 @@ void alarme_every100ms(void)
 				else
 				{
 					#ifdef MDEBUG
-					print_log(DEBUG, "alarme : declenchement d'un minuteur\n");
+					print_log(DEBUG, F("alarme : declenchement d'un minuteur\n"));
 					#endif
 					// La minuterie est arrivée à expiration, déclencher le callback
 					(*mi_pool[i]->foncteur)();
@@ -91,9 +93,7 @@ void alarme_every1mn(void)
 	al_tmp = al_first;
 
 	heure_courante = clock_getClock();
-	
-	// BUG : l'alarme se declenche plusieurs fois pendant la meme seconde
-	// booleen de controle ? comment le reset ?
+
 	// TODO : enlever le controle de la seconde ?
 	while (al_tmp != NULL)
 	{
@@ -102,7 +102,7 @@ void alarme_every1mn(void)
 		 && al_tmp->horaire.secondes == heure_courante.secondes)
 		{
 			#ifdef MDEBUG1
-			print_log(DEBUG, "alarme : declenchement d'une alarme\n");
+			print_log(DEBUG, F("alarme : declenchement d'une alarme\n"));
 			#endif
 			(*al_tmp->foncteur)();
 		}
@@ -145,7 +145,7 @@ char alarme_setAlarme(clock p_al, void (*callback)(void))
 
 	ret = 1;
 	#ifdef MDEBUG
-	print_log(DEBUG, "alarme : alarme enclenchee\n");
+	print_log(DEBUG, F("alarme : alarme enclenchee\n"));
 	#endif
 	return ret;
 }
@@ -181,7 +181,7 @@ char alarme_setMinuteur(uint16_t p_delai, void (*callback)(void))
 			m_nbMin ++;
 			ret = 1;
 			#ifdef MDEBUG
-			print_log(DEBUG, "alarme : minuteur enclenche\n");
+			print_log(DEBUG, F("alarme : minuteur enclenche\n"));
 			#endif
 		}
 	}
