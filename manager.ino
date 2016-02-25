@@ -58,7 +58,7 @@ void manager_100ms(void)
 {
 	static uint8_t etat = 0;
 	static uint8_t cmp = 0;
-	char event_bt = NO_EVENT;
+	char event;
 	
 	/*if ( ! isEmpty_btfifo())
 	{
@@ -93,6 +93,9 @@ void manager_100ms(void)
 			else if (cmp >= MAX_CMP)
 			{
 				// Partir en mode sommeil
+				state = 3;
+				cmp = 0;
+				menu_off();
 			}
 			else
 			{
@@ -102,9 +105,24 @@ void manager_100ms(void)
 		
 		case 3:
 			// Surveiller l'appuie d'un bouton et rallumer l'ecran
-			if (event != NO_EVENT)
+			event = get_btfifo();
+			if (event == BT_D_PRESSE)
 			{
+				// Rallumer l'écran
 				state = 0;
+			}
+			else if (event == BT_G_PRESSE)
+			{
+				// distrib moyen
+				moteur_setCmd(MT_MOYEN);
+			}
+			else if (event == BT_H_PRESSE)
+			{
+				moteur_setCmd(MT_GRAND);
+			}
+			else if (event == BT_B_PRESSE)
+			{
+				moteur_setCmd(MT_PETIT);
 			}
 		break;
 		
