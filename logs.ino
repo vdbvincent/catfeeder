@@ -73,7 +73,7 @@ void print_log(char crit, char * texte)
 	}
 	if (i >= MAX_SIZE_LOG-1)
 	{
-		printstr(F("logs : ERR MAX SIZE\n"));  // message tronqué
+		printstr("logs : ERR MAX SIZE\n");  // message tronqué
 	}
 
 	mylog.texte[i] = '\0';
@@ -81,5 +81,5 @@ void print_log(char crit, char * texte)
 	if (! f_log.isFull())
 		f_log.push(mylog);
 	else
-		printstr(F("logs : ERR FULL FIFO\n"));
+		printstr("logs : ERR FULL FIFO\n");
 }

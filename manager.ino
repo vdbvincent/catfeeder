@@ -54,8 +54,9 @@ si appuie bouton droit, demander au menu de se remettre en route et de rallumer 
 */
 
 
-void manager_100ms(void)
+void manager_idle(void)
 {
+#if 0
 	static uint8_t etat = 0;
 	static uint8_t cmp = 0;
 	char event;
@@ -141,6 +142,7 @@ void manager_100ms(void)
 			// ou si appui bouton enlever le minuteur et repartie en état 1 ?
 		break;
 	}
+#endif
 }
 
 void manager_setAlarme(clock p_horloge)
@@ -152,7 +154,7 @@ void manager_procAlarme(void)
 {
 	// faire tourner le moteur
 #ifdef MDEBUG1
-	print_log(DEBUG, F("manager : grande  distrib OK\n"));
+	print_log(DEBUG, "manager : grande  distrib OK\n");
 #endif
 	moteur_setCmd(MT_GRAND);
 	// si le lcd est allumé, faire apparaitre une popup
@@ -160,12 +162,8 @@ void manager_procAlarme(void)
 
 void manager_procMinut(void)
 {
-	if (state == 1)
-	{
-		// faire tourner le moteur
 #ifdef MDEBUG
-		print_log(DEBUG, F("manager : petite distrib NON OK\n"));
+	print_log(DEBUG, "manager : petite distrib NON OK\n");
 #endif
-		moteur_setCmd(MT_PETIT);
-	}
+	moteur_setCmd(MT_PETIT);
 }

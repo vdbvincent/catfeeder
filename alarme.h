@@ -45,14 +45,12 @@ void alarme_every1mn(void);
 char alarme_setAlarme(clock p_al, void (*callback)(void));
 // Méthode permettant de régler une minuterie. Retourne 0 en cas d'échec
 // delai en secondes
-// callback avec @ d'un char a mettre à 1
+// callback
 char alarme_setMinuteur(uint16_t p_delai, void (*callback)(void));
 
 // Fonction permettant de retourner un pointeur sur la premiere alarme de la liste chainée
 Alarme_t * alarme_getAlarme(void);
 
-// Fonction retournant un char * de la prochaine alarme à peter
-//char * alarme_getNextAlarmeStr(void);
 
 // Fonction permettant de supprimer une alarme
 Bool alarme_delAlarme(uint8_t p_selection);

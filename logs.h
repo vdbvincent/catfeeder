@@ -30,7 +30,7 @@ void logs_setup(void);
 void logs_idle(void);
 
 // Seule fonction visible de l'extérieur
-void print_log(char crit, char * texte);
+void print_log(char crit, /*char **/const __FlashStringHelper * texte);
 
 
 #endif /* _LOGS_H_ */

@@ -16,7 +16,7 @@
 #include "manager.h"
 
 // Variables globales
-static int c10 = 0 ;
+static int c10 = 0;
 static int tmp = 0;
 
 
@@ -24,7 +24,7 @@ void setup()
 {
 	// OS
 	init_mcubind();
-	print_log(INFO, F("Initialisation\n"));
+	print_log(INFO, "Initialisation\n");
 	clock_setup();
 	alarme_setup();
 	boutons_setup(10);  // init du process bouton avec un delai de filtrage de 10ms

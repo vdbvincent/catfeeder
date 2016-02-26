@@ -44,9 +44,9 @@ static void menu_affMenu(void)
 	    	if (g_tmp != 0)  // Fin de l'ecran de demarrage
 	    	{
 	    		clearCmdButtons();
-			lcd_clear();
-			clock_reset();
-			state = 2;
+				lcd_clear();
+				clock_reset();
+				state = 2;
 	    	}
 	      	break;
 
@@ -188,7 +188,7 @@ char giveFood(void)
 			case 1:	moteur_setCmd(MT_MOYEN); break;
 			case 2:	moteur_setCmd(MT_GRAND); break;
 		}
-		lcd_popup(F("feeding ..."));
+		lcd_popup("feeding ...");
 	}
 	else if (select.retour == SELECT_CANCEL)
 	{
@@ -312,7 +312,7 @@ char setAnAlarm(void)
 				retour = MENU_CANCEL;
 				break;
 			}
-			sprintf(montitre, F("Regler alarme"));
+			sprintf(montitre, "Regler alarme");
 
 			// Accrocher le titre dans le menu
 			al_menu->titre = montitre;
@@ -334,7 +334,7 @@ char setAnAlarm(void)
 				retour = MENU_CANCEL;
 				break;
 			}
-			sprintf(txt, F("Ajouter"));
+			sprintf(txt, "Ajouter");
 			strncpy(item[nbAl], txt, 8);
 			item[nbAl][7] = 0;  // ajouter le \0 terminal
 
@@ -381,7 +381,7 @@ char setAnAlarm(void)
 					// Ajouter une nouvelle alarme
 					if (nbAl >= MAX_COUNT_ALARM + 1)  // +1 pour prendre en compte l'indice du 'ajouter'
 					{
-						lcd_popup(F("Ajout interdit"));
+						lcd_popup("Ajout interdit");
 					}
 					else
 					{
@@ -412,7 +412,7 @@ char setAnAlarm(void)
 			{
 				if (horloge->heures == 0 && horloge->minutes == 0)
 				{
-					lcd_popup(F("Ajout interdit"));
+					lcd_popup("Ajout interdit");
 					state = 1;
 				}
 				else
@@ -439,32 +439,45 @@ char setAnAlarm(void)
 		// faut parcourir la liste chainée en comptant le nombre d'objets
 		pt_al_tmp = alarme_getAlarme();
 
+		if (pt_al_tmp == NULL)
+		{
+			// erreur de pointeur
+			state = 99;
+			tmpret = MENU_CANCEL;
+			lcd_popup("pt_al_tmp null");
+			#ifdef MDEBUG1
+			print_log(DEBUG, "pt_al_tmp null\n");
+			#endif
+			break;
+		}
+
 		ret = select.selection;
 		ret --; // supprimer l'indice du "ajouter"
-		while (ret > 0 && pt_al_tmp != NULL)
+		while (ret > 0 && pt_al_tmp->suivant != NULL)
 		{
 			pt_al_tmp = pt_al_tmp->suivant;
 			ret --;
 		}
 		
-		if (pt_al_tmp == NULL || pt_al == NULL)
+		if (pt_al_tmp == NULL)
 		{
 			// erreur d'indice détectée
 			state = 99;
 			tmpret = MENU_CANCEL;
-			lcd_popup(F("pt_al null"));
+			lcd_popup("pt_al null");
+			#ifdef MDEBUG1
+			print_log(DEBUG, "ptr null\n");
+			#endif
+			break;
 		}
-		else
-		{
-			pclk = (clock*)malloc(sizeof(clock));
-			pclk->heures = pt_al_tmp->horaire.heures;
-			pclk->minutes = pt_al_tmp->horaire.minutes;
-			
-			ret = setAclock(pclk);
-			free(pclk);
+		pclk = (clock*)malloc(sizeof(clock));
+		pclk->heures = pt_al_tmp->horaire.heures;
+		pclk->minutes = pt_al_tmp->horaire.minutes;
+		
+		ret = setAclock(pclk);
+		free(pclk);
 
-			state = 5;
-		}
+		state = 5;
 		break;
 		
 		case 5:
