@@ -250,7 +250,7 @@ void afficheBtMenu(uint8_t forced)
 
 
 // MENU
-Select_t afficheMenu(Menu_t * myMenu , uint8_t select)
+Select_t afficheMenu(Menu_t myMenu , uint8_t select)
 {
   static uint8_t selection = 0;
   uint8_t retour = NO_SELECT;
@@ -272,9 +272,9 @@ Select_t afficheMenu(Menu_t * myMenu , uint8_t select)
   {
     // Afficher le menu désiré7
     lcd.setCursor(0,0);
-    lcd.print(myMenu->titre);
+    lcd.print(myMenu.titre);
     lcd.setCursor(0,1);
-    lcd.print(myMenu->items[selection]);
+    lcd.print(myMenu.items[selection]);
     
     // Attente d'un événement
     if ( ! isEmpty_btfifo())
@@ -284,7 +284,7 @@ Select_t afficheMenu(Menu_t * myMenu , uint8_t select)
       {
         case BT_B_PRESSE:
           // choix suivant s'il existe
-          if (selection < (myMenu->nbItem - 1))
+          if (selection < (myMenu.nbItem - 1))
           {
             // Passe au choix suivant
             selection ++;
@@ -315,7 +315,7 @@ Select_t afficheMenu(Menu_t * myMenu , uint8_t select)
           else
           {
             // Va au dernier choix
-            selection = myMenu->nbItem - 1;
+            selection = myMenu.nbItem - 1;
             // Effacement de la ligne
             lcd.setCursor(0,1);
             lcd.print("                ");

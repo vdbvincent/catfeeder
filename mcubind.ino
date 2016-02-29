@@ -83,7 +83,6 @@ void printstr(const char * s)
 
 static void init_timer1(void)
 {
-#ifndef FAKEDEV
 	cli();          // disable global interrupts
     TCCR1A = 0;     // set entire TCCR1A register to 0
     TCCR1B = 0;     // same for TCCR1B
@@ -101,7 +100,6 @@ static void init_timer1(void)
     TIMSK1 |= (1 << OCIE1A);
     // enable global interrupts:
     sei();
-#endif
 }
 
 ISR(TIMER1_COMPA_vect)

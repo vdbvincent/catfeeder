@@ -37,7 +37,8 @@ void clearCmdButtons(void);
 // Méthode permettant de configurer un objet clock
 // Si aucun param, le structure globale horloge est utilisé et valorisé par la clock
 // Si une clock est passée en param, elle servira
-char setAclock(clock * p_clock);
+char setAclock(clock p_clock);
+char setAnAlarm(void);
 // Permet de remettre à 0 les champs de la structure horloge globale
 void clearHorloge(void);
 

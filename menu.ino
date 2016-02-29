@@ -30,6 +30,10 @@ static void menu_affMenu(void)
 	static uint8_t state = 0;
 	static Select_t select;
 	char ret;  // Variable temporaire
+	static clock clocktmp;
+	clocktmp.heures = 0;
+	clocktmp.minutes = 0;
+	clocktmp.secondes = 62;
 
 	switch (state)
 	{
@@ -76,7 +80,7 @@ static void menu_affMenu(void)
 	    // MENU PRINCIPAL
 
 		case 3:
-			select = afficheMenu(&MAIN_MENU);
+			select = afficheMenu(MAIN_MENU);
 			if (select.retour == SELECT_OK)
 			{
 				switch (select.selection)
@@ -125,7 +129,7 @@ static void menu_affMenu(void)
 		// REGLAGE HORLOGE
 
 		case 5:
-			ret = setAclock(NULL);
+			ret = setAclock(clocktmp);
 			if (ret == MENU_OK)
 			{
 				// Mise a jour des données d'horodatage
@@ -178,7 +182,7 @@ char giveFood(void)
 	char retour = MENU_NO_ACTION;
 	static Select_t select;
 	
-	select = afficheMenu(&FEED_MENU);
+	select = afficheMenu(FEED_MENU);
 	if (select.retour == SELECT_OK)
 	{
 		// Select.selection contient l'indice sur la quantité
@@ -199,7 +203,7 @@ char giveFood(void)
 }
 
 // Méthode permettant de configurer un objet clock
-char setAclock(clock * p_clock)
+char setAclock(clock p_clock)
 {
 	static uint8_t state = 0;
 	char retour = MENU_NO_ACTION;
@@ -209,22 +213,22 @@ char setAclock(clock * p_clock)
 	{
 		case 0:
 			clearHorloge();
-			if (p_clock == NULL)
+			if (p_clock.secondes >= 61)
 			{
 				*horloge = clock_getClock();  // recopie les données d'horloge dans la struc horloge
 			}
 			else
 			{
-				horloge->heures = p_clock->heures;
-				horloge->minutes = p_clock->minutes;
-				horloge->secondes = p_clock->secondes;
+				horloge->heures = p_clock.heures;
+				horloge->minutes = p_clock.minutes;
+				horloge->secondes = p_clock.secondes;
 			}
-			select = afficheMenu(&CLOCK_HOUR_MENU, horloge->heures);
+			select = afficheMenu(CLOCK_HOUR_MENU, horloge->heures);
 			state = 1;
 		break;
 
 		case 1:
-			select = afficheMenu(&CLOCK_HOUR_MENU);
+			select = afficheMenu(CLOCK_HOUR_MENU);
 			
 			if (select.retour == SELECT_OK)
 			{
@@ -241,12 +245,12 @@ char setAclock(clock * p_clock)
 			break;
 			
 		case 2 :
-			select = afficheMenu(&CLOCK_MIN_MENU, horloge->minutes);
+			select = afficheMenu(CLOCK_MIN_MENU, horloge->minutes);
 			state = 3;
 		break;
 
 		case 3 :
-			select = afficheMenu(&CLOCK_MIN_MENU);
+			select = afficheMenu(CLOCK_MIN_MENU);
 			if (select.retour == SELECT_OK)
 			{
 				horloge->minutes = select.selection;
@@ -270,23 +274,31 @@ char setAclock(clock * p_clock)
 // retourne MENU_NO_ACTION, MENU_CANCEL, MENU_OK
 char setAnAlarm(void)
 {
+	// gestion fsm
 	static uint8_t state = 0;
 	static Select_t select;
 	char retour = MENU_NO_ACTION;
 	
-	static char ** item;
-	static Menu_t * al_menu = NULL;
-	
+	// menu
+	//static char ** item;
+	//static Menu_t * al_menu = NULL;
+	static char * item[6];
+	static Menu_t al_menu;
+	static clock pclk;
+	pclk.heures = 0;
+	pclk.minutes = 0;
+	pclk.secondes = 62;
+	char txt[11];
+	//char * montitre;
+	//char * alitem;
+	char alitem[6];
+
+	// alarme
 	Alarme_t * pt_al = NULL;
 	static uint8_t nbAl = 0;
-	
-	clock * pclk = NULL;
-	
 	static Alarme_t * pt_al_tmp = NULL;
-	char txt[11];
-	char * montitre;
+	
 	char ret = 0; // variable temporaire
-	char * alitem;
 
 	static char tmpret = MENU_NO_ACTION;
 
@@ -297,37 +309,39 @@ char setAnAlarm(void)
 			pt_al = alarme_getAlarme();  // fonction retournant un pointeur sur la premiere alarme config. (liste chainée d'alarmes)
 			
 			// Allouer le menu
-			al_menu = (Menu_t*)malloc(sizeof(Menu_t));
-			if (al_menu == NULL)
-			{
-				state = 99;
-				retour = MENU_CANCEL;
-				break;
-			}
+			//al_menu = (Menu_t*)malloc(sizeof(Menu_t));
+			//if (al_menu == NULL)
+			//{
+			//	state = 99;
+			//	retour = MENU_CANCEL;
+			//	break;
+			//}
 			// Allouer une chaine pour le titre
-			montitre = (char*)malloc(16);
-			if (montitre == NULL)
-			{
-				state = 99;
-				retour = MENU_CANCEL;
-				break;
-			}
-			sprintf(montitre, "Regler alarme");
+			//montitre = (char*)malloc(16);
+			//if (montitre == NULL)
+			//{
+			//	state = 99;
+			//	retour = MENU_CANCEL;
+			//	break;
+			//}
+			//sprintf(montitre, "Regler alarme");
 
 			// Accrocher le titre dans le menu
-			al_menu->titre = montitre;
+			//al_menu->titre = montitre;
+
+			al_menu.titre = "Regler alarme";
 
 			nbAl = 0;
 			// Allouer le tableau
-			item = (char **)malloc((MAX_COUNT_ALARM + 1) * sizeof(char *));
-			if (item == NULL)
-			{
-				state = 99;
-				retour = MENU_CANCEL;
-				break;
-			}
+			//item = (char **)malloc((MAX_COUNT_ALARM + 1) * sizeof(char *));
+			//if (item == NULL)
+			//{
+			//	state = 99;
+			//	retour = MENU_CANCEL;
+			//	break;
+			//}
 			// Allouer la premiere chaine et l'ajouter
-			item[nbAl] = (char *)malloc(16);
+			/*item[nbAl] = (char *)malloc(16);
 			if (item[nbAl] == NULL)
 			{
 				state = 99;
@@ -337,7 +351,8 @@ char setAnAlarm(void)
 			sprintf(txt, "Ajouter");
 			strncpy(item[nbAl], txt, 8);
 			item[nbAl][7] = 0;  // ajouter le \0 terminal
-
+			*/
+			item[0] = "Ajouter";
 			nbAl ++;
 
 			// Ajout des alarmes en mode texte
@@ -345,16 +360,17 @@ char setAnAlarm(void)
 			while (pt_al_tmp)
 			{
 				// Allocation d'une chaine pour un item
-				alitem = (char*)malloc(6);
+				/*alitem = (char*)malloc(6);
 				if (alitem == NULL)
 				{
 					state = 99;
 					retour = MENU_CANCEL;
 					break;
-				}
+				}*/
 				sprintf(alitem, "%02d:%02d", pt_al_tmp->horaire.heures, pt_al_tmp->horaire.minutes);
-				item[nbAl] = alitem;
-				alitem = NULL;
+				//item[nbAl] = alitem;
+				strncpy(item[nbAl], alitem, sizeof(alitem));
+				//alitem = NULL;
 				
 				// log
 				//sprintf(txt, "al : %02d:%02d\n", pt_al_tmp->horaire.heures, pt_al_tmp->horaire.minutes);
@@ -363,8 +379,8 @@ char setAnAlarm(void)
 				nbAl ++;
 				pt_al_tmp = pt_al_tmp->suivant;
 			}
-			al_menu->nbItem = nbAl;
-			al_menu->items = item;
+			al_menu.nbItem = nbAl;
+			al_menu.items = item;
 
 			state = 1;
 			
@@ -407,7 +423,8 @@ char setAnAlarm(void)
 		case 2:
 			// Ajouter une nouvelle alarme
 			//lcd_clear();
-			ret = setAclock(NULL);
+			pclk.secondes = 62;
+			ret = setAclock(pclk);
 			if (ret == MENU_OK)
 			{
 				if (horloge->heures == 0 && horloge->minutes == 0)
@@ -470,18 +487,18 @@ char setAnAlarm(void)
 			#endif
 			break;
 		}
-		pclk = (clock*)malloc(sizeof(clock));
-		pclk->heures = pt_al_tmp->horaire.heures;
-		pclk->minutes = pt_al_tmp->horaire.minutes;
-		
+		//pclk = (clock*)malloc(sizeof(clock));
+		pclk.heures = pt_al_tmp->horaire.heures;
+		pclk.minutes = pt_al_tmp->horaire.minutes;
+		pclk.secondes = 0;
 		ret = setAclock(pclk);
-		free(pclk);
+		//free(pclk);
 
 		state = 5;
 		break;
 		
 		case 5:
-			ret = setAclock(NULL);
+			ret = setAclock(pclk);
 			if (ret == MENU_OK)
 			{
 				// Si les valeurs sont à 0, supp l'alarme
@@ -505,11 +522,11 @@ char setAnAlarm(void)
 				// Réglage annulé par l'utilisateur. Retour au menu
 				lcd_clear();
 				state = 1;
-				if (pclk != NULL)
+				/*if (pclk != NULL)
 				{
 					delete pclk;
 					pclk = NULL;
-				}
+				}*/
 			}
 		break;
 
@@ -519,7 +536,7 @@ char setAnAlarm(void)
 			state = 0;
 			
 			// Désallouer le tableau
-			for (ret = 0; ret < nbAl; ret ++)
+			/*for (ret = 0; ret < nbAl; ret ++)
 			{
 				if (item[ret] != NULL)
 				{
@@ -528,13 +545,13 @@ char setAnAlarm(void)
 				}
 			}
 			free(item);
-			item = NULL;
+			item = NULL;*/
 			// Désallouer le titre
-			free(montitre);
-			montitre = NULL;
+			//free(montitre);
+			//montitre = NULL;
 			// Désallouer le menu
-			free(al_menu);
-			al_menu = NULL;
+			//free(al_menu);
+			//al_menu = NULL;
 
 			nbAl = 0;
 			pt_al = NULL;
