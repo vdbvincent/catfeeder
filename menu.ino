@@ -282,7 +282,8 @@ char setAnAlarm(void)
 	// menu
 	//static char ** item;
 	//static Menu_t * al_menu = NULL;
-	static char * item[6];
+	//static char * item[6];
+	static char item[6][10];
 	static Menu_t al_menu;
 	static clock pclk;
 	pclk.heures = 0;
@@ -369,7 +370,8 @@ char setAnAlarm(void)
 				}*/
 				sprintf(alitem, "%02d:%02d", pt_al_tmp->horaire.heures, pt_al_tmp->horaire.minutes);
 				//item[nbAl] = alitem;
-				strncpy(item[nbAl], alitem, sizeof(alitem));
+				//strncpy(item[nbAl], alitem, sizeof(alitem));
+				strcpy(item[nbAl], alitem);
 				//alitem = NULL;
 				
 				// log
