@@ -86,6 +86,9 @@ extern Menu_t CLOCK_SEC_MENU ;
 extern char * ALARME_MENU_ITEMS[];
 extern Menu_t ALARME_MENU;
 
+extern char * SSALARM_MENU_ITEMS[];
+extern Menu_t SSALARM_MENU;
+
 void lcd_setup(void);
 void lcd_every10ms(void);
 
@@ -102,7 +105,8 @@ void afficheHeure(uint8_t forced = 0);
 void afficheBtMenu(uint8_t forced = 0);
 
 // Affichage du menu
-Select_t afficheMenu(Menu_t myMenu, uint8_t select = 255);
+// Select : param optionnel par defaut mettre 255
+Select_t afficheMenu(Menu_t * myMenu, uint8_t select);
 
 // Affichage du symbole de reveil
 void afficheReveil(void);

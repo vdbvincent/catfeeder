@@ -70,7 +70,7 @@ void alarme_every100ms(void)
 				}
 				else
 				{
-					#ifdef MDEBUG1
+					#ifdef MDEBUG
 					print_log(DEBUG, "alarme : declenchement d'un minuteur\n");
 					#endif
 					// La minuterie est arrivée à expiration, déclencher le callback
@@ -95,7 +95,7 @@ void alarme_every1mn(void)
 
 	heure_courante = clock_getClock();
 
-	#ifdef MDEBUG1
+	#ifdef MDEBUG
 	print_log(DEBUG, "tic\n");
 	#endif
 
@@ -107,7 +107,7 @@ void alarme_every1mn(void)
 			if (heure_courante.secondes > (al_tmp->horaire.secondes -5) 
 			 && heure_courante.secondes < (al_tmp->horaire.secondes +5))
 			{
-				#ifdef MDEBUG1
+				#ifdef MDEBUG
 				print_log(DEBUG, "alarme : declenchement d'une alarme\n");
 				#endif
 				(*al_tmp->foncteur)();
@@ -151,7 +151,7 @@ char alarme_setAlarme(clock p_al, void (*callback)(void))
 	}
 
 	ret = 1;
-	#ifdef MDEBUG1
+	#ifdef MDEBUG
 	print_log(DEBUG, "alarme : alarme enclenchee\n");
 	#endif
 	return ret;
@@ -187,7 +187,7 @@ char alarme_setMinuteur(uint16_t p_delai, void (*callback)(void))
 			mi_pool[i] = am;
 			m_nbMin ++;
 			ret = 1;
-			#ifdef MDEBUG1
+			#ifdef MDEBUG
 			print_log(DEBUG, "alarme : minuteur enclenche\n");
 			#endif
 		}

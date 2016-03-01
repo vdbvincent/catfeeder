@@ -80,7 +80,7 @@ static void menu_affMenu(void)
 	    // MENU PRINCIPAL
 
 		case 3:
-			select = afficheMenu(MAIN_MENU);
+			select = afficheMenu(&MAIN_MENU, 255);
 			if (select.retour == SELECT_OK)
 			{
 				switch (select.selection)
@@ -182,7 +182,7 @@ char giveFood(void)
 	char retour = MENU_NO_ACTION;
 	static Select_t select;
 	
-	select = afficheMenu(FEED_MENU);
+	select = afficheMenu(&FEED_MENU, 255);
 	if (select.retour == SELECT_OK)
 	{
 		// Select.selection contient l'indice sur la quantité
@@ -223,12 +223,12 @@ char setAclock(clock p_clock)
 				horloge->minutes = p_clock.minutes;
 				horloge->secondes = p_clock.secondes;
 			}
-			select = afficheMenu(CLOCK_HOUR_MENU, horloge->heures);
+			select = afficheMenu(&CLOCK_HOUR_MENU, horloge->heures);
 			state = 1;
 		break;
 
 		case 1:
-			select = afficheMenu(CLOCK_HOUR_MENU);
+			select = afficheMenu(&CLOCK_HOUR_MENU, 255);
 			
 			if (select.retour == SELECT_OK)
 			{
@@ -245,12 +245,12 @@ char setAclock(clock p_clock)
 			break;
 			
 		case 2 :
-			select = afficheMenu(CLOCK_MIN_MENU, horloge->minutes);
+			select = afficheMenu(&CLOCK_MIN_MENU, horloge->minutes);
 			state = 3;
 		break;
 
 		case 3 :
-			select = afficheMenu(CLOCK_MIN_MENU);
+			select = afficheMenu(&CLOCK_MIN_MENU, 255);
 			if (select.retour == SELECT_OK)
 			{
 				horloge->minutes = select.selection;
@@ -271,6 +271,7 @@ char setAclock(clock p_clock)
 }
 
 
+
 // retourne MENU_NO_ACTION, MENU_CANCEL, MENU_OK
 char setAnAlarm(void)
 {
@@ -280,22 +281,17 @@ char setAnAlarm(void)
 	char retour = MENU_NO_ACTION;
 	
 	// menu
-	//static char ** item;
-	//static Menu_t * al_menu = NULL;
-	//static char * item[6];
-	static char item[6][10];
-	static Menu_t al_menu;
+	//static Menu_t al_menu;
 	static clock pclk;
+
 	pclk.heures = 0;
 	pclk.minutes = 0;
 	pclk.secondes = 62;
-	char txt[11];
-	//char * montitre;
-	//char * alitem;
 	char alitem[6];
+	char txt[8];
 
 	// alarme
-	Alarme_t * pt_al = NULL;
+	static Alarme_t * pt_al = NULL;
 	static uint8_t nbAl = 0;
 	static Alarme_t * pt_al_tmp = NULL;
 	
@@ -306,90 +302,57 @@ char setAnAlarm(void)
 	switch (state)
 	{
 		case 0:  // creation du menu
-			// init des struct
-			pt_al = alarme_getAlarme();  // fonction retournant un pointeur sur la premiere alarme config. (liste chainée d'alarmes)
 			
-			// Allouer le menu
-			//al_menu = (Menu_t*)malloc(sizeof(Menu_t));
-			//if (al_menu == NULL)
-			//{
-			//	state = 99;
-			//	retour = MENU_CANCEL;
-			//	break;
-			//}
-			// Allouer une chaine pour le titre
-			//montitre = (char*)malloc(16);
-			//if (montitre == NULL)
-			//{
-			//	state = 99;
-			//	retour = MENU_CANCEL;
-			//	break;
-			//}
-			//sprintf(montitre, "Regler alarme");
-
 			// Accrocher le titre dans le menu
-			//al_menu->titre = montitre;
-
-			al_menu.titre = "Regler alarme";
+			//al_menu.titre = "Regler alarme";
+			//sprintf(txt, "Regler alarme");
+			//strcpy(al_menu.titre, txt);
 
 			nbAl = 0;
-			// Allouer le tableau
-			//item = (char **)malloc((MAX_COUNT_ALARM + 1) * sizeof(char *));
-			//if (item == NULL)
-			//{
-			//	state = 99;
-			//	retour = MENU_CANCEL;
-			//	break;
-			//}
-			// Allouer la premiere chaine et l'ajouter
-			/*item[nbAl] = (char *)malloc(16);
-			if (item[nbAl] == NULL)
-			{
-				state = 99;
-				retour = MENU_CANCEL;
-				break;
-			}
-			sprintf(txt, "Ajouter");
-			strncpy(item[nbAl], txt, 8);
-			item[nbAl][7] = 0;  // ajouter le \0 terminal
-			*/
-			item[0] = "Ajouter";
+			
+			//al_menu.items[0] = "Ajouter\0";
+			//sprintf(txt, "Ajouter");
+			//strcpy(SSALARM_MENU_ITEMS[nbAl], txt);
+			//strncpy(al_menu.items[nbAl], txt, strlen(txt));
+			//SSALARM_MENU_ITEMS[nbAl] = "Ajouter";
+
 			nbAl ++;
 
+
 			// Ajout des alarmes en mode texte
-			pt_al_tmp = pt_al;
-			while (pt_al_tmp)
+			pt_al_tmp = alarme_getAlarme();  // fonction retournant un pointeur sur la premiere alarme config. (liste chainée d'alarmes)
+			pt_al = pt_al_tmp;
+			while (pt_al != NULL)
 			{
-				// Allocation d'une chaine pour un item
-				/*alitem = (char*)malloc(6);
-				if (alitem == NULL)
-				{
-					state = 99;
-					retour = MENU_CANCEL;
-					break;
-				}*/
-				sprintf(alitem, "%02d:%02d", pt_al_tmp->horaire.heures, pt_al_tmp->horaire.minutes);
+				//alitem[0] = '\0';
+				sprintf(alitem, "%d", nbAl);
+				sprintf(SSALARM_MENU_ITEMS[nbAl], "%02d:%02d", pt_al->horaire.heures, pt_al->horaire.minutes);
 				//item[nbAl] = alitem;
 				//strncpy(item[nbAl], alitem, sizeof(alitem));
-				strcpy(item[nbAl], alitem);
-				//alitem = NULL;
-				
-				// log
-				//sprintf(txt, "al : %02d:%02d\n", pt_al_tmp->horaire.heures, pt_al_tmp->horaire.minutes);
-				//print_log(DEBUG, txt);
+				//strcpy(al_menu.items[nbAl], alitem);
+				//strcpy(SSALARM_MENU_ITEMS[nbAl], alitem);
+				//strncpy(SSALARM_MENU_ITEMS[nbAl], alitem, sizeof(alitem));
+				//SSALARM_MENU_ITEMS[nbAl][5] = '\0';
+				//SSALARM_MENU_ITEMS[nbAl] = alitem;
+
+				#ifdef MDEBUG1
+				print_log(DEBUG, SSALARM_MENU_ITEMS[nbAl]);
+				#endif
 
 				nbAl ++;
-				pt_al_tmp = pt_al_tmp->suivant;
+				pt_al = pt_al->suivant;
 			}
-			al_menu.nbItem = nbAl;
-			al_menu.items = item;
+			//al_menu.nbItem = nbAl;
+			SSALARM_MENU.nbItem = nbAl;
+			//al_menu.items = &item;
 
 			state = 1;
 			
 		break;
 		
 		case 1:
-			select = afficheMenu(al_menu);
+			//select = afficheMenu(al_menu, 255);
+			select = afficheMenu(&SSALARM_MENU, 255);
 			
 			if (select.retour == SELECT_OK)
 			{
@@ -489,12 +452,10 @@ char setAnAlarm(void)
 			#endif
 			break;
 		}
-		//pclk = (clock*)malloc(sizeof(clock));
 		pclk.heures = pt_al_tmp->horaire.heures;
 		pclk.minutes = pt_al_tmp->horaire.minutes;
 		pclk.secondes = 0;
 		ret = setAclock(pclk);
-		//free(pclk);
 
 		state = 5;
 		break;
@@ -524,11 +485,6 @@ char setAnAlarm(void)
 				// Réglage annulé par l'utilisateur. Retour au menu
 				lcd_clear();
 				state = 1;
-				/*if (pclk != NULL)
-				{
-					delete pclk;
-					pclk = NULL;
-				}*/
 			}
 		break;
 
@@ -538,30 +494,15 @@ char setAnAlarm(void)
 			state = 0;
 			
 			// Désallouer le tableau
-			/*for (ret = 0; ret < nbAl; ret ++)
+			for (ret = 1; ret < 6; ret ++)
 			{
-				if (item[ret] != NULL)
-				{
-					free (item[ret]);
-					item[ret] = NULL;
-				}
+				//SSALARM_MENU_ITEMS[ret][0] = '\0';
+				sprintf(SSALARM_MENU_ITEMS[ret], "");
 			}
-			free(item);
-			item = NULL;*/
-			// Désallouer le titre
-			//free(montitre);
-			//montitre = NULL;
-			// Désallouer le menu
-			//free(al_menu);
-			//al_menu = NULL;
 
 			nbAl = 0;
 			pt_al = NULL;
-			/*if (pclk != NULL)
-			{
-				delete pclk;
-				pclk = NULL;
-			}*/
+
 			retour = tmpret;
 		break;
 	}
