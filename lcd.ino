@@ -18,26 +18,28 @@ static Bool lcd_isInit = False;
 
 
 // Déclaration du menu principal
-char SSALARM_MENU_ITEMS[][16] = 
+char SSALARM_MENU_ITEMS[6][8];
+/* = 
 {
   "Ajouter",
-  "",
-  "",
-  "",
-  "",
-  ""
-};
+  "       ",
+  "       ",
+  "       ",
+  "       ",
+  "       "
+};*/
+//trcpy(SSALARM_MENU_ITEMS[0], "Ajouter");
 
 Menu_t SSALARM_MENU = 
 {
   "Regler alarme",
-  SSALARM_MENU_ITEMS,
-  1
+  (char**)SSALARM_MENU_ITEMS,
+  6
 };
 
 
 // Déclaration du menu principal
-char MAIN_MENU_ITEMS[][16] = 
+char * MAIN_MENU_ITEMS[] = 
 {
   "Regler horloge",
   "Regler alarme",
@@ -52,7 +54,7 @@ Menu_t MAIN_MENU =
 };
 
 // Déclaration du menu Donner a manger
-char FEED_MENU_ITEMS[][16] =
+char * FEED_MENU_ITEMS[] =
 {
   "1/2 portion",
   "1 portion",
@@ -66,7 +68,7 @@ Menu_t FEED_MENU =
 };
 
 // Déclaration du menu reglage heure
-char CLOCK_HOUR_MENU_ITEMS[][16] =
+char * CLOCK_HOUR_MENU_ITEMS[] =
 {
   "00",
   "01",
@@ -93,7 +95,7 @@ char CLOCK_HOUR_MENU_ITEMS[][16] =
   "22",
   "23"
 };
-char CLOCK_MINSEC_MENU_ITEMS[][16] =
+char * CLOCK_MINSEC_MENU_ITEMS[] =
 {
   "00",
   "01",
@@ -181,6 +183,9 @@ void lcd_setup(void)
   lcd.begin(16, 2);
   lcd.clear();
   lcd_isInit = True;
+
+ strcpy(SSALARM_MENU_ITEMS[0], "Ajouter");
+
 }
 
 Bool lcd_is_init(void)

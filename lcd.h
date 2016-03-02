@@ -21,8 +21,8 @@
 typedef struct
 {
   char * titre;   // Titre du menu
-  //char ** items;  // Tableau de choix du menu
-  char items[][16];  // Tableau de choix du menu
+  char ** items;  // Tableau de choix du menu
+  //char items[][16];  // Tableau de choix du menu
   uint8_t nbItem; // Nombre de choix possible
 } Menu_t;
 
@@ -69,25 +69,25 @@ byte reveil3[8] =
 };
 
 // Déclaration du menu principal
-extern char MAIN_MENU_ITEMS[][16];
+extern char * MAIN_MENU_ITEMS[];
 extern Menu_t MAIN_MENU;
 
 // Déclaration du menu Donner a manger
-extern char FEED_MENU_ITEMS[][16];
+extern char * FEED_MENU_ITEMS[];
 extern Menu_t FEED_MENU;
 
 // Déclaration du menu reglage heure
-extern char CLOCK_HOUR_MENU_ITEMS[][16];
-extern char CLOCK_MINSEC_MENU_ITEMS[][16];
+extern char * CLOCK_HOUR_MENU_ITEMS[];
+extern char * CLOCK_MINSEC_MENU_ITEMS[];
 extern Menu_t CLOCK_HOUR_MENU;
 extern Menu_t CLOCK_MIN_MENU;
 extern Menu_t CLOCK_SEC_MENU ;
 
 // Déclaration du menu alarme
-extern char ALARME_MENU_ITEMS[][16];
+extern char * ALARME_MENU_ITEMS[];
 extern Menu_t ALARME_MENU;
 
-extern char SSALARM_MENU_ITEMS[][16];
+extern char SSALARM_MENU_ITEMS[6][8];
 extern Menu_t SSALARM_MENU;
 
 void lcd_setup(void);
