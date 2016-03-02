@@ -324,14 +324,14 @@ char setAnAlarm(void)
 			pt_al = pt_al_tmp;
 			while (pt_al != NULL)
 			{
-				//alitem[0] = '\0';
-				sprintf(alitem, "%d", nbAl);
-				sprintf(SSALARM_MENU_ITEMS[nbAl], "%02d:%02d", pt_al->horaire.heures, pt_al->horaire.minutes);
+				alitem[0] = '\0';
+				//sprintf(alitem, "%d", nbAl);
+				sprintf(alitem, "%02d:%02d", pt_al->horaire.heures, pt_al->horaire.minutes);
 				//item[nbAl] = alitem;
 				//strncpy(item[nbAl], alitem, sizeof(alitem));
 				//strcpy(al_menu.items[nbAl], alitem);
 				//strcpy(SSALARM_MENU_ITEMS[nbAl], alitem);
-				//strncpy(SSALARM_MENU_ITEMS[nbAl], alitem, sizeof(alitem));
+				strncpy(SSALARM_MENU_ITEMS[nbAl], alitem, strlen(alitem));
 				//SSALARM_MENU_ITEMS[nbAl][5] = '\0';
 				//SSALARM_MENU_ITEMS[nbAl] = alitem;
 
