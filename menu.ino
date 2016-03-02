@@ -288,6 +288,7 @@ char setAnAlarm(void)
 	pclk.minutes = 0;
 	pclk.secondes = 62;
 	char alitem[6];
+	//char * alitem;
 	char txt[8];
 
 	// alarme
@@ -296,6 +297,7 @@ char setAnAlarm(void)
 	static Alarme_t * pt_al_tmp = NULL;
 	
 	char ret = 0; // variable temporaire
+	uint8_t i = 0;
 
 	static char tmpret = MENU_NO_ACTION;
 
@@ -325,17 +327,24 @@ char setAnAlarm(void)
 			while (pt_al != NULL)
 			{
 				//alitem[0] = '\0';
-				sprintf(alitem, "%d", nbAl);
-				sprintf(SSALARM_MENU_ITEMS[nbAl], "%02d:%02d", pt_al->horaire.heures, pt_al->horaire.minutes);
+				//sprintf(alitem, "%d", nbAl);
+				//sprintf(SSALARM_MENU_ITEMS[nbAl], "%02d:%02d", pt_al->horaire.heures, pt_al->horaire.minutes);
+				sprintf(alitem, "%02d:%02d", pt_al->horaire.heures, pt_al->horaire.minutes);
 				//item[nbAl] = alitem;
 				//strncpy(item[nbAl], alitem, sizeof(alitem));
 				//strcpy(al_menu.items[nbAl], alitem);
-				//strcpy(SSALARM_MENU_ITEMS[nbAl], alitem);
+				strcpy(SSALARM_MENU_ITEMS[nbAl], alitem);
 				//strncpy(SSALARM_MENU_ITEMS[nbAl], alitem, sizeof(alitem));
-				//SSALARM_MENU_ITEMS[nbAl][5] = '\0';
 				//SSALARM_MENU_ITEMS[nbAl] = alitem;
+				/*for (i = 0; i < 5; i ++)
+				{
+					SSALARM_MENU_ITEMS[nbAl][i] = alitem[i];
+				}
+				SSALARM_MENU_ITEMS[nbAl][5] = '\0';
+				*/
+				//strcpy(*(SSALARM_MENU_ITEMS + nbAl), alitem);
 
-				#ifdef MDEBUG1
+				#ifdef MDEBUG
 				print_log(DEBUG, SSALARM_MENU_ITEMS[nbAl]);
 				#endif
 
@@ -343,7 +352,8 @@ char setAnAlarm(void)
 				pt_al = pt_al->suivant;
 			}
 			//al_menu.nbItem = nbAl;
-			SSALARM_MENU.nbItem = nbAl;
+			//SSALARM_MENU.nbItem = nbAl;
+			SSALARM_MENU.nbItem = 6;
 			//al_menu.items = &item;
 
 			state = 1;

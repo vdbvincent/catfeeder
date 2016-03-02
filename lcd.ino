@@ -18,7 +18,7 @@ static Bool lcd_isInit = False;
 
 
 // Déclaration du menu principal
-char * SSALARM_MENU_ITEMS[] = 
+char SSALARM_MENU_ITEMS[][16] = 
 {
   "Ajouter",
   "",
@@ -37,7 +37,7 @@ Menu_t SSALARM_MENU =
 
 
 // Déclaration du menu principal
-char * MAIN_MENU_ITEMS[] = 
+char MAIN_MENU_ITEMS[][16] = 
 {
   "Regler horloge",
   "Regler alarme",
@@ -52,7 +52,7 @@ Menu_t MAIN_MENU =
 };
 
 // Déclaration du menu Donner a manger
-char * FEED_MENU_ITEMS[] =
+char FEED_MENU_ITEMS[][16] =
 {
   "1/2 portion",
   "1 portion",
@@ -66,7 +66,7 @@ Menu_t FEED_MENU =
 };
 
 // Déclaration du menu reglage heure
-char * CLOCK_HOUR_MENU_ITEMS[] =
+char CLOCK_HOUR_MENU_ITEMS[][16] =
 {
   "00",
   "01",
@@ -93,7 +93,7 @@ char * CLOCK_HOUR_MENU_ITEMS[] =
   "22",
   "23"
 };
-char * CLOCK_MINSEC_MENU_ITEMS[] =
+char CLOCK_MINSEC_MENU_ITEMS[][16] =
 {
   "00",
   "01",
