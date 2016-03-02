@@ -18,7 +18,7 @@ static Bool lcd_isInit = False;
 
 
 // Déclaration du menu principal
-char * SSALARM_MENU_ITEMS[] = 
+char SSALARM_MENU_ITEMS[][8] = 
 {
   "Ajouter",
   "",
