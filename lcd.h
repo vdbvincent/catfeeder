@@ -86,7 +86,7 @@ extern Menu_t CLOCK_SEC_MENU ;
 extern char * ALARME_MENU_ITEMS[];
 extern Menu_t ALARME_MENU;
 
-extern char * SSALARM_MENU_ITEMS[];
+extern char SSALARM_MENU_ITEMS[][8];
 extern Menu_t SSALARM_MENU;
 
 void lcd_setup(void);
