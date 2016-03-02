@@ -31,7 +31,7 @@ char SSALARM_MENU_ITEMS[][8] =
 Menu_t SSALARM_MENU = 
 {
   "Regler alarme",
-  SSALARM_MENU_ITEMS,
+  (char**)SSALARM_MENU_ITEMS,
   1
 };
 
