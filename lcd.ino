@@ -18,8 +18,10 @@ static Bool lcd_isInit = False;
 
 
 // Déclaration du menu principal
+
 char SSALARM_MENU_ITEMS[6][8];
 /* = 
+char SSALARM_MENU_ITEMS[][8] = 
 {
   "Ajouter",
   "       ",
@@ -28,7 +30,7 @@ char SSALARM_MENU_ITEMS[6][8];
   "       ",
   "       "
 };*/
-//trcpy(SSALARM_MENU_ITEMS[0], "Ajouter");
+//strcpy(SSALARM_MENU_ITEMS[0], "Ajouter");
 
 Menu_t SSALARM_MENU = 
 {
