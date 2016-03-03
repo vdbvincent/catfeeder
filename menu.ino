@@ -332,6 +332,7 @@ char setAnAlarm(void)
 				alitem[0] = '\0';
 				//sprintf(alitem, "%d", nbAl);
 				sprintf(alitem, "%02d:%02d", pt_al->horaire.heures, pt_al->horaire.minutes);
+				alitem[5] = '\0';
 				//item[nbAl] = alitem;
 				//strncpy(item[nbAl], alitem, sizeof(alitem));
 				//strcpy(al_menu.items[nbAl], alitem);
@@ -357,8 +358,8 @@ char setAnAlarm(void)
 				pt_al = pt_al->suivant;
 			}
 			//al_menu.nbItem = nbAl;
-			//SSALARM_MENU.nbItem = nbAl;
-			SSALARM_MENU.nbItem = 6;
+			SSALARM_MENU.nbItem = nbAl;
+			//SSALARM_MENU.nbItem = 6;
 			//al_menu.items = &item;
 
 			state = 1;

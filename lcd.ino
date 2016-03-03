@@ -19,7 +19,8 @@ static Bool lcd_isInit = False;
 
 // Déclaration du menu principal
 
-char SSALARM_MENU_ITEMS[6][8];
+char * SSALARM_MENU_ITEMS[8];
+
 /* = 
 char SSALARM_MENU_ITEMS[][8] = 
 {
@@ -35,7 +36,7 @@ char SSALARM_MENU_ITEMS[][8] =
 Menu_t SSALARM_MENU = 
 {
   "Regler alarme",
-  (char**)SSALARM_MENU_ITEMS,
+  SSALARM_MENU_ITEMS,
   6
 };
 
@@ -186,8 +187,18 @@ void lcd_setup(void)
   lcd.clear();
   lcd_isInit = True;
 
- strcpy(SSALARM_MENU_ITEMS[0], "Ajouter");
-
+  SSALARM_MENU_ITEMS[0] = (char*)malloc(8);
+  SSALARM_MENU_ITEMS[1] = (char*)malloc(8);
+  SSALARM_MENU_ITEMS[2] = (char*)malloc(8);
+  SSALARM_MENU_ITEMS[3] = (char*)malloc(8);
+  SSALARM_MENU_ITEMS[4] = (char*)malloc(8);
+  SSALARM_MENU_ITEMS[5] = (char*)malloc(8);
+  strcpy(SSALARM_MENU_ITEMS[0], "Ajouter");
+  strcpy(SSALARM_MENU_ITEMS[1], "");
+  strcpy(SSALARM_MENU_ITEMS[2], "");
+  strcpy(SSALARM_MENU_ITEMS[3], "");
+  strcpy(SSALARM_MENU_ITEMS[4], "");
+  strcpy(SSALARM_MENU_ITEMS[5], "");
 }
 
 Bool lcd_is_init(void)
