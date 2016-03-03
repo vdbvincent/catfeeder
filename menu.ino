@@ -287,7 +287,7 @@ char setAnAlarm(void)
 	pclk.heures = 0;
 	pclk.minutes = 0;
 	pclk.secondes = 62;
-	char alitem[6];
+	char alitem[5];
 	//char * alitem;
 	char txt[8];
 
@@ -332,7 +332,7 @@ char setAnAlarm(void)
 				alitem[0] = '\0';
 				//sprintf(alitem, "%d", nbAl);
 				sprintf(alitem, "%02d:%02d", pt_al->horaire.heures, pt_al->horaire.minutes);
-				alitem[5] = '\0';
+				//alitem[5] = '\0';
 				//item[nbAl] = alitem;
 				//strncpy(item[nbAl], alitem, sizeof(alitem));
 				//strcpy(al_menu.items[nbAl], alitem);

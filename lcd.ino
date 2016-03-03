@@ -188,11 +188,11 @@ void lcd_setup(void)
   lcd_isInit = True;
 
   SSALARM_MENU_ITEMS[0] = (char*)malloc(8);
-  SSALARM_MENU_ITEMS[1] = (char*)malloc(8);
-  SSALARM_MENU_ITEMS[2] = (char*)malloc(8);
-  SSALARM_MENU_ITEMS[3] = (char*)malloc(8);
-  SSALARM_MENU_ITEMS[4] = (char*)malloc(8);
-  SSALARM_MENU_ITEMS[5] = (char*)malloc(8);
+  SSALARM_MENU_ITEMS[1] = (char*)malloc(6);
+  SSALARM_MENU_ITEMS[2] = (char*)malloc(6);
+  SSALARM_MENU_ITEMS[3] = (char*)malloc(6);
+  SSALARM_MENU_ITEMS[4] = (char*)malloc(6);
+  SSALARM_MENU_ITEMS[5] = (char*)malloc(6);
   strcpy(SSALARM_MENU_ITEMS[0], "Ajouter");
   strcpy(SSALARM_MENU_ITEMS[1], "");
   strcpy(SSALARM_MENU_ITEMS[2], "");
