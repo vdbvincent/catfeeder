@@ -34,13 +34,17 @@ TODO :
 	* bouton bas : moyenne ration
 	* bouton droit : grande ration
 
-TODO : doit appeler menu_idle() avec en param les event bouton pour les centraliser ici
+TODO : doit appeler menu_idle() avec en param les event bouton pour les centraliser ici => non
+       doit demander au menu de s'eteindre : désallouer des trucs ou fermer des machins
+       puis demander au main d'arreter de l'appeler: eviter un appel de fonction inutile
+       si appui sur le btn de reveil, demander au main d'appeler le menu, il va s'init tout seul comme un grand
+       => ca impose de gerer la concurrence d'accès à la fifo bouton :/
+       => ca permet d'appeler le manager depuis l'it 100ms pour compter le temps et eviter de déclencher des 
+          minuteurs qui vont faire foirer la mémoire.
 
 le lcd doit avoir une fonction on() et off() pr piloter le lcd
 digitalWrite(PinLCDBacklight, LOW); // Retro-éclairage éteint
 
-pour le moment le besoin :
-eteindre l'écran et gérer les boutons.
 
 // TODO : appeler un menu_reset() pour réinit de toutes les variables sur fermeture ecran
 le manager doit etre appeler tout les 100ms
@@ -48,7 +52,7 @@ il doit verifier si la fifo bouton est vide ou pas
 si elle est vide commencer a compter le temps
 a chaque evenement, il doit reset son compteur
 si le compteur arrive à 1 minute, demander au menu de se couper. Menu appelera egalement un lcd_off() pour eteindre l'écran
-le manager rentre dans un etat d'attente d'evenement de boutons, le menu n'est plus appelé (shunt dans menu_idle())
+le manager rentre dans un etat d'attente d'evenement de boutons, le menu n'est plus appelé
 il doit veiller sur les events (fifo.front())
 si appuie bouton droit, demander au menu de se remettre en route et de rallumer l'écran.
 */
