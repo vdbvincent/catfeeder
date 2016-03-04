@@ -281,14 +281,11 @@ char setAnAlarm(void)
 	char retour = MENU_NO_ACTION;
 	
 	// menu
-	//static Menu_t al_menu;
 	static clock pclk;
-
 	pclk.heures = 0;
 	pclk.minutes = 0;
 	pclk.secondes = 62;
 	char alitem[5];
-	//char * alitem;
 	char txt[8];
 
 	// alarme
@@ -297,77 +294,32 @@ char setAnAlarm(void)
 	static Alarme_t * pt_al_tmp = NULL;
 	
 	char ret = 0; // variable temporaire
-	uint8_t i = 0;
+	uint8_t i = 0; // indice de boucle
 
 	static char tmpret = MENU_NO_ACTION;
 
 	switch (state)
 	{
 		case 0:  // creation du menu
-			
-			// Accrocher le titre dans le menu
-			//al_menu.titre = "Regler alarme";
-			//sprintf(txt, "Regler alarme");
-			//strcpy(al_menu.titre, txt);
-
+			// init du nombre d'entrées dans le menu d'alarmes
 			nbAl = 0;
-			
-			//al_menu.items[0] = "Ajouter\0";
-			//sprintf(txt, "Ajouter");
-			//strcpy(SSALARM_MENU_ITEMS[nbAl], txt);
-			//strncpy(al_menu.items[nbAl], txt, strlen(txt));
-			//SSALARM_MENU_ITEMS[nbAl] = "Ajouter";
-
-			nbAl ++;
-
+			nbAl ++;  // La premiere entrée est le texte "ajouter"
 
 			// Ajout des alarmes en mode texte
-			pt_al_tmp = alarme_getAlarme();  // fonction retournant un pointeur sur la premiere alarme config. (liste chainée d'alarmes)
-			pt_al = pt_al_tmp;
+			pt_al = alarme_getAlarme();  // fonction retournant un pointeur sur la premiere alarme config. (liste chainée d'alarmes)
 			while (pt_al != NULL)
 			{
-				//alitem[0] = '\0';
-				//sprintf(alitem, "%d", nbAl);
-				//sprintf(SSALARM_MENU_ITEMS[nbAl], "%02d:%02d", pt_al->horaire.heures, pt_al->horaire.minutes);
 				alitem[0] = '\0';
-				//sprintf(alitem, "%d", nbAl);
 				sprintf(alitem, "%02d:%02d", pt_al->horaire.heures, pt_al->horaire.minutes);
-				//alitem[5] = '\0';
-				//item[nbAl] = alitem;
-				//strncpy(item[nbAl], alitem, sizeof(alitem));
-				//strcpy(al_menu.items[nbAl], alitem);
-				//strcpy(SSALARM_MENU_ITEMS[nbAl], alitem);
-				//strncpy(SSALARM_MENU_ITEMS[nbAl], alitem, sizeof(alitem));
-				//strcpy(SSALARM_MENU_ITEMS[nbAl], alitem);
-				strncpy(SSALARM_MENU_ITEMS[nbAl], alitem, strlen(alitem));
-				//SSALARM_MENU_ITEMS[nbAl][5] = '\0';
-				//SSALARM_MENU_ITEMS[nbAl] = alitem;
-				/*for (i = 0; i < 5; i ++)
-				{
-					SSALARM_MENU_ITEMS[nbAl][i] = alitem[i];
-				}
-				SSALARM_MENU_ITEMS[nbAl][5] = '\0';
-				*/
-				//strcpy(*(SSALARM_MENU_ITEMS + nbAl), alitem);
-
-				#ifdef MDEBUG
-				print_log(DEBUG, SSALARM_MENU_ITEMS[nbAl]);
-				#endif
-
+				strncpy(SSALARM_MENU_ITEMS[nbAl], alitem, strlen(alitem));  // TODO : verifier si l'espace est bien alloué?
 				nbAl ++;
 				pt_al = pt_al->suivant;
 			}
-			//al_menu.nbItem = nbAl;
 			SSALARM_MENU.nbItem = nbAl;
-			//SSALARM_MENU.nbItem = 6;
-			//al_menu.items = &item;
-
 			state = 1;
-			
 		break;
 		
 		case 1:
-			//select = afficheMenu(al_menu, 255);
 			select = afficheMenu(&SSALARM_MENU, 255);
 			
 			if (select.retour == SELECT_OK)
@@ -417,6 +369,12 @@ char setAnAlarm(void)
 				{
 					// Ajout de l'alarme
 					manager_setAlarme(*horloge);
+					// Allocation de la chaine pour l'affichage en état O
+					SSALARM_MENU_ITEMS[nbAl] = (char*)malloc(6);
+					if (SSALARM_MENU_ITEMS[nbAl] != NULL)
+					{
+						lcd.popup("malloc null");
+					}
 					// Retour en ecran d'acceuil
 					state = 99;
 					tmpret = MENU_OK;
@@ -485,6 +443,9 @@ char setAnAlarm(void)
 				{
 					// Supprimer l'alarme
 					alarme_delAlarme(select.selection - 1); // -1 car l'indice 0 est le txt "Ajouter"
+					// Desallouer l'espace pour afficher l'alarme
+					if (SSALARM_MENU_ITEMS[nbAl] != NULL)
+						free(SSALARM_MENU_ITEMS[nbAl]);
 				}
 				else
 				{				
