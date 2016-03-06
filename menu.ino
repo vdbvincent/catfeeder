@@ -370,11 +370,14 @@ char setAnAlarm(void)
 					// Ajout de l'alarme
 					manager_setAlarme(*horloge);
 					// Allocation de la chaine pour l'affichage en état O
-					SSALARM_MENU_ITEMS[nbAl] = (char*)malloc(6);
-					if (SSALARM_MENU_ITEMS[nbAl] != NULL)
+					/*SSALARM_MENU_ITEMS[nbAl] = (char*)malloc(6);
+					if (SSALARM_MENU_ITEMS[nbAl] == NULL)
 					{
-						lcd.popup("malloc null");
-					}
+						lcd_popup("malloc null");
+						#ifdef MDEBUG1
+						print_log(DEBUG, "malloc null\n");
+						#endif
+					}*/
 					// Retour en ecran d'acceuil
 					state = 99;
 					tmpret = MENU_OK;
@@ -444,8 +447,8 @@ char setAnAlarm(void)
 					// Supprimer l'alarme
 					alarme_delAlarme(select.selection - 1); // -1 car l'indice 0 est le txt "Ajouter"
 					// Desallouer l'espace pour afficher l'alarme
-					if (SSALARM_MENU_ITEMS[nbAl] != NULL)
-						free(SSALARM_MENU_ITEMS[nbAl]);
+					/*if (SSALARM_MENU_ITEMS[nbAl] != NULL)
+						free(SSALARM_MENU_ITEMS[nbAl]);*/
 				}
 				else
 				{				
