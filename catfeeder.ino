@@ -39,7 +39,8 @@ void loop()
 	
 	logs_idle();
 	menu_idle();
-	manager_idle();
+
+	delay(10);
 }
 
 
@@ -59,6 +60,9 @@ void every10ms(void)
 		break;
 		case 3:
 			moteur_every100ms();
+		break;
+		case 4:
+			manager_every100ms();
 		break;
 	}
 	if (c10 >= 10)

@@ -42,5 +42,9 @@ char setAnAlarm(void);
 // Permet de remettre à 0 les champs de la structure horloge globale
 void clearHorloge(void);
 
+// Méthode pour eteindre ou allumer l'écran
+void menu_on(void);
+void menu_off(void);
+
 
 #endif /* _MENU_H_ */

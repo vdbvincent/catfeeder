@@ -58,49 +58,64 @@ si appuie bouton droit, demander au menu de se remettre en route et de rallumer 
 */
 
 
-void manager_idle(void)
+void manager_every100ms(void)
 {
-#if 0
-	static uint8_t etat = 0;
-	static uint8_t cmp = 0;
+
+	static uint8_t etat = ALLUMER_MENU;
+	static uint16_t cmp = 0;
+	static uint8_t bpCounter = 0;
+	static uint8_t oldBpCounter = 0;
 	char event;
-	
-	/*if ( ! isEmpty_btfifo())
-	{
-		event = get_btfifo();
-	}*/
 	
 	
 	switch (etat)
 	{
-		case 0:
+		case ALLUMER_MENU:
 			// Allumer le menu
 			menu_on();
-			state = 1;
+			etat = SURVEILLANCE_BP;
+			bpCounter = boutons_getBPCounter();
+			oldBpCounter = bpCounter;
+			#ifdef MDEBUG2
+			print_log(DEBUG, "SURVEILLANCE_BP\n");
+			#endif
 		break;
 		
-		case 1:
-			if (isEmpty_btfifo())  // Si aucune action
+		case ATTENTE_BP:
+			bpCounter = boutons_getBPCounter();
+			if (bpCounter == oldBpCounter)
 			{
-				state = 2;
+				oldBpCounter = bpCounter;
+				etat = SURVEILLANCE_BP;
 				cmp = 0;
+				#ifdef MDEBUG2
+				print_log(DEBUG, "SURVEILLANCE_BP\n");
+				#endif
 			}
 		break;
 		
-		case 2:
+		case SURVEILLANCE_BP:
 			// Compter le temps
-			if (! isEmpty_btfifo())
+			bpCounter = boutons_getBPCounter();
+			if (bpCounter != oldBpCounter)
 			{
 				// Une action a été enregistrée
 				cmp = 0;
-				state = 1;
+				oldBpCounter = bpCounter;
+				//etat = ATTENTE_BP;
+				#ifdef MDEBUG2
+				print_log(DEBUG, "RESET_CMPT\n");
+				#endif
 			}
 			else if (cmp >= MAX_CMP)
 			{
 				// Partir en mode sommeil
-				state = 3;
+				etat = SOMMEIL;
 				cmp = 0;
 				menu_off();
+				#ifdef MDEBUG2
+				print_log(DEBUG, "SOMMEIL\n");
+				#endif
 			}
 			else
 			{
@@ -108,45 +123,35 @@ void manager_idle(void)
 			}
 		break;
 		
-		case 3:
+		case SOMMEIL:
 			// Surveiller l'appuie d'un bouton et rallumer l'ecran
-			event = get_btfifo();
-			if (event == BT_D_PRESSE)
-			{
-				// Rallumer l'écran
-				state = 0;
+			if ( ! isEmpty_btfifo())
+    		{
+				event = get_btfifo();
+				if (event == BT_D_PRESSE)
+				{
+					// Rallumer l'écran
+					etat = ALLUMER_MENU;
+					#ifdef MDEBUG2
+					print_log(DEBUG, "ALLUMER_MENU\n");
+					#endif
+				}
+				else if (event == BT_G_PRESSE)
+				{
+					// distrib moyen
+					moteur_setCmd(MT_MOYEN);
+				}
+				else if (event == BT_H_PRESSE)
+				{
+					moteur_setCmd(MT_GRAND);
+				}
+				else if (event == BT_B_PRESSE)
+				{
+					moteur_setCmd(MT_PETIT);
+				}
 			}
-			else if (event == BT_G_PRESSE)
-			{
-				// distrib moyen
-				moteur_setCmd(MT_MOYEN);
-			}
-			else if (event == BT_H_PRESSE)
-			{
-				moteur_setCmd(MT_GRAND);
-			}
-			else if (event == BT_B_PRESSE)
-			{
-				moteur_setCmd(MT_PETIT);
-			}
-		break;
-		
-		case 10:
-			// Surveiller l'inactivité
-			if (event == NO_EVENT)
-			{
-				// Déclencher un minuteur
-				state = 2;
-			}
-		break;
-		
-		case 20:
-			// Attendre le déclenchement d'un muinuteur
-			
-			// ou si appui bouton enlever le minuteur et repartie en état 1 ?
 		break;
 	}
-#endif
 }
 
 void manager_setAlarme(clock p_horloge)

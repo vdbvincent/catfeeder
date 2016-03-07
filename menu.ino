@@ -10,6 +10,10 @@
 static unsigned int ui_tempoDem = 2;  // Valeur par défaut 300 = 2s
 uint8_t g_tmp = 0;
 clock * horloge;
+static uint8_t state_affmenu = 0;
+static uint8_t state_setAclock = 0;
+static uint8_t state_setAnAlarm = 0;
+static uint8_t mb_actif = 1; // Booleen indiquant si le menu est à afficher (oui par défaut)
 
 void menu_setup(unsigned int p_tempoDem)
 {
@@ -22,12 +26,33 @@ void menu_setup(unsigned int p_tempoDem)
 void menu_idle(void)
 {
 	// Gestion de l'affichage des menus
-	menu_affMenu();
+	if (mb_actif == 1)
+		menu_affMenu();
 }
-	
+
+void menu_on(void)
+{
+	lcd_on();
+	clearCmdButtons();
+	mb_actif = 1;
+}
+
+void menu_off(void)
+{
+	lcd_off();
+	clearHorloge();
+	clearCmdButtons();
+	// TODO : reset le max de truc
+	// reset les variables state car peut s'eteindre en cours de menu
+	state_affmenu = 2;
+	state_setAclock = 0;
+	state_setAnAlarm = 0;
+	mb_actif = 0;
+}
+
 static void menu_affMenu(void)
 {
-	static uint8_t state = 0;
+	//static uint8_t state = 0;
 	static Select_t select;
 	char ret;  // Variable temporaire
 	static clock clocktmp;
@@ -35,13 +60,13 @@ static void menu_affMenu(void)
 	clocktmp.minutes = 0;
 	clocktmp.secondes = 62;
 
-	switch (state)
+	switch (state_affmenu)
 	{
 	    // ECRAN DEMARRAGE
 	    case 0:
 	      	welcomeScreen();
 	      	alarme_setMinuteur(ui_tempoDem, &procGtmp); // Affiche pour 2 seconde
-			state = 1;
+			state_affmenu = 1;
 	    break;
 
 	    case 1:
@@ -50,7 +75,7 @@ static void menu_affMenu(void)
 	    		clearCmdButtons();
 				lcd_clear();
 				clock_reset();
-				state = 2;
+				state_affmenu = 2;
 	    	}
 	      	break;
 
@@ -58,7 +83,7 @@ static void menu_affMenu(void)
 
 	    case 2:
 	    	afficheHome(1);  // Forcer l'affichage complet
-	    	state = 21;
+	    	state_affmenu = 21;
 	    break;
 
 	    case 21:
@@ -70,7 +95,7 @@ static void menu_affMenu(void)
 				if (event == BT_D_PRESSE)
 				{
 					// Affiche du menu
-					state = 3;
+					state_affmenu = 3;
 					lcd_clear();
 				}
 			}
@@ -87,21 +112,21 @@ static void menu_affMenu(void)
 				{
 					case 0:
 						// Regler l'horloge
-						state = 5;
+						state_affmenu = 5;
 						clearHorloge();
 						lcd_clear();
 					break;
 
 					case 1:
 						// Régler alarme
-						state = 6;
+						state_affmenu = 6;
 						clearHorloge();
 						lcd_clear();
 					break;
 
 					case 2 :
 						// Donner à manger
-						state = 4;
+						state_affmenu = 4;
 						lcd_clear();
 					break;
 				}
@@ -110,7 +135,7 @@ static void menu_affMenu(void)
 			{
 				// retour à l'écran d'acceuil
 				lcd_clear();
-				state = 2;
+				state_affmenu = 2;
 			}
 
 		break;
@@ -122,7 +147,7 @@ static void menu_affMenu(void)
 			if (giveFood() != MENU_NO_ACTION)
 			{
 				lcd_clear();
-				state = 2;
+				state_affmenu = 2;
 			}
 		break;
 		
@@ -136,13 +161,13 @@ static void menu_affMenu(void)
 				clock_setClock(horloge);
 				// Retour en ecran d'acceuil
 				lcd_clear();
-				state = 2;
+				state_affmenu = 2;
 			}
 			else if (ret == MENU_CANCEL)
 			{
 				// Réglage annulé par l'utilisateur. Retour au menu
 				lcd_clear();
-				state = 3;
+				state_affmenu = 3;
 			}
 		break;
 		
@@ -154,7 +179,7 @@ static void menu_affMenu(void)
 			{
 				// dans tous les cas retourner au menu principale
 				lcd_clear();
-				state = 3;
+				state_affmenu = 3;
 			}
 		break;
 	}
@@ -205,11 +230,11 @@ char giveFood(void)
 // Méthode permettant de configurer un objet clock
 char setAclock(clock p_clock)
 {
-	static uint8_t state = 0;
+	//static uint8_t state = 0;
 	char retour = MENU_NO_ACTION;
 	static Select_t select;
 
-	switch (state)
+	switch (state_setAclock)
 	{
 		case 0:
 			clearHorloge();
@@ -224,7 +249,7 @@ char setAclock(clock p_clock)
 				horloge->secondes = p_clock.secondes;
 			}
 			select = afficheMenu(&CLOCK_HOUR_MENU, horloge->heures);
-			state = 1;
+			state_setAclock = 1;
 		break;
 
 		case 1:
@@ -234,19 +259,19 @@ char setAclock(clock p_clock)
 			{
 				horloge->heures = select.selection;
 				lcd_clear();
-				state = 2;
+				state_setAclock = 2;
 			}
 			else if (select.retour == SELECT_CANCEL)
 			{
 				// retour à l'écran d'acceuil
 				retour = MENU_CANCEL;
-				state = 0;
+				state_setAclock = 0;
 			}
 			break;
 			
 		case 2 :
 			select = afficheMenu(&CLOCK_MIN_MENU, horloge->minutes);
-			state = 3;
+			state_setAclock = 3;
 		break;
 
 		case 3 :
@@ -255,7 +280,7 @@ char setAclock(clock p_clock)
 			{
 				horloge->minutes = select.selection;
 				lcd_clear();
-				state = 0;
+				state_setAclock = 0;
 				retour = MENU_OK;
 				horloge->secondes = 0;
 			}
@@ -263,7 +288,7 @@ char setAclock(clock p_clock)
 			{
 				// retour à l'écran précédent
 				lcd_clear();
-				state = 1;
+				state_setAclock = 1;
 			}
 		break;
 	}
@@ -276,7 +301,7 @@ char setAclock(clock p_clock)
 char setAnAlarm(void)
 {
 	// gestion fsm
-	static uint8_t state = 0;
+	//static uint8_t state = 0;
 	static Select_t select;
 	char retour = MENU_NO_ACTION;
 	
@@ -285,7 +310,7 @@ char setAnAlarm(void)
 	pclk.heures = 0;
 	pclk.minutes = 0;
 	pclk.secondes = 62;
-	char alitem[5];
+	char alitem[8];
 	char txt[8];
 
 	// alarme
@@ -298,7 +323,7 @@ char setAnAlarm(void)
 
 	static char tmpret = MENU_NO_ACTION;
 
-	switch (state)
+	switch (state_setAnAlarm)
 	{
 		case 0:  // creation du menu
 			// init du nombre d'entrées dans le menu d'alarmes
@@ -310,13 +335,14 @@ char setAnAlarm(void)
 			while (pt_al != NULL)
 			{
 				alitem[0] = '\0';
-				sprintf(alitem, "%02d:%02d", pt_al->horaire.heures, pt_al->horaire.minutes);
+				// copier 7 char car sprintf met le \0 dans alitem car la ligne de SSALARM_MENU_ITEM est alloué pour 8 char
+				sprintf(alitem, "%02d:%02d  ", pt_al->horaire.heures, pt_al->horaire.minutes);
 				strncpy(SSALARM_MENU_ITEMS[nbAl], alitem, strlen(alitem));  // TODO : verifier si l'espace est bien alloué?
 				nbAl ++;
 				pt_al = pt_al->suivant;
 			}
 			SSALARM_MENU.nbItem = nbAl;
-			state = 1;
+			state_setAnAlarm = 1;
 		break;
 		
 		case 1:
@@ -335,21 +361,21 @@ char setAnAlarm(void)
 					else
 					{
 						lcd_clear();
-						state = 2;
+						state_setAnAlarm = 2;
 					}
 				}
 				else
 				{
 					// Modifier une alarme
 					lcd_clear();
-					state = 4;
+					state_setAnAlarm = 4;
 				}
 			}
 			else if (select.retour == SELECT_CANCEL)
 			{
 				// retour à l'écran d'acceuil
 				tmpret = MENU_CANCEL;
-				state = 99;
+				state_setAnAlarm = 99;
 			}
 		break;
 		
@@ -363,7 +389,7 @@ char setAnAlarm(void)
 				if (horloge->heures == 0 && horloge->minutes == 0)
 				{
 					lcd_popup("Ajout interdit");
-					state = 1;
+					state_setAnAlarm = 1;
 				}
 				else
 				{
@@ -379,7 +405,7 @@ char setAnAlarm(void)
 						#endif
 					}*/
 					// Retour en ecran d'acceuil
-					state = 99;
+					state_setAnAlarm = 99;
 					tmpret = MENU_OK;
 				}
 			}
@@ -387,7 +413,7 @@ char setAnAlarm(void)
 			{
 				// Réglage annulé par l'utilisateur. Retour au menu
 				lcd_clear();
-				state = 1;
+				state_setAnAlarm = 1;
 			}
 		break;
 		
@@ -401,7 +427,7 @@ char setAnAlarm(void)
 		if (pt_al_tmp == NULL)
 		{
 			// erreur de pointeur
-			state = 99;
+			state_setAnAlarm = 99;
 			tmpret = MENU_CANCEL;
 			lcd_popup("pt_al_tmp null");
 			#ifdef MDEBUG1
@@ -421,7 +447,7 @@ char setAnAlarm(void)
 		if (pt_al_tmp == NULL)
 		{
 			// erreur d'indice détectée
-			state = 99;
+			state_setAnAlarm = 99;
 			tmpret = MENU_CANCEL;
 			lcd_popup("pt_al null");
 			#ifdef MDEBUG1
@@ -434,7 +460,7 @@ char setAnAlarm(void)
 		pclk.secondes = 0;
 		ret = setAclock(pclk);
 
-		state = 5;
+		state_setAnAlarm = 5;
 		break;
 		
 		case 5:
@@ -457,21 +483,21 @@ char setAnAlarm(void)
 					pt_al_tmp->horaire.minutes = horloge->minutes;
 				}
 				// Retour en ecran d'acceuil
-				state = 99;
+				state_setAnAlarm = 99;
 				tmpret = MENU_OK;
 			}
 			else if (ret == MENU_CANCEL)
 			{
 				// Réglage annulé par l'utilisateur. Retour au menu
 				lcd_clear();
-				state = 1;
+				state_setAnAlarm = 1;
 			}
 		break;
 
 
 		case 99:
 			lcd_clear();
-			state = 0;
+			state_setAnAlarm = 0;
 			
 			// Désallouer le tableau
 			for (ret = 1; ret < 6; ret ++)

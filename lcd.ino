@@ -175,6 +175,7 @@ void lcd_setup(void)
   lcd.clear();
   lcd_isInit = True;
 
+  // Allocation dynamique pour le tableau d'alarmes
   SSALARM_MENU_ITEMS[0] = (char*)malloc(8);
   SSALARM_MENU_ITEMS[1] = (char*)malloc(6);
   SSALARM_MENU_ITEMS[2] = (char*)malloc(6);
@@ -187,11 +188,31 @@ void lcd_setup(void)
   strcpy(SSALARM_MENU_ITEMS[3], "");
   strcpy(SSALARM_MENU_ITEMS[4], "");
   strcpy(SSALARM_MENU_ITEMS[5], "");
+
+  // Init de la sortie d'allimentation de l'écran en sortie
+  mcubind_virtualport_init(MCUBIND_VIRTUALPORT_D_b4, 1);
+  mcubind_virtualport_write(MCUBIND_VIRTUALPORT_D_b4, 1);
 }
 
 Bool lcd_is_init(void)
 {
   return lcd_isInit;
+}
+
+void lcd_on(void)
+{
+  // Allumer le backlight
+  mcubind_virtualport_write(MCUBIND_VIRTUALPORT_D_b4, 1);
+  // Allumer le lcd
+  lcd.display();
+}
+
+void lcd_off(void)
+{
+  // Eteindre le backlight
+  mcubind_virtualport_write(MCUBIND_VIRTUALPORT_D_b4, 0);
+  // Eteindre le lcd
+  lcd.noDisplay();
 }
 
 void welcomeScreen(void)

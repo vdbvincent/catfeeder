@@ -117,4 +117,8 @@ void afficheReveil(void);
 void lcd_popup(const char * p_msg);
 void procPopup(void); // callback
 
+// Méthodes pour eteindre ou allumer l'écran
+void lcd_on(void);
+void lcd_off(void);
+
 #endif /* _LCD_H_ */

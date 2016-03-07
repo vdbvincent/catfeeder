@@ -33,4 +33,6 @@ Bool isEmpty_btfifo(void);
 char get_btfifo(void);
 Bool isFull_btfifo(void);
 
+uint8_t boutons_getBPCounter(void);
+
 #endif /* _BOUTONS_H_ */

@@ -25,11 +25,15 @@ int filtre = 0;
 // Port analogique à lire
 const uint8_t ci_ADC0 = MCUBIND_VIRTUALPORT_ADC00;
 const int ci_NBVALADC = 256;
+// variable globale de comptage d'appuies bouton pour associer manager a menu
+uint8_t mb_com_apbp = 0;
 
 void boutons_setup(int p_delayFiltre_ms)
 {
     // Init du filtrage anti-rebond
     filtre = p_delayFiltre_ms / FREQ_SEQ;
+    // init du nb d'appuies bp
+	mb_com_apbp = 0;
 }
 
 static void sendEvent(char event)
@@ -214,6 +218,14 @@ static uint16_t lireBouton(void)
 static void put_btfifo(char event)
 {
   f_boutons.enqueue(event);
+  if (mb_com_apbp < 255)
+  {
+  	mb_com_apbp++;
+  }
+  else
+  {
+  	mb_com_apbp = 0;
+  }
 }
 
 Bool isEmpty_btfifo(void)
@@ -229,4 +241,9 @@ char get_btfifo(void)
 Bool isFull_btfifo(void)
 {
   return (Bool)f_boutons.isFull();
+}
+
+uint8_t boutons_getBPCounter(void)
+{
+	return mb_com_apbp;
 }
