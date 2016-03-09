@@ -32,7 +32,7 @@ void moteur_every100ms(void)
 				print_log(DEBUG, "MT : commande captee\n");
 				#endif
 				isRunning = 1;
-				cmp = 4;	// valeur de 4 pour démarrer le calcul de la rampe
+				cmp = DUTYCYCLE;//4;	// valeur de 4 pour démarrer le calcul de la rampe
 				state = 1;
 			}
 	      break;
@@ -44,7 +44,7 @@ void moteur_every100ms(void)
 	      		cmp = 0;
 	      		state = 2;
 	      		pwm_out(DUTYCYCLE);
-	      		#ifdef MDEBUG
+	      		#ifdef MDEBUG1
 	      		print_log(DEBUG, "MT : rampe finie\n");
 	      		#endif
 	      	}

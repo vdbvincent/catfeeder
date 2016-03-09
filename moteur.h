@@ -16,7 +16,7 @@
 #define MT_GRAND   8
 #define MT_NONE    0
 
-#define DUTYCYCLE  38 // Rapport cyclique 38 = 15% de 255
+#define DUTYCYCLE  255//46//38 // Rapport cyclique 38 = 15% de 255
 
 void moteur_setup(void);
 void moteur_every100ms(void);

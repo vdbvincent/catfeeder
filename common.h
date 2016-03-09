@@ -11,7 +11,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define MDEBUG2
+#define MDEBUG1
 
 /* Définition des événements */
 #define NO_EVENT    -1
