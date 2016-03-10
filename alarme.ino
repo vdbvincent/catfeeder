@@ -12,8 +12,6 @@
 
 // Variables globales
 static Alarme_t * al_first = NULL;  // Toujours init la liste à NULL sinon peut etre considérée comme ayant au moins 1 element
-//static llist * ma_liste = NULL;  // TODO : utiliser la linked list
-
 static Minuteur_t * mi_pool[MAX_COUNT_MINUT];
 static uint8_t m_nbMin = 0;
 
@@ -21,6 +19,8 @@ void alarme_setup(void)
 {
 	int i;
 	al_first = NULL;
+	clock ctmp;
+	uint8_t indice = 0;
 	
 	// Init de la banque de minuteries à NULL
 	for (i = 0; i < MAX_COUNT_MINUT; i++)
@@ -28,9 +28,16 @@ void alarme_setup(void)
 		mi_pool[i] = NULL;
 	}
 
-	#ifdef MDEBUG
-	print_log(INFO, "alarme : fin init.\n");
-	#endif
+	// Charger les alarmes stockées en eeprom
+	indice = EEPROM_AL1;
+	ctmp = eeprom_lire_alarme(indice);
+	indice ++;
+	while((ctmp.heures != 0 && ctmp.minutes != 0) && indice <= EEPROM_AL5)
+	{
+		alarme_setAlarme(ctmp, &manager_procAlarme, indice);  // Toujours appeler la methode du manager
+		ctmp = eeprom_lire_alarme(indice);
+		indice ++;
+	}
 }
 
 void alarme_every100ms(void)
@@ -118,7 +125,7 @@ void alarme_every1mn(void)
 }
 
 // Méthode permettant de regler une alarme. Retourne 0 en cas d'echec
-char alarme_setAlarme(clock p_al, void (*callback)(void))
+char alarme_setAlarme(clock p_al, void (*callback)(void), uint8_t p_id)
 {
 	char ret = 0;
 	Alarme_t * al_tmp = NULL;
@@ -132,6 +139,14 @@ char alarme_setAlarme(clock p_al, void (*callback)(void))
 	new_al->horaire.secondes = p_al.secondes;
 	new_al->foncteur = callback;
 	new_al->suivant = NULL;
+	if (p_id > 0)
+	{
+		new_al->id = p_id;
+	}
+	else
+	{
+		new_al->id = 1;
+	}
 	
 	// Ajout de l'alarme
 	al_tmp = al_first;
@@ -147,7 +162,17 @@ char alarme_setAlarme(clock p_al, void (*callback)(void))
 			al_tmp = al_tmp->suivant;
 		}
 		// ici al_tmp pointe sur le dernier element
+		if (p_id == 0)
+		{
+			new_al->id = al_tmp->id + 1;
+		}
 		al_tmp->suivant = new_al;
+	}
+
+	if (p_id == 0)
+	{
+		// Enregistrement en eeprom
+		eeprom_ecrire_alarme(new_al->horaire, new_al->id);
 	}
 
 	ret = 1;

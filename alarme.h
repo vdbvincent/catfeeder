@@ -11,6 +11,8 @@
 #include "common.h"
 #include "clock.h"
 #include "logs.h"
+#include "e2prom.h"
+#include "manager.h"
 
 // Nombre max d'alarme configurable
 #define MAX_COUNT_ALARM 5
@@ -23,6 +25,7 @@ struct Alarme_t
 {
 	clock horaire;           // structure contenant l'heure de déclenchement
 	void (*foncteur)(void);  // Callback à appeler à l'échéance
+	uint8_t id;				 // Numero d'identification de l'alarme
 	struct Alarme_t * suivant;
 };
 
@@ -42,7 +45,7 @@ void alarme_every100ms(void);
 void alarme_every1mn(void);
 
 // Méthode permettant de régler une alarme. Retourne 0 en cas d'échec
-char alarme_setAlarme(clock p_al, void (*callback)(void));
+char alarme_setAlarme(clock p_al, void (*callback)(void), uint8_t p_id);
 // Méthode permettant de régler une minuterie. Retourne 0 en cas d'échec
 // delai en secondes
 // callback

@@ -14,6 +14,7 @@
 #include "moteur.h"
 #include "menu.h"
 #include "manager.h"
+#include "e2prom.h"
 
 // Variables globales
 static int c10 = 0;
@@ -22,6 +23,9 @@ static int tmp = 0;
 
 void setup()
 {
+	//clock tmp;
+	//char txt[8];
+	
 	// OS
 	init_mcubind();
 	print_log(INFO, "Initialisation\n");
@@ -31,12 +35,27 @@ void setup()
 	moteur_setup();
 	menu_setup(2); // temps du welcom screen de 2s
 	manager_setup();
+
+
+	//-------------------
+	// A faire seulement une fois au premier demarrage
+	//-------------------
+	// tmp.heures = 0;
+	// tmp.minutes =  0;
+	// eeprom_ecrire_alarme(tmp, EEPROM_AL1);
+	// eeprom_ecrire_alarme(tmp, EEPROM_AL2);
+	// eeprom_ecrire_alarme(tmp, EEPROM_AL3);
+	// eeprom_ecrire_alarme(tmp, EEPROM_AL4);
+	// eeprom_ecrire_alarme(tmp, EEPROM_AL5);
+	
+	// tmp = eeprom_lire_alarme(EEPROM_AL5);
+	// sprintf(txt, "%02d:%02d", tmp.heures, tmp.minutes);
+	// print_log(DEBUG, txt);
+	//-------------------
 }
 
 void loop()
 {
-	static char state = 99;
-	
 	logs_idle();
 	menu_idle();
 
