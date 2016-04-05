@@ -25,8 +25,8 @@ struct Alarme_t
 {
 	clock horaire;           // structure contenant l'heure de déclenchement
 	void (*foncteur)(void);  // Callback à appeler à l'échéance
-	uint8_t id;				 // Numero d'identification de l'alarme
-	struct Alarme_t * suivant;
+	//uint8_t id;				 // Numero d'identification de l'alarme
+	//struct Alarme_t * suivant;
 };
 
 // Définition du type linked list
@@ -45,17 +45,20 @@ void alarme_every100ms(void);
 void alarme_every1mn(void);
 
 // Méthode permettant de régler une alarme. Retourne 0 en cas d'échec
-char alarme_setAlarme(clock p_al, void (*callback)(void), uint8_t p_id);
+char alarme_setAlarme(clock p_al, void (*callback)(void), uint8_t p_toMemory);
 // Méthode permettant de régler une minuterie. Retourne 0 en cas d'échec
 // delai en secondes
 // callback
 char alarme_setMinuteur(uint16_t p_delai, void (*callback)(void));
 
 // Fonction permettant de retourner un pointeur sur la premiere alarme de la liste chainée
-Alarme_t * alarme_getAlarme(void);
-
+//Alarme_t * alarme_getAlarme(void);
+clock alarme_getAlarme(uint8_t indice);
 
 // Fonction permettant de supprimer une alarme
 Bool alarme_delAlarme(uint8_t p_selection);
+
+// Fonction permettant de modifier une alarme en fonction de son indice
+void alarme_modify(clock p_clock, uint8_t p_indice);
 
 #endif /* _ALARME_H_ */

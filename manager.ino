@@ -156,7 +156,7 @@ void manager_every100ms(void)
 
 void manager_setAlarme(clock p_horloge)
 {
-	alarme_setAlarme(p_horloge, &manager_procAlarme, 0);
+	alarme_setAlarme(p_horloge, &manager_procAlarme, 1);
 }
 
 void manager_procAlarme(void)

@@ -314,9 +314,11 @@ char setAnAlarm(void)
 	char txt[8];
 
 	// alarme
-	static Alarme_t * pt_al = NULL;
+	//static Alarme_t * pt_al = NULL;
 	static uint8_t nbAl = 0;
-	static Alarme_t * pt_al_tmp = NULL;
+	//static Alarme_t * pt_al_tmp = NULL;
+	static uint8_t tabselect[MAX_COUNT_ALARM];
+	uint8_t indice = 0;
 	
 	char ret = 0; // variable temporaire
 	uint8_t i = 0; // indice de boucle
@@ -331,7 +333,7 @@ char setAnAlarm(void)
 			nbAl ++;  // La premiere entrée est le texte "ajouter"
 
 			// Ajout des alarmes en mode texte
-			pt_al = alarme_getAlarme();  // fonction retournant un pointeur sur la premiere alarme config. (liste chainée d'alarmes)
+			/*pt_al = alarme_getAlarme();  // fonction retournant un pointeur sur la premiere alarme config. (liste chainée d'alarmes)
 			while (pt_al != NULL)
 			{
 				alitem[0] = '\0';
@@ -340,8 +342,25 @@ char setAnAlarm(void)
 				strncpy(SSALARM_MENU_ITEMS[nbAl], alitem, strlen(alitem));  // TODO : verifier si l'espace est bien alloué?
 				nbAl ++;
 				pt_al = pt_al->suivant;
+			}*/
+
+			while (i < MAX_COUNT_ALARM)
+			{
+			    pclk = alarme_getAlarme(i);
+			    if (pclk.heures != 0 && pclk.minutes != 0)
+			    {
+				    alitem[0] = '\0';
+					// copier 7 char car sprintf met le \0 dans alitem car la ligne de SSALARM_MENU_ITEM est alloué pour 8 char
+					sprintf(alitem, "%02d:%02d  ", pclk.heures, pclk.minutes);
+					strncpy(SSALARM_MENU_ITEMS[nbAl], alitem, strlen(alitem));  // TODO : verifier si l'espace est bien alloué?
+					nbAl ++;
+					// Retenir l'indice de l'alarme pour la selection
+					tabselect[indice] = i;
+					indice ++;
+			    }
 			}
 			SSALARM_MENU.nbItem = nbAl;
+			indice = 0;
 			state_setAnAlarm = 1;
 		break;
 		
@@ -422,7 +441,7 @@ char setAnAlarm(void)
 		
 		// on a le numéro de selection, il faut récupérer la bonne alarme.
 		// faut parcourir la liste chainée en comptant le nombre d'objets
-		pt_al_tmp = alarme_getAlarme();
+		/*pt_al_tmp = alarme_getAlarme();
 
 		if (pt_al_tmp == NULL)
 		{
@@ -434,11 +453,12 @@ char setAnAlarm(void)
 			print_log(DEBUG, "pt_al_tmp null\n");
 			#endif
 			break;
-		}
+		}*/
 
-		ret = select.selection;
-		ret --; // supprimer l'indice du "ajouter"
-		while (ret > 0 && pt_al_tmp->suivant != NULL)
+
+		pclk = alarme_getAlarme(tabselect[select.selection-1]);  // supprimer l'indice du "ajouter"
+
+		/*while (ret > 0 && pt_al_tmp->suivant != NULL)
 		{
 			pt_al_tmp = pt_al_tmp->suivant;
 			ret --;
@@ -454,9 +474,9 @@ char setAnAlarm(void)
 			print_log(DEBUG, "ptr null\n");
 			#endif
 			break;
-		}
-		pclk.heures = pt_al_tmp->horaire.heures;
-		pclk.minutes = pt_al_tmp->horaire.minutes;
+		}*/
+		//pclk.heures = pt_al_tmp->horaire.heures;
+		//pclk.minutes = pt_al_tmp->horaire.minutes;
 		pclk.secondes = 0;
 		ret = setAclock(pclk);
 
@@ -471,13 +491,14 @@ char setAnAlarm(void)
 				if (horloge->heures == 0 &&  horloge->minutes == 0)
 				{
 					// Supprimer l'alarme
-					alarme_delAlarme(select.selection);
+					alarme_delAlarme(select.selection-1);
 				}
 				else
 				{				
 					// modifier en live l'alarme
-					pt_al_tmp->horaire.heures = horloge->heures;
-					pt_al_tmp->horaire.minutes = horloge->minutes;
+					//pt_al_tmp->horaire.heures = horloge->heures;
+					//pt_al_tmp->horaire.minutes = horloge->minutes;
+					alarme_modify(*horloge, select.selection-1);
 				}
 				// Retour en ecran d'acceuil
 				state_setAnAlarm = 99;
@@ -504,7 +525,7 @@ char setAnAlarm(void)
 			}
 
 			nbAl = 0;
-			pt_al = NULL;
+			//pt_al = NULL;
 
 			retour = tmpret;
 		break;

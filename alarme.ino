@@ -11,14 +11,15 @@
 #define delais (10*delais_sec)
 
 // Variables globales
-static Alarme_t * al_first = NULL;  // Toujours init la liste à NULL sinon peut etre considérée comme ayant au moins 1 element
+//static Alarme_t * al_first = NULL;  // Toujours init la liste à NULL sinon peut etre considérée comme ayant au moins 1 element
+static Alarme_t al_pool[MAX_COUNT_ALARM];
 static Minuteur_t * mi_pool[MAX_COUNT_MINUT];
 static uint8_t m_nbMin = 0;
 
 void alarme_setup(void)
 {
 	int i;
-	al_first = NULL;
+	//al_first = NULL;
 	clock ctmp;
 	uint8_t indice = 0;
 	
@@ -32,11 +33,14 @@ void alarme_setup(void)
 	indice = EEPROM_AL1;
 	ctmp = eeprom_lire_alarme(indice);
 	indice ++;
-	while((ctmp.heures != 0 && ctmp.minutes != 0) && indice <= EEPROM_AL5)
+	while(indice <= EEPROM_AL5)
 	{
-		alarme_setAlarme(ctmp, &manager_procAlarme, indice);  // Toujours appeler la methode du manager
-		ctmp = eeprom_lire_alarme(indice);
+		if (ctmp.heures != 0 && ctmp.minutes != 0)
+		{
+			alarme_setAlarme(ctmp, &manager_procAlarme, 0);  // Toujours appeler la methode du manager
+		}
 		indice ++;
+		ctmp = eeprom_lire_alarme(indice);
 	}
 }
 
@@ -95,10 +99,10 @@ void alarme_every100ms(void)
 void alarme_every1mn(void)
 {
 	// vérifier toutes les minutes si une alarme déclenche
-	uint8_t i;
+	uint8_t i = 0;
 	clock heure_courante;
-	Alarme_t * al_tmp = NULL;
-	al_tmp = al_first;
+	//Alarme_t * al_tmp = NULL;
+	//al_tmp = al_first;
 
 	heure_courante = clock_getClock();
 
@@ -106,7 +110,28 @@ void alarme_every1mn(void)
 	print_log(DEBUG, "tic\n");
 	#endif
 
-	while (al_tmp != NULL)
+	while (i < MAX_COUNT_ALARM)
+	{
+		if (al_pool[i].horaire.heures != 0 && al_pool[i].horaire.minutes != 0)
+		{
+			if (al_pool[i].horaire.heures == heure_courante.heures
+			 && al_pool[i].horaire.minutes == heure_courante.minutes)
+			{
+				if (heure_courante.secondes > (al_pool[i].horaire.secondes - 5)
+				 && heure_courante.secondes < (al_pool[i].horaire.secondes + 5))
+				{
+					#ifdef MDEBUG
+					print_log(DEBUG, "alarme : declenchement d'une alarme\n");
+					#endif
+					(*al_pool[i].foncteur)();
+				}
+			}
+		}
+		i ++;
+	}
+
+
+	/*while (al_tmp != NULL)
 	{
 		if (al_tmp->horaire.heures == heure_courante.heures
 		 && al_tmp->horaire.minutes == heure_courante.minutes)
@@ -121,14 +146,43 @@ void alarme_every1mn(void)
 			}
 		}
 		al_tmp = al_tmp->suivant;
-	}
+	}*/
 }
 
 // Méthode permettant de regler une alarme. Retourne 0 en cas d'echec
-char alarme_setAlarme(clock p_al, void (*callback)(void), uint8_t p_id)
+char alarme_setAlarme(clock p_al, void (*callback)(void), uint8_t p_toMemory)
 {
 	char ret = 0;
-	Alarme_t * al_tmp = NULL;
+	uint8_t indice = 0;
+
+	// Recherche de la premiere position vide
+	while ((al_pool[indice].horaire.heures != 0 && al_pool[indice].horaire.minutes != 0) && indice < MAX_COUNT_ALARM)
+	{
+		indice ++;
+	}
+
+	if (indice < MAX_COUNT_ALARM)
+	{
+		// ici indice pointe sur le premier element vide du tableau al_pool
+		// Ajout de l'alarme
+		al_pool[indice].horaire = p_al;
+		
+		if (p_toMemory > 0)
+		{
+			// Enregistrement en eeprom
+			eeprom_ecrire_alarme(al_pool[indice].horaire, indice);
+		}
+
+		#ifdef MDEBUG
+		print_log(DEBUG, "alarme : alarme enclenchee\n");
+		#endif
+
+		ret = 1;
+	}
+
+
+
+	/*Alarme_t * al_tmp = NULL;
 	
 	// Création de la nouvelle alarme
 	Alarme_t * new_al = NULL;
@@ -179,6 +233,8 @@ char alarme_setAlarme(clock p_al, void (*callback)(void), uint8_t p_id)
 	#ifdef MDEBUG
 	print_log(DEBUG, "alarme : alarme enclenchee\n");
 	#endif
+	*/
+
 	return ret;
 }
 
@@ -220,9 +276,11 @@ char alarme_setMinuteur(uint16_t p_delai, void (*callback)(void))
 	return ret;
 }
 
-Alarme_t * alarme_getAlarme(void)
+//Alarme_t * alarme_getAlarme(void)
+clock alarme_getAlarme(uint8_t indice)
 {
-	return al_first;
+	//return al_first;
+	return al_pool[indice].horaire;
 }
 
 
@@ -231,6 +289,7 @@ Alarme_t * alarme_getAlarme(void)
 Bool alarme_delAlarme(uint8_t p_selection)
 {
 	Bool b_return = True;
+	#if 0
 	uint8_t indice = 1;
 	Alarme_t * al_tmp = al_first;
 	Alarme_t * al_tmp_old = al_tmp;
@@ -293,5 +352,16 @@ Bool alarme_delAlarme(uint8_t p_selection)
 			}*/
 		}
 	}
+	#endif
 	return b_return;
+}
+
+void alarme_modify(clock p_clock, uint8_t p_indice)
+{
+	if (p_indice < MAX_COUNT_ALARM)
+	{
+		al_pool[p_indice].horaire.heures = p_clock.heures;
+		al_pool[p_indice].horaire.minutes = p_clock.minutes;
+		al_pool[p_indice].horaire.secondes = p_clock.secondes;
+	}
 }
