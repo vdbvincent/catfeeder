@@ -201,6 +201,7 @@ Bool lcd_is_init(void)
 
 void lcd_on(void)
 {
+  lcd.clear();
   // Allumer le backlight
   mcubind_virtualport_write(MCUBIND_VIRTUALPORT_D_b4, 1);
   // Allumer le lcd

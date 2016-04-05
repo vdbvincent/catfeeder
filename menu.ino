@@ -471,10 +471,7 @@ char setAnAlarm(void)
 				if (horloge->heures == 0 &&  horloge->minutes == 0)
 				{
 					// Supprimer l'alarme
-					alarme_delAlarme(select.selection - 1); // -1 car l'indice 0 est le txt "Ajouter"
-					// Desallouer l'espace pour afficher l'alarme
-					/*if (SSALARM_MENU_ITEMS[nbAl] != NULL)
-						free(SSALARM_MENU_ITEMS[nbAl]);*/
+					alarme_delAlarme(select.selection);
 				}
 				else
 				{				

@@ -231,11 +231,11 @@ Alarme_t * alarme_getAlarme(void)
 Bool alarme_delAlarme(uint8_t p_selection)
 {
 	Bool b_return = True;
-	uint8_t indice = 0;
+	uint8_t indice = 1;
 	Alarme_t * al_tmp = al_first;
 	Alarme_t * al_tmp_old = al_tmp;
 	
-	if (al_tmp == NULL)
+	if (al_tmp == NULL || p_selection == 0)
 	{
 		// La liste est vide, rien a supprimer
 		b_return = False;
@@ -243,7 +243,7 @@ Bool alarme_delAlarme(uint8_t p_selection)
 
 	if (b_return == True)
 	{
-		if (p_selection == 0)
+		if (0)//selection == 0)
 		{
 			// Dans le cas particulier de supprimer le premier element
 			al_first = al_first->suivant;
