@@ -11,7 +11,6 @@
 #define delais (10*delais_sec)
 
 // Variables globales
-//static Alarme_t * al_first = NULL;  // Toujours init la liste à NULL sinon peut etre considérée comme ayant au moins 1 element
 static Alarme_t al_pool[MAX_COUNT_ALARM];
 static Minuteur_t * mi_pool[MAX_COUNT_MINUT];
 static uint8_t m_nbMin = 0;
@@ -19,7 +18,6 @@ static uint8_t m_nbMin = 0;
 void alarme_setup(void)
 {
 	int i;
-	//al_first = NULL;
 	clock ctmp;
 	uint8_t indice = 0;
 	
@@ -37,10 +35,13 @@ void alarme_setup(void)
 	{
 		if (ctmp.heures != 0 && ctmp.minutes != 0)
 		{
+			#ifdef MDEBUG4
+			print_log(DEBUG, "al : charge\n");
+			#endif
 			alarme_setAlarme(ctmp, &manager_procAlarme, 0);  // Toujours appeler la methode du manager
 		}
-		indice ++;
 		ctmp = eeprom_lire_alarme(indice);
+		indice ++;
 	}
 }
 
@@ -52,8 +53,6 @@ void alarme_every100ms(void)
 	// Gestion de l'alarme
 	// 1minute = 60 secondes = 60000ms = 600.100ms
 	// 5secondes = 5000ms = 50 * 100ms
-	
-	// BUG BUG BUG Appeler avec un static tous les 1min
 	
 	if (cmp_100ms == 0)
 	{
@@ -101,8 +100,6 @@ void alarme_every1mn(void)
 	// vérifier toutes les minutes si une alarme déclenche
 	uint8_t i = 0;
 	clock heure_courante;
-	//Alarme_t * al_tmp = NULL;
-	//al_tmp = al_first;
 
 	heure_courante = clock_getClock();
 
@@ -129,24 +126,6 @@ void alarme_every1mn(void)
 		}
 		i ++;
 	}
-
-
-	/*while (al_tmp != NULL)
-	{
-		if (al_tmp->horaire.heures == heure_courante.heures
-		 && al_tmp->horaire.minutes == heure_courante.minutes)
-		{
-			if (heure_courante.secondes > (al_tmp->horaire.secondes -5) 
-			 && heure_courante.secondes < (al_tmp->horaire.secondes +5))
-			{
-				#ifdef MDEBUG
-				print_log(DEBUG, "alarme : declenchement d'une alarme\n");
-				#endif
-				(*al_tmp->foncteur)();
-			}
-		}
-		al_tmp = al_tmp->suivant;
-	}*/
 }
 
 // Méthode permettant de regler une alarme. Retourne 0 en cas d'echec
@@ -171,6 +150,9 @@ char alarme_setAlarme(clock p_al, void (*callback)(void), uint8_t p_toMemory)
 		{
 			// Enregistrement en eeprom
 			eeprom_ecrire_alarme(al_pool[indice].horaire, indice);
+			#ifdef MDEBUG4
+			print_log(DEBUG, "al : eeprom\n");
+			#endif
 		}
 
 		#ifdef MDEBUG
@@ -179,61 +161,6 @@ char alarme_setAlarme(clock p_al, void (*callback)(void), uint8_t p_toMemory)
 
 		ret = 1;
 	}
-
-
-
-	/*Alarme_t * al_tmp = NULL;
-	
-	// Création de la nouvelle alarme
-	Alarme_t * new_al = NULL;
-	new_al = new Alarme_t();
-	
-	new_al->horaire.heures = p_al.heures;
-	new_al->horaire.minutes = p_al.minutes;
-	new_al->horaire.secondes = p_al.secondes;
-	new_al->foncteur = callback;
-	new_al->suivant = NULL;
-	if (p_id > 0)
-	{
-		new_al->id = p_id;
-	}
-	else
-	{
-		new_al->id = 1;
-	}
-	
-	// Ajout de l'alarme
-	al_tmp = al_first;
-	if (al_tmp == NULL)
-	{
-		// Ajout de la premiere alarme
-		al_first = new_al;
-	}
-	else
-	{
-		while(al_tmp->suivant != NULL)
-		{
-			al_tmp = al_tmp->suivant;
-		}
-		// ici al_tmp pointe sur le dernier element
-		if (p_id == 0)
-		{
-			new_al->id = al_tmp->id + 1;
-		}
-		al_tmp->suivant = new_al;
-	}
-
-	if (p_id == 0)
-	{
-		// Enregistrement en eeprom
-		eeprom_ecrire_alarme(new_al->horaire, new_al->id);
-	}
-
-	ret = 1;
-	#ifdef MDEBUG
-	print_log(DEBUG, "alarme : alarme enclenchee\n");
-	#endif
-	*/
 
 	return ret;
 }
@@ -279,7 +206,6 @@ char alarme_setMinuteur(uint16_t p_delai, void (*callback)(void))
 //Alarme_t * alarme_getAlarme(void)
 clock alarme_getAlarme(uint8_t indice)
 {
-	//return al_first;
 	return al_pool[indice].horaire;
 }
 
@@ -290,14 +216,14 @@ Bool alarme_delAlarme(uint8_t p_selection)
 {
 	Bool b_return = True;
 
-	if (p_selection < ALARME_MAX_COUNT)
+	if (p_selection < MAX_COUNT_ALARM)
 	{
 		if (al_pool[p_selection].horaire.heures != 0 && al_pool[p_selection].horaire.minutes != 0)
 		{
 			// Suppression de l'alarme
 			al_pool[p_selection].horaire.heures = 0;
-			al_pool[p_selection].horaires.minutes = 0;
-			al_pool[p_selection].horaires.secondes = 0;
+			al_pool[p_selection].horaire.minutes = 0;
+			al_pool[p_selection].horaire.secondes = 0;
 			// Propager la suppression dans l'eeprom
 			eeprom_ecrire_alarme(al_pool[p_selection].horaire, p_selection);
 		}
@@ -310,71 +236,7 @@ Bool alarme_delAlarme(uint8_t p_selection)
 	{
 		b_return = False;
 	}
-	
-	#if 0
-	uint8_t indice = 1;
-	Alarme_t * al_tmp = al_first;
-	Alarme_t * al_tmp_old = al_tmp;
-	
-	if (al_tmp == NULL || p_selection == 0)
-	{
-		// La liste est vide, rien a supprimer
-		b_return = False;
-	}
 
-	if (b_return == True)
-	{
-		if (0)//selection == 0)
-		{
-			// Dans le cas particulier de supprimer le premier element
-			al_first = al_first->suivant;
-			delete al_tmp;
-			al_tmp = NULL;
-		}
-		else
-		{
-			// Sinon chercher le bon élément
-			while (al_tmp->suivant != NULL && indice < p_selection)
-			{
-				al_tmp_old = al_tmp;
-				al_tmp = al_tmp->suivant;
-				indice ++;
-			}
-			if (indice != p_selection) // on a pas trouvé le bon indice
-			{
-				b_return = False;
-			}
-			else
-			{
-				// ici on a trouvé notre alarme pointée par al_tmp
-				// Au pire on est sur le dernier élément non null car la cond de sortie est elem->suivant
-				// Au mieux on est sur le premier non null;
-				// al_tmp_old pointe sur l'élément -1 au mieux, au pire, si c'est le premier, il pointe sur le premier element comme al_tmp
-				al_tmp_old = al_tmp->suivant;
-				delete al_tmp;
-				al_tmp = NULL;
-			}
-			/*while (al_tmp != NULL && indice < p_selection)
-			{
-				al_tmp_old = al_tmp;  // Se souvenir de l'élément précédent
-				al_tmp = al_tmp->suivant;
-				indice ++;
-			}
-			if (al_tmp == NULL)
-			{
-				b_return = False;
-			}
-			
-			if (b_return == True)
-			{
-				// ici on a trouvé notre alarme pointée par al_tmp
-				al_tmp_old->suivant = al_tmp->suivant;  // Shunter al_tmp
-				delete al_tmp;                          // Supprimer al_tmp
-				al_tmp = NULL;
-			}*/
-		}
-	}
-	#endif
 	return b_return;
 }
 

@@ -22,7 +22,6 @@ typedef struct
 {
   char * titre;   // Titre du menu
   char ** items;  // Tableau de choix du menu
-  //char items[][16];  // Tableau de choix du menu
   uint8_t nbItem; // Nombre de choix possible
 } Menu_t;
 

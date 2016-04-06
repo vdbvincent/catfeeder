@@ -25,12 +25,7 @@ struct Alarme_t
 {
 	clock horaire;           // structure contenant l'heure de déclenchement
 	void (*foncteur)(void);  // Callback à appeler à l'échéance
-	//uint8_t id;				 // Numero d'identification de l'alarme
-	//struct Alarme_t * suivant;
 };
-
-// Définition du type linked list
-//typedef Alarme_t * llist;
 
 // Structure d'un minuteur
 typedef struct
@@ -52,7 +47,6 @@ char alarme_setAlarme(clock p_al, void (*callback)(void), uint8_t p_toMemory);
 char alarme_setMinuteur(uint16_t p_delai, void (*callback)(void));
 
 // Fonction permettant de retourner un pointeur sur la premiere alarme de la liste chainée
-//Alarme_t * alarme_getAlarme(void);
 clock alarme_getAlarme(uint8_t indice);
 
 // Fonction permettant de supprimer une alarme

@@ -7,11 +7,6 @@
  */
 #include "EEPROM.h"
 #include "e2prom.h"
-/*
-	TODO : incrementer l'id alarme à chaque ajout dans alarme_setAlarme(). Commencer à 1
-	       dans delete_alarme() s'aider de l'indice pour retrouver l'al en fonction de la selection
-	       envoyer l'indice a eeprom pour suppression
-*/
 
 void eeprom_ecrire_alarme(clock p_cl, uint8_t p_id)
 {
@@ -43,8 +38,7 @@ void eeprom_ecrire_alarme(clock p_cl, uint8_t p_id)
 	{
 		// ecriture de l'heure
 		EEPROM.write(addr, p_cl.heures);
-		addr ++;
-		EEPROM.write(addr, p_cl.minutes);
+		EEPROM.write(addr+1, p_cl.minutes);
 	}
 }
 
@@ -53,6 +47,9 @@ clock eeprom_lire_alarme(uint8_t p_id)
 	clock cret;
 	uint8_t addr = 0;
 	uint8_t bok = 0;
+
+	cret.heures = 0;
+	cret.minutes = 0;
 
 	switch (p_id)
 	{
@@ -78,8 +75,7 @@ clock eeprom_lire_alarme(uint8_t p_id)
 	if (bok == 0)
 	{
 		cret.heures = EEPROM.read(addr);
-		addr ++;
-		cret.minutes = EEPROM.read(addr);
+		cret.minutes = EEPROM.read(addr+1);
 	}
 
 	return cret;

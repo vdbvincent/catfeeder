@@ -32,8 +32,7 @@ void procGtmp(void);
 
 void clearCmdButtons(void);
 
-// Méthode permettant de controler la distribution de nourriture. Retourne 0 lorsque c'est fini. 1 sinon.
-//char feedTheCat(void);
+
 // Méthode permettant de configurer un objet clock
 // Si aucun param, le structure globale horloge est utilisé et valorisé par la clock
 // Si une clock est passée en param, elle servira

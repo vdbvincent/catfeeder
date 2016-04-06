@@ -18,7 +18,6 @@ static Bool lcd_isInit = False;
 
 
 // Déclaration du menu principal
-
 char * SSALARM_MENU_ITEMS[8];
 
 Menu_t SSALARM_MENU = 
@@ -227,7 +226,7 @@ void welcomeScreen(void)
 
 void lcd_clear(void)
 {
-  if (lcd_isInit)
+  if (lcd_isInit && (m_bPopup == False))
   {
     lcd.clear();
   }
@@ -265,27 +264,6 @@ void afficheHeure(uint8_t forced)
     oldheure = heure;
   }
 }
-/*
-void afficheTempsRestant(uint8_t forced)
-{
-  static char * oldtxt;
-  char * txt;
-
-  // on  affiche le temps seulement si une alarme est enclenchée
-  if (alarme_getAlarme())
-  {
-    if (forced == 1)
-    {
-       txt = alarme_getNextAlarmeStr();
-       if (strcmp(txt, oldtxt) != 0)
-       {
-          lcd.setCursor(0,1); // Curseur en haut à gauche
-          lcd.print(txt);
-          strcpy(oldtxt, txt);
-       }
-    }
-  }
-}*/
 
 void afficheBtMenu(uint8_t forced)
 {

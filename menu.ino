@@ -19,7 +19,6 @@ void menu_setup(unsigned int p_tempoDem)
 {
 	// Configuration de la tempo de l'écran de démarrage
  	ui_tempoDem = p_tempoDem;
- 	//horloge = new clock();
 	horloge = (clock*)malloc(sizeof(clock));
 }
 
@@ -42,7 +41,6 @@ void menu_off(void)
 	lcd_off();
 	clearHorloge();
 	clearCmdButtons();
-	// TODO : reset le max de truc
 	// reset les variables state car peut s'eteindre en cours de menu
 	state_affmenu = 2;
 	state_setAclock = 0;
@@ -52,7 +50,6 @@ void menu_off(void)
 
 static void menu_affMenu(void)
 {
-	//static uint8_t state = 0;
 	static Select_t select;
 	char ret;  // Variable temporaire
 	static clock clocktmp;
@@ -301,7 +298,6 @@ char setAclock(clock p_clock)
 char setAnAlarm(void)
 {
 	// gestion fsm
-	//static uint8_t state = 0;
 	static Select_t select;
 	char retour = MENU_NO_ACTION;
 	
@@ -314,9 +310,7 @@ char setAnAlarm(void)
 	char txt[8];
 
 	// alarme
-	//static Alarme_t * pt_al = NULL;
 	static uint8_t nbAl = 0;
-	//static Alarme_t * pt_al_tmp = NULL;
 	static uint8_t tabselect[MAX_COUNT_ALARM];
 	uint8_t indice = 0;
 	
@@ -331,18 +325,6 @@ char setAnAlarm(void)
 			// init du nombre d'entrées dans le menu d'alarmes
 			nbAl = 0;
 			nbAl ++;  // La premiere entrée est le texte "ajouter"
-
-			// Ajout des alarmes en mode texte
-			/*pt_al = alarme_getAlarme();  // fonction retournant un pointeur sur la premiere alarme config. (liste chainée d'alarmes)
-			while (pt_al != NULL)
-			{
-				alitem[0] = '\0';
-				// copier 7 char car sprintf met le \0 dans alitem car la ligne de SSALARM_MENU_ITEM est alloué pour 8 char
-				sprintf(alitem, "%02d:%02d  ", pt_al->horaire.heures, pt_al->horaire.minutes);
-				strncpy(SSALARM_MENU_ITEMS[nbAl], alitem, strlen(alitem));  // TODO : verifier si l'espace est bien alloué?
-				nbAl ++;
-				pt_al = pt_al->suivant;
-			}*/
 
 			while (i < MAX_COUNT_ALARM)
 			{
@@ -401,7 +383,6 @@ char setAnAlarm(void)
 		
 		case 2:
 			// Ajouter une nouvelle alarme
-			//lcd_clear();
 			pclk.secondes = 62;
 			ret = setAclock(pclk);
 			if (ret == MENU_OK)
@@ -415,15 +396,8 @@ char setAnAlarm(void)
 				{
 					// Ajout de l'alarme
 					manager_setAlarme(*horloge);
-					// Allocation de la chaine pour l'affichage en état O
-					/*SSALARM_MENU_ITEMS[nbAl] = (char*)malloc(6);
-					if (SSALARM_MENU_ITEMS[nbAl] == NULL)
-					{
-						lcd_popup("malloc null");
-						#ifdef MDEBUG1
-						print_log(DEBUG, "malloc null\n");
-						#endif
-					}*/
+					lcd_popup("Alarme ajoutee");
+
 					// Retour en ecran d'acceuil
 					state_setAnAlarm = 99;
 					tmpret = MENU_OK;
@@ -439,49 +413,14 @@ char setAnAlarm(void)
 		
 		
 		case 4: // Selection d'une alarme
-		
-		// on a le numéro de selection, il faut récupérer la bonne alarme.
-		// faut parcourir la liste chainée en comptant le nombre d'objets
-		/*pt_al_tmp = alarme_getAlarme();
+			{
+				pclk = alarme_getAlarme(tabselect[select.selection-1]);  // supprimer l'indice du "ajouter"
+				
+				pclk.secondes = 0;
+				ret = setAclock(pclk);
 
-		if (pt_al_tmp == NULL)
-		{
-			// erreur de pointeur
-			state_setAnAlarm = 99;
-			tmpret = MENU_CANCEL;
-			lcd_popup("pt_al_tmp null");
-			#ifdef MDEBUG1
-			print_log(DEBUG, "pt_al_tmp null\n");
-			#endif
-			break;
-		}*/
-
-
-		pclk = alarme_getAlarme(tabselect[select.selection-1]);  // supprimer l'indice du "ajouter"
-
-		/*while (ret > 0 && pt_al_tmp->suivant != NULL)
-		{
-			pt_al_tmp = pt_al_tmp->suivant;
-			ret --;
-		}
-		
-		if (pt_al_tmp == NULL)
-		{
-			// erreur d'indice détectée
-			state_setAnAlarm = 99;
-			tmpret = MENU_CANCEL;
-			lcd_popup("pt_al null");
-			#ifdef MDEBUG1
-			print_log(DEBUG, "ptr null\n");
-			#endif
-			break;
-		}*/
-		//pclk.heures = pt_al_tmp->horaire.heures;
-		//pclk.minutes = pt_al_tmp->horaire.minutes;
-		pclk.secondes = 0;
-		ret = setAclock(pclk);
-
-		state_setAnAlarm = 5;
+				state_setAnAlarm = 5;
+			}
 		break;
 		
 		case 5:
@@ -493,13 +432,12 @@ char setAnAlarm(void)
 				{
 					// Supprimer l'alarme
 					alarme_delAlarme(select.selection-1);
+					lcd_popup("Alarme supprimee");
 				}
 				else
-				{				
-					// modifier en live l'alarme
-					//pt_al_tmp->horaire.heures = horloge->heures;
-					//pt_al_tmp->horaire.minutes = horloge->minutes;
+				{
 					alarme_modify(*horloge, select.selection-1);
+					lcd_popup("Alarme modifiee");
 				}
 				// Retour en ecran d'acceuil
 				state_setAnAlarm = 99;
@@ -524,10 +462,7 @@ char setAnAlarm(void)
 				//SSALARM_MENU_ITEMS[ret][0] = '\0';
 				sprintf(SSALARM_MENU_ITEMS[ret], "");
 			}
-
 			nbAl = 0;
-			//pt_al = NULL;
-
 			retour = tmpret;
 		break;
 	}
