@@ -289,6 +289,28 @@ clock alarme_getAlarme(uint8_t indice)
 Bool alarme_delAlarme(uint8_t p_selection)
 {
 	Bool b_return = True;
+
+	if (p_selection < ALARME_MAX_COUNT)
+	{
+		if (al_pool[p_selection].horaire.heures != 0 && al_pool[p_selection].horaire.minutes != 0)
+		{
+			// Suppression de l'alarme
+			al_pool[p_selection].horaire.heures = 0;
+			al_pool[p_selection].horaires.minutes = 0;
+			al_pool[p_selection].horaires.secondes = 0;
+			// Propager la suppression dans l'eeprom
+			eeprom_ecrire_alarme(al_pool[p_selection].horaire, p_selection);
+		}
+		else
+		{
+			b_return = False;
+		}
+	}
+	else
+	{
+		b_return = False;
+	}
+	
 	#if 0
 	uint8_t indice = 1;
 	Alarme_t * al_tmp = al_first;
@@ -360,8 +382,13 @@ void alarme_modify(clock p_clock, uint8_t p_indice)
 {
 	if (p_indice < MAX_COUNT_ALARM)
 	{
-		al_pool[p_indice].horaire.heures = p_clock.heures;
-		al_pool[p_indice].horaire.minutes = p_clock.minutes;
-		al_pool[p_indice].horaire.secondes = p_clock.secondes;
+		if (p_clock.heures != 0 && p_clock.minutes != 0)
+		{
+			al_pool[p_indice].horaire.heures = p_clock.heures;
+			al_pool[p_indice].horaire.minutes = p_clock.minutes;
+			al_pool[p_indice].horaire.secondes = p_clock.secondes;
+			// Propager la modification dans l'eeprom
+			eeprom_ecrire_alarme(al_pool[p_indice].horaire, p_indice);
+		}
 	}
 }
