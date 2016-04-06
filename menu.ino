@@ -349,15 +349,16 @@ char setAnAlarm(void)
 			    pclk = alarme_getAlarme(i);
 			    if (pclk.heures != 0 && pclk.minutes != 0)
 			    {
-				    alitem[0] = '\0';
+					alitem[0] = '\0';
 					// copier 7 char car sprintf met le \0 dans alitem car la ligne de SSALARM_MENU_ITEM est alloué pour 8 char
 					sprintf(alitem, "%02d:%02d  ", pclk.heures, pclk.minutes);
 					strncpy(SSALARM_MENU_ITEMS[nbAl], alitem, strlen(alitem));  // TODO : verifier si l'espace est bien alloué?
 					nbAl ++;
 					// Retenir l'indice de l'alarme pour la selection
-					tabselect[indice] = i;
+					tabselect[indice] = i; /// TODO : utiliser nbAl-1 ? pour gagner 8 bits
 					indice ++;
 			    }
+			    i++;
 			}
 			SSALARM_MENU.nbItem = nbAl;
 			indice = 0;
