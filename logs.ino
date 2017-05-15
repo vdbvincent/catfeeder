@@ -58,7 +58,7 @@ void logs_idle(void)
 }
 
 
-void print_log(char crit, char * texte)
+void print_log(char crit, const char * texte)
 {
 	uint8_t i = 0;
 	Logs_t mylog;

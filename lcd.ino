@@ -22,7 +22,7 @@ char * SSALARM_MENU_ITEMS[8];
 
 Menu_t SSALARM_MENU = 
 {
-  "Regler alarme",
+  (char *)"Regler alarme",
   SSALARM_MENU_ITEMS,
   6
 };
@@ -31,14 +31,14 @@ Menu_t SSALARM_MENU =
 // Déclaration du menu principal
 char * MAIN_MENU_ITEMS[] = 
 {
-  "Regler horloge",
-  "Regler alarme",
-  "Donner a manger"
+  (char *)"Regler horloge",
+  (char *)"Regler alarme",
+  (char *)"Donner a manger"
 };
 
 Menu_t MAIN_MENU = 
 {
-  "Menu principal",
+  (char *)"Menu principal",
   MAIN_MENU_ITEMS,
   3
 };
@@ -46,13 +46,13 @@ Menu_t MAIN_MENU =
 // Déclaration du menu Donner a manger
 char * FEED_MENU_ITEMS[] =
 {
-  "1/2 portion",
-  "1 portion",
-  "2 portions"
+  (char *)"1/2 portion",
+  (char *)"1 portion",
+  (char *)"2 portions"
 };
 Menu_t FEED_MENU = 
 {
-  "Choisir quantite",
+  (char *)"Choisir quantite",
   FEED_MENU_ITEMS,
   3
 };
@@ -60,103 +60,103 @@ Menu_t FEED_MENU =
 // Déclaration du menu reglage heure
 char * CLOCK_HOUR_MENU_ITEMS[] =
 {
-  "00",
-  "01",
-  "02",
-  "03",
-  "04",
-  "05",
-  "06",
-  "07",
-  "08",
-  "09",
-  "10",
-  "11",
-  "12",
-  "13",
-  "14",
-  "15",
-  "16",
-  "17",
-  "18",
-  "19",
-  "20",
-  "21",
-  "22",
-  "23"
+  (char *)"00",
+  (char *)"01",
+  (char *)"02",
+  (char *)"03",
+  (char *)"04",
+  (char *)"05",
+  (char *)"06",
+  (char *)"07",
+  (char *)"08",
+  (char *)"09",
+  (char *)"10",
+  (char *)"11",
+  (char *)"12",
+  (char *)"13",
+  (char *)"14",
+  (char *)"15",
+  (char *)"16",
+  (char *)"17",
+  (char *)"18",
+  (char *)"19",
+  (char *)"20",
+  (char *)"21",
+  (char *)"22",
+  (char *)"23"
 };
 char * CLOCK_MINSEC_MENU_ITEMS[] =
 {
-  "00",
-  "01",
-  "02",
-  "03",
-  "04",
-  "05",
-  "06",
-  "07",
-  "08",
-  "09",
-  "10",
-  "11",
-  "12",
-  "13",
-  "14",
-  "15",
-  "16",
-  "17",
-  "18",
-  "19",
-  "20",
-  "21",
-  "22",
-  "23",
-  "24",
-  "25",
-  "26",
-  "27",
-  "28",
-  "29",
-  "30",
-  "31",
-  "32",
-  "33",
-  "34",
-  "35",
-  "36",
-  "37",
-  "38",
-  "39",
-  "40",
-  "41",  
-  "42",
-  "43",
-  "44",
-  "45",
-  "46",
-  "47",
-  "48",
-  "49",
-  "50",
-  "51",
-  "52",
-  "53",
-  "54",
-  "55",
-  "56",
-  "57",
-  "58",
-  "59"
+  (char *)"00",
+  (char *)"01",
+  (char *)"02",
+  (char *)"03",
+  (char *)"04",
+  (char *)"05",
+  (char *)"06",
+  (char *)"07",
+  (char *)"08",
+  (char *)"09",
+  (char *)"10",
+  (char *)"11",
+  (char *)"12",
+  (char *)"13",
+  (char *)"14",
+  (char *)"15",
+  (char *)"16",
+  (char *)"17",
+  (char *)"18",
+  (char *)"19",
+  (char *)"20",
+  (char *)"21",
+  (char *)"22",
+  (char *)"23",
+  (char *)"24",
+  (char *)"25",
+  (char *)"26",
+  (char *)"27",
+  (char *)"28",
+  (char *)"29",
+  (char *)"30",
+  (char *)"31",
+  (char *)"32",
+  (char *)"33",
+  (char *)"34",
+  (char *)"35",
+  (char *)"36",
+  (char *)"37",
+  (char *)"38",
+  (char *)"39",
+  (char *)"40",
+  (char *)"41",  
+  (char *)"42",
+  (char *)"43",
+  (char *)"44",
+  (char *)"45",
+  (char *)"46",
+  (char *)"47",
+  (char *)"48",
+  (char *)"49",
+  (char *)"50",
+  (char *)"51",
+  (char *)"52",
+  (char *)"53",
+  (char *)"54",
+  (char *)"55",
+  (char *)"56",
+  (char *)"57",
+  (char *)"58",
+  (char *)"59"
 };
 Menu_t CLOCK_HOUR_MENU =
 {
-  "Heure :",
+  (char *)"Heure :",
   CLOCK_HOUR_MENU_ITEMS,
   24
 };
 Menu_t CLOCK_MIN_MENU =
 {
-  "Minute :",
+  (char *)"Minute :",
   CLOCK_MINSEC_MENU_ITEMS,
   60
 };
