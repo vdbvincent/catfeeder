@@ -22,10 +22,11 @@
 #define MENU_EVENT      0
 #define MENU_NO_EVENT   4
 
-void menu_setup(unsigned int p_tempoDem = 2);
+void menu_setup(uint8_t p_tempoDem = 2);
 void menu_idle(void);
 
-static void menu_affMenu(void);
+void menu_affMenu(void);
+char giveFood(void);
 
 void procGtmp(void);
 
@@ -44,6 +45,8 @@ void clearHorloge(void);
 // Méthode pour eteindre ou allumer l'écran
 void menu_on(void);
 void menu_off(void);
+void menu_setMenuOff(void);
+void menu_SetMenuOn(void);
 
 
 #endif /* _MENU_H_ */

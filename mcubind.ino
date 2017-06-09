@@ -119,6 +119,7 @@ void mcubind_virtualport_init(uint8_t virtualPort, uint8_t flagUseAsOutput)
 {
 	if (flagUseAsOutput == 1)
 	{
+            // OUTPUT
 		switch (virtualPort)
 		{
 			// config du port en I/O (0 = input only)
@@ -140,6 +141,7 @@ void mcubind_virtualport_init(uint8_t virtualPort, uint8_t flagUseAsOutput)
 	}
 	else
 	{
+            // INPUT
 		switch (virtualPort)
 		{
 			// config du port en I/O (0 = input only)
@@ -310,7 +312,7 @@ static uint16_t adc_lecture(uint8_t voie)
 /*                                                                         */
 /***************************************************************************/
 
-static void pwm_init(void)
+static void pwm_init(uint8_t virtualPort)
 {
 /*
 	DDRD |= (1 << DDD3);
@@ -328,21 +330,29 @@ static void pwm_init(void)
 	TCCR0B |= (1 << CS01);
 */
 
-	// PD3 an output
-	mcubind_virtualport_init(MCUBIND_VIRTUALPORT_D_b3, 1);
-	/**
-	 * There are quite a number of PWM modes available but for the
-	 * sake of simplicity we'll just use the 8-bit Fast PWM mode.
-	 * This is done by setting the WGM00 and WGM01 bits.  The 
-	 * Setting COM0A1 tells the microcontroller to set the 
-	 * output of the OCR0A pin low when the timer's counter reaches
-	 * a compare value (which will be explained below).  CS00 being
-	 * set simply turns the timer on without a prescaler (so at full
-	 * speed).  The timer is used to determine when the PWM pin should be
-	 * on and when it should be off.
-	 */
-	TCCR2A |= _BV(COM2B1) | _BV(WGM20) | _BV(WGM21);
-	TCCR2B |= _BV(CS20);
+	switch (virtualPort)
+	{
+		case MCUBIND_VIRTUALPORT_PWM00 :
+			// PD3 an output
+			mcubind_virtualport_init(MCUBIND_VIRTUALPORT_D_b3, 1);
+			/**
+			 * There are quite a number of PWM modes available but for the
+			 * sake of simplicity we'll just use the 8-bit Fast PWM mode.
+			 * This is done by setting the WGM00 and WGM01 bits.  The 
+			 * Setting COM0A1 tells the microcontroller to set the 
+			 * output of the OCR0A pin low when the timer's counter reaches
+			 * a compare value (which will be explained below).  CS00 being
+			 * set simply turns the timer on without a prescaler (so at full
+			 * speed).  The timer is used to determine when the PWM pin should be
+			 * on and when it should be off.
+			 */
+			TCCR2A |= _BV(COM2B1) | _BV(WGM20) | _BV(WGM21);
+			TCCR2B |= _BV(CS20);
+		break;
+
+		default:
+		break;
+	}
 }
 
 /***************************************************************************/
@@ -352,7 +362,7 @@ static void pwm_init(void)
 /***************************************************************************/
 
 // TODO : arranger tout ca pour gerer tous les pwm
-static void pwm_out(uint8_t pwm)
+/*static void pwm_out(uint8_t pwm)
 {
 	// set prescaler to 8 and start pwm
 	//TCCR0B |= (1 << CS01);
@@ -373,5 +383,21 @@ static void pwm_out(uint8_t pwm)
 		OCR2B = pwm;
 		TCCR2A = 0x00;
 		flag = 0;
+	}
+}*/
+
+static void pwm_out(uint8_t virtualPort, uint8_t dutycycle)
+{
+	switch (virtualPort)
+	{
+	    case MCUBIND_VIRTUALPORT_PWM00 :
+		    OCR2B = dutycycle;
+			if (dutycycle <= 0)  // Si la commande est à 0, arreter le pwm
+				TCCR2A = 0x00;
+	    break;
+
+	    default:
+	      // do something
+	    break;
 	}
 }

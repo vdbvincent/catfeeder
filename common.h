@@ -11,7 +11,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define MDEBUG4
+// Définitions des modes de debug
+//#define MDEBUG  // logs moteur
+//#define BDEBUG  // logs boutons
+//#define MANDEBUG  // logs du manager
+//#define CDEBUG  // logs clock
+//#define ADEBUG    // logs alarme
 
 /* Définition des événements */
 #define NO_EVENT    -1

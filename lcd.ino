@@ -5,20 +5,33 @@
  *      Author: vincent
  */
  
-#include "LiquidCrystal.h"
+#include <Wire.h>
+#include <LiquidCrystal_I2C.h>
+//#include "LiquidCrystal.h"
 #include "lcd.h"
+#include "menu.h"
  
-LiquidCrystal lcd(11,10,9,8,7,6); //liaison 4 bits de données
+//LiquidCrystal lcd(11,10,9,8,7,6); //liaison 4 bits de données
+LiquidCrystal_I2C lcd(0x3F,16,2);
 
 // Temps d'affichage d'une popup
-static uint8_t m_uiTempoPopup = 2; // 2 secondes
-static Bool m_bPopup = False;
+uint8_t m_uiTempoPopup = 2; // 2 secondes
+Bool m_bPopup = False;
 // Variable de la FSM
 static Bool lcd_isInit = False;
 
 
 // Déclaration du menu principal
-char * SSALARM_MENU_ITEMS[8];
+char * SSALARM_MENU_ITEMS[6];
+char tab0[8];
+char tab1[8];
+char tab2[8];
+char tab3[8];
+char tab4[8];
+char tab5[8];
+
+
+//char SSALARM_MENU_ITEMS[8][16];
 
 Menu_t SSALARM_MENU = 
 {
@@ -164,33 +177,25 @@ Menu_t CLOCK_MIN_MENU =
 
 void lcd_setup(void)
 {
-  // Chargement du symbole reveil
-  //lcd.createChar(0, reveil1);
-  //lcd.createChar(1, reveil2);
-  //lcd.createChar(2, reveil3);
-
   // set up the LCD's number of columns and rows:
-  lcd.begin(16, 2);
+  //lcd.begin(16, 2);
+  lcd.begin();
   lcd.clear();
   lcd_isInit = True;
 
-  // Allocation dynamique pour le tableau d'alarmes
-  SSALARM_MENU_ITEMS[0] = (char*)malloc(8);
-  SSALARM_MENU_ITEMS[1] = (char*)malloc(6);
-  SSALARM_MENU_ITEMS[2] = (char*)malloc(6);
-  SSALARM_MENU_ITEMS[3] = (char*)malloc(6);
-  SSALARM_MENU_ITEMS[4] = (char*)malloc(6);
-  SSALARM_MENU_ITEMS[5] = (char*)malloc(6);
-  strcpy(SSALARM_MENU_ITEMS[0], "Ajouter");
-  strcpy(SSALARM_MENU_ITEMS[1], "");
-  strcpy(SSALARM_MENU_ITEMS[2], "");
-  strcpy(SSALARM_MENU_ITEMS[3], "");
-  strcpy(SSALARM_MENU_ITEMS[4], "");
-  strcpy(SSALARM_MENU_ITEMS[5], "");
-
-  // Init de la sortie d'allimentation de l'écran en sortie
-  mcubind_virtualport_init(MCUBIND_VIRTUALPORT_D_b4, 1);
-  mcubind_virtualport_write(MCUBIND_VIRTUALPORT_D_b4, 1);
+  // Allocation pour le tableau d'alarmes
+  sprintf(tab0, "Ajouter");
+  sprintf(tab1, "");
+  sprintf(tab2, "");
+  sprintf(tab3, "");
+  sprintf(tab4, "");
+  sprintf(tab5, "");
+  SSALARM_MENU_ITEMS[0] = tab0;
+  SSALARM_MENU_ITEMS[1] = tab1;
+  SSALARM_MENU_ITEMS[2] = tab2;
+  SSALARM_MENU_ITEMS[3] = tab3;
+  SSALARM_MENU_ITEMS[4] = tab4;
+  SSALARM_MENU_ITEMS[5] = tab5;
 }
 
 Bool lcd_is_init(void)
@@ -202,17 +207,17 @@ void lcd_on(void)
 {
   lcd.clear();
   // Allumer le backlight
-  mcubind_virtualport_write(MCUBIND_VIRTUALPORT_D_b4, 1);
+  lcd.backlight();
   // Allumer le lcd
   lcd.display();
 }
 
 void lcd_off(void)
 {
-  // Eteindre le backlight
-  mcubind_virtualport_write(MCUBIND_VIRTUALPORT_D_b4, 0);
   // Eteindre le lcd
   lcd.noDisplay();
+  // Eteindre le backlight
+  lcd.noBacklight();
 }
 
 void welcomeScreen(void)
@@ -220,7 +225,8 @@ void welcomeScreen(void)
   if (lcd_isInit)
   {
     lcd.clear();
-    lcd.print(F("CatFeeder  v2.0"));
+    lcd.home();
+    lcd.print(F("CatFeeder  v1.0"));
   }
 }
 
@@ -229,15 +235,8 @@ void lcd_clear(void)
   if (lcd_isInit && (m_bPopup == False))
   {
     lcd.clear();
+    lcd.home();
   }
-}
-
-void afficheReveil(void)
-{
-  //lcd.setCursor(0,14);    // Affiche sur la fin de la premiere ligne
-  //lcd.write((uint8_t) 0);
-  //lcd.write((uint8_t) 1);
-  //lcd.write((uint8_t) 2);
 }
 
 // Ecran d'acceuil
@@ -260,6 +259,7 @@ void afficheHeure(uint8_t forced)
     lcd.setCursor(0,0); // Curseur en haut à gauche
     char message[8];  
     sprintf(message, "%02d:%02d", heure.heures, heure.minutes);
+    message[6] = '\0';
     lcd.print(message);
     oldheure = heure;
   }
@@ -351,7 +351,6 @@ Select_t afficheMenu(Menu_t * myMenu , uint8_t select)
         case BT_D_PRESSE:
           // Validation du choix
           retour = SELECT_OK;
-          //selection = 0;
         break;
         
         case BT_G_PRESSE:
@@ -375,6 +374,12 @@ Select_t afficheMenu(Menu_t * myMenu , uint8_t select)
 }
 
 // GESTION POPUP
+void procPopup(void)
+{
+  //lcd.clear();  // Ne pas le faire en IT
+  m_bPopup = False;
+}
+
 void lcd_popup(const char * p_msg)
 {
 /*
@@ -382,15 +387,15 @@ declencher une minuterie de 2s et afficher le texte
 bloquer la fonction affichemenu le temps de la popup
 et ds la callback tout remettre normal
 */
-  lcd.clear();
-  lcd.setCursor(0,0);
-  lcd.print(p_msg);
-  alarme_setMinuteur((uint16_t)m_uiTempoPopup, &procPopup); // Affiche pour 2 secondes
-  m_bPopup = True;
+
+  if (lcd_isInit == True)
+  {
+    lcd.clear();
+    lcd.home();
+    lcd.print(p_msg);
+    alarme_setMinuteur(m_uiTempoPopup, &procPopup); // Affiche pour 2 secondes
+    m_bPopup = True;
+  }
 }
 
-void procPopup(void)
-{
-  lcd.clear();
-  m_bPopup = False;
-}
+

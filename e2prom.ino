@@ -1,3 +1,5 @@
+#include <EEPROM.h>
+
 /*
  * eeprom.c
  *
@@ -5,7 +7,8 @@
  *      Author: vincent
  *
  */
-#include "EEPROM.h"
+
+//#include <EEPROM.h>
 #include "e2prom.h"
 
 void eeprom_ecrire_alarme(clock p_cl, uint8_t p_id)
@@ -39,6 +42,9 @@ void eeprom_ecrire_alarme(clock p_cl, uint8_t p_id)
 		// ecriture de l'heure
 		EEPROM.write(addr, p_cl.heures);
 		EEPROM.write(addr+1, p_cl.minutes);
+		char txt[16];
+		sprintf(txt, "e2:%02d:%02d\n", p_cl.heures, p_cl.minutes);
+		printstr(txt);
 	}
 }
 

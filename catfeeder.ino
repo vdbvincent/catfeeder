@@ -4,7 +4,7 @@
  *  Created on: 31 juil. 2015
  *      Author: vincent
  */
-// Inclusions
+
 #include "catfeeder.h"
 #include "mcubind.h"
 #include "boutons.h"
@@ -14,52 +14,53 @@
 #include "moteur.h"
 #include "menu.h"
 #include "manager.h"
-#include "e2prom.h"
 
 // Variables globales
 static int c10 = 0;
 static int tmp = 0;
 
+/*
+	TODO :
+		- Ajouter un capteur de courant pour controler l'intensité du moteur
+		- Ajouter un pont en H a base de relais pour faire tourner le moteur dans les 2 sens
+		- Ajouter un module de communication RF
+		- Ajouter un système de sauvegarde de codes defauts en eeprom
+		- Ajouter un fusible en entrée de l'alimentation
+*/
 
 void setup()
 {
-	//clock tmp;
-	//char txt[8];
-	
 	// OS
 	init_mcubind();
-	print_log(INFO, "Initialisation\n");
+	//print_log(INFO, "Initialisation\n");
 	clock_setup();
-	alarme_setup();
-	boutons_setup(10);  // init du process bouton avec un delai de filtrage de 10ms
+	boutons_setup(100);  // init du process bouton avec un delai de filtrage de 10ms
 	moteur_setup();
-	menu_setup(2); // temps du welcom screen de 2s
 	manager_setup();
-
+    alarme_setup();
+	menu_setup(2); // temps du welcom screen de 2s
 
 	//-------------------
 	// A faire seulement une fois au premier demarrage
 	//-------------------
-	// tmp.heures = 0;
-	// tmp.minutes =  0;
-	// eeprom_ecrire_alarme(tmp, EEPROM_AL1);
-	// eeprom_ecrire_alarme(tmp, EEPROM_AL2);
-	// eeprom_ecrire_alarme(tmp, EEPROM_AL3);
-	// eeprom_ecrire_alarme(tmp, EEPROM_AL4);
-	// eeprom_ecrire_alarme(tmp, EEPROM_AL5);
-	
-	// tmp = eeprom_lire_alarme(EEPROM_AL5);
-	// sprintf(txt, "%02d:%02d", tmp.heures, tmp.minutes);
-	// print_log(DEBUG, txt);
-	//-------------------
+	/* clock tmp;
+	 tmp.heures = 0;
+	 tmp.minutes =  0;
+	 eeprom_ecrire_alarme(tmp, EEPROM_AL1);
+	 eeprom_ecrire_alarme(tmp, EEPROM_AL2);
+	 eeprom_ecrire_alarme(tmp, EEPROM_AL3);
+	 eeprom_ecrire_alarme(tmp, EEPROM_AL4);
+	 eeprom_ecrire_alarme(tmp, EEPROM_AL5);
+	 */
 }
 
 void loop()
 {
 	logs_idle();
 	menu_idle();
-
-	delay(10);
+	logs_idle();
+	clock_idle();
+	delay(5);
 }
 
 

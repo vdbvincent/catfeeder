@@ -104,7 +104,7 @@ static void adc_init(void);
 static uint16_t adc_lecture(uint8_t voie);
 
 // PWM
-static void pwm_init(void);
-static void pwm_out(uint8_t pwm);
+static void pwm_init(uint8_t virtualPort);
+static void pwm_out(uint8_t virtualPort, uint8_t dutycycle);
 
 #endif /* _MCUBIND_H_ */

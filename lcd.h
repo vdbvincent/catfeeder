@@ -12,10 +12,10 @@
 #include "alarme.h"
 
 // Définitions
-#define SELECT_BACK    0
-#define SELECT_OK      1
-#define SELECT_CANCEL  2
-#define NO_SELECT      99
+#define SELECT_BACK    (uint8_t)0
+#define SELECT_OK      (uint8_t)1
+#define SELECT_CANCEL  (uint8_t)2
+#define NO_SELECT      (uint8_t)99
 
 // Structure d'un menu
 typedef struct
@@ -25,47 +25,21 @@ typedef struct
   uint8_t nbItem; // Nombre de choix possible
 } Menu_t;
 
+// Structure d'un menu alarme
+typedef struct
+{
+  char * titre;   // Titre du menu
+  char * items[6][8];  // Tableau de choix du menu
+  uint8_t nbItem; // Nombre de choix possible
+} Menu_al_t;
+
 // Structure d'un selection
 typedef struct
 {
-  unsigned char selection;
-  unsigned char retour;
+  uint8_t selection;
+  uint8_t retour;
 } Select_t;
 
-// Creation du symbole reveil
-byte reveil1[8] = 
-{
-    B0011,
-    B0010,
-    B0100,
-    B1101,
-    B1110,
-    B0010,
-    B0001,
-    B0000
-};
-byte reveil2[8] = 
-{
-    B1111,
-    B0000,
-    B0001,
-    B0101,
-    B0100,
-    B0111,
-    B0001,
-    B1110
-};
-byte reveil3[8] = 
-{
-    B1000,
-    B1000,
-    B0100,
-    B0110,
-    B1110,
-    B1000,
-    B0000,
-    B0000
-};
 
 // Déclaration du menu principal
 extern char * MAIN_MENU_ITEMS[];
@@ -86,8 +60,8 @@ extern Menu_t CLOCK_SEC_MENU ;
 extern char * ALARME_MENU_ITEMS[];
 extern Menu_t ALARME_MENU;
 
-//extern char SSALARM_MENU_ITEMS[6][8];
-extern char * SSALARM_MENU_ITEMS[];
+extern char * SSALARM_MENU_ITEMS[6];
+//extern char * SSALARM_MENU_ITEMS[];
 extern Menu_t SSALARM_MENU;
 
 void lcd_setup(void);
@@ -108,9 +82,6 @@ void afficheBtMenu(uint8_t forced = 0);
 // Affichage du menu
 // Select : param optionnel par defaut mettre 255
 Select_t afficheMenu(Menu_t * myMenu, uint8_t select);
-
-// Affichage du symbole de reveil
-void afficheReveil(void);
 
 // Gestion du popup
 void lcd_popup(const char * p_msg);

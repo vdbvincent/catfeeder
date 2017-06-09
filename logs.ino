@@ -40,13 +40,13 @@ void logs_idle(void)
 			switch (objLog.crit)
 			{
 			    case ERREUR:
-					sprintf(buffer, "[ERREUR] - %s - %s\n", message, objLog.texte);
+					sprintf(buffer, "[ERR] - %s - %s\n", message, objLog.texte);
 			      	break;
 			    case INFO:
-					sprintf(buffer, "[ INFO ] - %s - %s\n", message, objLog.texte);
+					sprintf(buffer, "[INF] - %s - %s\n", message, objLog.texte);
 			      	break;
 			    case DEBUG:
-					sprintf(buffer, "[ DEBUG] - %s - %s\n", message, objLog.texte);
+					sprintf(buffer, "[DEB] - %s - %s\n", message, objLog.texte);
 			    	break;
 			    default:
 			    	sprintf(buffer, "%s\n", objLog.texte);

@@ -20,11 +20,11 @@
 #define EEPROM_ADDR_AL4	12
 #define EEPROM_ADDR_AL5	16
 
-#define EEPROM_AL1		0//1
-#define EEPROM_AL2		1//2
-#define EEPROM_AL3		2//3
-#define EEPROM_AL4		3//4
-#define EEPROM_AL5		4//5
+#define EEPROM_AL1		(uint8_t)0
+#define EEPROM_AL2		(uint8_t)1
+#define EEPROM_AL3		(uint8_t)2
+#define EEPROM_AL4		(uint8_t)3
+#define EEPROM_AL5		(uint8_t)4
 
 clock eeprom_lire_alarme(uint8_t p_id);
 void eeprom_ecrire_alarme(clock p_cl, uint8_t p_id);
