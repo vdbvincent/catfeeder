@@ -31,45 +31,38 @@ In this mode, the 'OK' button switches the display back on. The others help to d
 
 <p align="center">
   main screen  <br />
-  <img src="https://github.com/vdbvincent/catfeeder/blob/master/pic/menu.png" width="350"/>
+  <img src="https://github.com/vdbvincent/catfeeder/blob/master/pic/menu.png" width="175"/>
 </p>
 
 <p align="center">
   main menu  <br />
-  <img src="https://github.com/vdbvincent/catfeeder/blob/master/pic/mp_regler_horloge.jpg" width="350"/>
-  <img src="https://github.com/vdbvincent/catfeeder/blob/master/pic/mp_regler_alarme.jpg" width="350"/>
-  <img src="https://github.com/vdbvincent/catfeeder/blob/master/pic/mp_dam.jpg" width="350"/>
+  <img src="https://github.com/vdbvincent/catfeeder/blob/master/pic/mp_regler_horloge.jpg" width="175"/>
+  <img src="https://github.com/vdbvincent/catfeeder/blob/master/pic/mp_regler_alarme.jpg" width="175"/>
+  <img src="https://github.com/vdbvincent/catfeeder/blob/master/pic/mp_dam.jpg" width="175"/>
 </p>
 
 <p align="center">
   Feed the cat  <br />
-  <img src="https://github.com/vdbvincent/catfeeder/blob/master/pic/quantite.jpg" width="350"/>
+  <img src="https://github.com/vdbvincent/catfeeder/blob/master/pic/quantite.jpg" width="175"/>
 </p>
 
 <p align="center">
   Set an alarm  <br />
-  <img src="https://github.com/vdbvincent/catfeeder/blob/master/pic/regler_al.jpg" width="350"/>
+  <img src="https://github.com/vdbvincent/catfeeder/blob/master/pic/regler_al.jpg" width="175"/>
 </p>
 
 ## Electronics
-
-<p align="center">
-   <br />
-
 #### Components list
 - Arduino Uno
 - 9v DC/DC
 - Relay
 - Power supply
-  
-  <br />
-  
+
 #### Diagram
 <p align="center">
   <img src="https://github.com/vdbvincent/catfeeder/blob/master/schema/shema_catfeeder.jpg" width="350"/>
 </p>
 
-</p>
 ## Frame
 
 <p align="center">
