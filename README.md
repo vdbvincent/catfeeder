@@ -5,7 +5,7 @@ Example for building your own automatic catfeeder built with Arduino uno
 
 ## About
 
-This is a example, with software provided, on how automate feeding your pets.
+This is an example, with software provided, on how automate feeding your pets.
 
 This repo contains schemas, and source code.
 
