@@ -30,6 +30,28 @@ In this mode, the 'OK' button switches the display back on. The others help to d
 
 == photos des écrans avec flow ==
 
+<p align="center">
+  main screen  <br />
+  <img src="https://github.com/vdbvincent/catfeeder/blob/master/pic/menu.jpg" width="350"/>
+</p>
+
+<p align="center">
+  main menu  <br />
+  <img src="https://github.com/vdbvincent/catfeeder/blob/master/pic/mp_regler_horloge.jpg" width="350"/>
+  <img src="https://github.com/vdbvincent/catfeeder/blob/master/pic/mp_regler_alarme.jpg" width="350"/>
+  <img src="https://github.com/vdbvincent/catfeeder/blob/master/pic/mp_dam.jpg" width="350"/>
+</p>
+
+<p align="center">
+  Feed the cat  <br />
+  <img src="https://github.com/vdbvincent/catfeeder/blob/master/pic/quantite.jpg" width="350"/>
+</p>
+
+<p align="center">
+  Set an alarm  <br />
+  <img src="https://github.com/vdbvincent/catfeeder/blob/master/pic/regler_al.jpg" width="350"/>
+</p>
+
 ## Electronics
 
 #### Components list
