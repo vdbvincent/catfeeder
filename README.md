@@ -43,10 +43,6 @@ In this mode, the 'OK' button switches the display back on. The others help to d
   <img src="https://github.com/vdbvincent/catfeeder/blob/master/schema/shema_catfeeder.jpg" width="350"/>
 </p>
 
-tmp
-
-![alt_text](https://github.com/vdbvincent/catfeeder/blob/master/schema/shema_catfeeder.jpg)
-
 #### Frame
 AJouter quelques photos du chassis
 
