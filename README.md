@@ -45,9 +45,9 @@ In this mode, the 'OK' button switches the display back on. The others help to d
 AJouter quelques photos du chassis
 
 ## Install software
-1/ Install Arduino environnement
+1/ Install Arduino environnement : https://www.arduino.cc/en/Main/Software
 
-2/ Download the source code
+2/ Download the source code or clone it : "git clone https://github.com/vdbvincent/catfeeder.git"
 
 3/ Put all the *.h and *.ino files into a named "catfeeder" folder
 
