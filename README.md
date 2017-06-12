@@ -24,7 +24,7 @@ A sleep mode id used to turn off the LCD scren to prevent overcurrent. It appear
 In this mode, the 'OK' button switches the display back on. The others help to distribute food quickly.
 
 <p align="center">
-  <img src="https://github.com/vdbvincent/catfeeder/blob/master/pic/2017-06-12_18_11_39.gif" width="350"/>
+  <img src="pic/2017-06-12_18_11_39.gif" width="350"/>
 </p>
 
 ## Menu screen
