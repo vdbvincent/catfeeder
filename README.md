@@ -66,7 +66,7 @@ In this mode, the 'OK' button switches the display back on. The others help to d
   <img src="https://github.com/vdbvincent/catfeeder/blob/master/schema/shema_catfeeder.jpg" width="350"/>
 </p>
 
-#### Frame
+## Frame
 
 <p align="center">
   <img src="https://github.com/vdbvincent/catfeeder/blob/master/schema/20170612_181236.jpg" width="350"/>
