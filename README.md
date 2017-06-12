@@ -16,7 +16,7 @@ It consists of a self-made wood frame and an archimede screw powered by an ardui
 The arduino drives the motor which drives the screw. The food is then pushed into a spilway.
 
 It offers a menu, througn a LCD screen, in which find :
-- Time programming : you need to set the time at fisrt power-up.
+- Time programming : you need to set the time at first power-up.
 - Alarms programming : up to 5 alarms can be set in a day to program a food distribution.
 - Food distribution : you can choose the amount of food to be dispensed and then operate the engine.
 
