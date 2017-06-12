@@ -32,7 +32,7 @@ In this mode, the 'OK' button switches the display back on. The others help to d
 
 <p align="center">
   main screen  <br />
-  <img src="https://github.com/vdbvincent/catfeeder/blob/master/pic/menu.jpg" width="350"/>
+  <img src="https://github.com/vdbvincent/catfeeder/blob/master/pic/menu.png" width="350"/>
 </p>
 
 <p align="center">
