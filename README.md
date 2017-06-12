@@ -29,8 +29,6 @@ In this mode, the 'OK' button switches the display back on. The others help to d
 
 ## Menu screen
 
-== photos des écrans avec flow ==
-
 <p align="center">
   main screen  <br />
   <img src="https://github.com/vdbvincent/catfeeder/blob/master/pic/menu.png" width="350"/>
@@ -55,17 +53,23 @@ In this mode, the 'OK' button switches the display back on. The others help to d
 
 ## Electronics
 
+<p align="center">
+   <br />
+
 #### Components list
 - Arduino Uno
 - 9v DC/DC
 - Relay
 - Power supply
-
+  
+  <br />
+  
 #### Diagram
 <p align="center">
   <img src="https://github.com/vdbvincent/catfeeder/blob/master/schema/shema_catfeeder.jpg" width="350"/>
 </p>
 
+</p>
 ## Frame
 
 <p align="center">
