@@ -32,7 +32,7 @@ In this mode, the 'OK' button switches the display back on. The others help to d
 
 ## Electronics
 
-### Components list
+#### Components list
 - Arduino Uno
 - 9v DC/DC
 - Relay
