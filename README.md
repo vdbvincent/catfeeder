@@ -69,11 +69,11 @@ In this mode, the 'OK' button switches the display back on. The others help to d
 ## Frame
 
 <p align="center">
-  <img src="https://github.com/vdbvincent/catfeeder/blob/master/schema/20170612_181236.jpg" width="350"/>
+  <img src="https://github.com/vdbvincent/catfeeder/blob/master/pic/20170612_181236.jpg" width="350"/>
 </p>
 
 <p align="center">
-  <img src="https://github.com/vdbvincent/catfeeder/blob/master/schema/20170612_181248.jpg" width="350"/>
+  <img src="https://github.com/vdbvincent/catfeeder/blob/master/pic/20170612_181248.jpg" width="350"/>
 </p>
 
 ## Install software
