@@ -31,24 +31,24 @@ In this mode, the 'OK' button switches the display back on. The others help to d
 
 <p align="center">
   main screen  <br />
-  <img src="https://github.com/vdbvincent/catfeeder/blob/master/pic/menu.png" width="175"/>
+  <img src="pic/menu.png" width="175"/>
 </p>
 
 <p align="center">
   main menu  <br />
-  <img src="https://github.com/vdbvincent/catfeeder/blob/master/pic/mp_regler_horloge.jpg" width="175"/>
-  <img src="https://github.com/vdbvincent/catfeeder/blob/master/pic/mp_regler_alarme.jpg" width="175"/>
-  <img src="https://github.com/vdbvincent/catfeeder/blob/master/pic/mp_dam.jpg" width="175"/>
+  <img src="pic/mp_regler_horloge.jpg" width="175"/>
+  <img src="pic/mp_regler_alarme.jpg" width="175"/>
+  <img src="pic/mp_dam.jpg" width="175"/>
 </p>
 
 <p align="center">
   Feed the cat  <br />
-  <img src="https://github.com/vdbvincent/catfeeder/blob/master/pic/quantite.jpg" width="175"/>
+  <img src="pic/quantite.jpg" width="175"/>
 </p>
 
 <p align="center">
   Set an alarm  <br />
-  <img src="https://github.com/vdbvincent/catfeeder/blob/master/pic/regler_al.jpg" width="175"/>
+  <img src="pic/regler_al.jpg" width="175"/>
 </p>
 
 ## Electronics
@@ -60,17 +60,17 @@ In this mode, the 'OK' button switches the display back on. The others help to d
 
 #### Diagram
 <p align="center">
-  <img src="https://github.com/vdbvincent/catfeeder/blob/master/schema/shema_catfeeder.jpg" width="350"/>
+  <img src="schema/shema_catfeeder.jpg" width="350"/>
 </p>
 
 ## Frame
 
 <p align="center">
-  <img src="https://github.com/vdbvincent/catfeeder/blob/master/pic/20170612_181236.jpg" width="350"/>
+  <img src="pic/20170612_181236.jpg" width="350"/>
 </p>
 
 <p align="center">
-  <img src="https://github.com/vdbvincent/catfeeder/blob/master/pic/20170612_181248.jpg" width="350"/>
+  <img src="pic/20170612_181248.jpg" width="350"/>
 </p>
 
 ## Install software
