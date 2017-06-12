@@ -23,8 +23,10 @@ It offers a menu, througn a LCD screen, in which find :
 A sleep mode id used to turn off the LCD scren to prevent overcurrent. It appears after 30 secondes of inactivity.
 In this mode, the 'OK' button switches the display back on. The others help to distribute food quickly.
 
-== VIDEO GIF ==
-![feed_gif]()
+<p align="center">
+  main screen  <br />
+  <img src="https://github.com/vdbvincent/catfeeder/blob/master/pic/2017-06-12_18_11_39.gif" width="350"/>
+</p>
 
 ## Menu screen
 
