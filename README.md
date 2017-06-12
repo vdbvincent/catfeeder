@@ -39,6 +39,12 @@ In this mode, the 'OK' button switches the display back on. The others help to d
 - Power supply
 
 #### Diagram
+<p align="center">
+  <img src="https://github.com/vdbvincent/catfeeder/blob/master/schema/shema_catfeeder.jpg" width="350"/>
+</p>
+
+tmp
+
 ![alt_text](https://github.com/vdbvincent/catfeeder/blob/master/schema/shema_catfeeder.jpg)
 
 #### Frame
