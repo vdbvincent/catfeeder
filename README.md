@@ -46,8 +46,11 @@ AJouter quelques photos du chassis
 
 ## Install software
 1/ Install Arduino environnement
+
 2/ Download the source code
+
 3/ Put all the *.h and *.ino files into a named "catfeeder" folder
+
 4/ Upload the soft into your Arduino board
 
 ## Contribute
