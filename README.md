@@ -1,4 +1,4 @@
-# catfeeder
+# Catfeeder
 
 Example for building your own automatic catfeeder built with Arduino uno
 
@@ -20,13 +20,13 @@ It offers a menu, througn a LCD screen, in which find :
 - Alarms programming : up to 5 alarms can be set in a day to program a food distribution.
 - Food distribution : you can choose the amount of food to be dispensed and then operate the engine.
 
-A sleep mode id used to turn off the LCD scren to prevent overcurrent. It appear after 30 secondes of inactivity.
+A sleep mode id used to turn off the LCD scren to prevent overcurrent. It appears after 30 secondes of inactivity.
 In this mode, the 'OK' button switches the display back on. The others help to distribute food quickly.
 
 == VIDEO GIF ==
 ![feed_gif]()
 
-## Menu interface
+## Menu screen
 
 == photos des écrans avec flow ==
 
@@ -45,10 +45,10 @@ In this mode, the 'OK' button switches the display back on. The others help to d
 AJouter quelques photos du chassis
 
 ## Contribute
-Please, feel free to send me a pull request
+Please, feel free to send me a pull request !
 
-## Next
-* Add RF communication
-* Add android interface for settings
-* Add a feelling sensor
+## Next to do
+* RF communication
+* Android interface for settings
+* Feelling sensor
 
