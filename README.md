@@ -54,9 +54,17 @@ In this mode, the 'OK' button switches the display back on. The others help to d
 ## Electronics
 #### Components list
 - Arduino Uno
+https://www.amazon.com/Arduino-Uno-R3-Microcontroller-A000066/dp/B008GRTSV6/
 - 9v DC/DC
+https://www.amazon.com/MT3608-DC-DC-Power-Module-Booster/dp/B01N41MM10
 - Relay
+https://www.amazon.com/Tolako-Arduino-Indicator-Channel-Official/dp/B00VRUAHLE/
+- LCD screen with I2C interface
+https://www.amazon.com/Frentaly-Backlight-Arduino-MEGA2560-letters/dp/B0182N00LU/
+- Switchs push button
+https://www.amazon.com/Mini-Momentary-Button-Switch-Terminal/dp/B013JTIKBY/
 - Power supply
+https://www.amazon.fr/Aukru-Universel-Alimentation-adaptateur-chargeur/dp/B00MVLJ6NI/
 
 #### Diagram
 <p align="center">
