@@ -5,23 +5,23 @@ Example for building your own automatic catfeeder built with Arduino uno
 
 ## About
 
-This is an example, with software provided, on how automate feeding your pets.
+This is an example, with software provided, to automate the feeding of your pets.
 
 This repo contains schemas and source code.
 
 ## How does it work ?
 
 The feeder dispenser is very simple.
-It consists of a self-made wood frame and an archimede screw powered by an arduino uno.
-The arduino drives the motor which drives the screw. The food is then pushed into a spilway.
+It consists of a self-made wood frame and an archimedes screw controled by an Arduino Uno.
+The arduino drives the motor which himself rotates the screw. The food is then pushed into a spilway.
 
-It offers a menu, througn a LCD screen, in which find :
-- Time programming : you need to set the time at first power-up.
+It offers a menu, through a LCD screen, in which you can find :
+- Time setting : you need to set the time at on power-up.
 - Alarms programming : up to 5 alarms can be set in a day to program a food distribution.
 - Food distribution : you can choose the amount of food to be dispensed and then operate the engine.
 
-A sleep mode id used to turn off the LCD scren to prevent overcurrent. It appears after 30 secondes of inactivity.
-In this mode, the 'OK' button switches the display back on. The others help to distribute food quickly.
+A sleep mode is used to turn off the LCD screen to prevent overconsumption. It appears after 30 secondes of inactivity.
+In this mode, the 'OK' button switches the display back on. The others help to distribute food quickly (Quickfeed shorcut).
 
 <p align="center">
   <img src="pic/2017-06-12_18_11_39.gif" width="350"/>
