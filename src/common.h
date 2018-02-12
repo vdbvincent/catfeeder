@@ -13,7 +13,7 @@
 
 // Définitions des modes de debug
 //#define MDEBUG  // logs moteur
-//#define BDEBUG  // logs boutons
+#define BDEBUG  // logs boutons
 //#define MANDEBUG  // logs du manager
 //#define CDEBUG  // logs clock
 //#define ADEBUG  // logs alarme
