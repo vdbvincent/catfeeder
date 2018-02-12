@@ -37,7 +37,6 @@ void setup()
 	boutons_setup(100);  // init du process bouton avec un delai de filtrage de 10ms
 	moteur_setup();
 	manager_setup();
-    alarme_setup();
 	menu_setup(2); // temps du welcom screen de 2s
 
 	//-------------------
@@ -52,6 +51,8 @@ void setup()
 	 eeprom_ecrire_alarme(tmp, EEPROM_AL4);
 	 eeprom_ecrire_alarme(tmp, EEPROM_AL5);
 	 */
+	
+	alarme_setup();
 }
 
 void loop()
