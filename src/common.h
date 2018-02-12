@@ -16,7 +16,8 @@
 //#define BDEBUG  // logs boutons
 //#define MANDEBUG  // logs du manager
 //#define CDEBUG  // logs clock
-//#define ADEBUG    // logs alarme
+//#define ADEBUG  // logs alarme
+#define MEDEBUG // logs menu
 
 /* Définition des événements */
 #define NO_EVENT    -1
