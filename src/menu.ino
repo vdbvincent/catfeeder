@@ -78,34 +78,43 @@ void menu_affMenu(void)
 
 	switch (state_affmenu)
 	{
-	    // ECRAN DEMARRAGE
-	    case 0:
-	    	g_tmp = 0;
-	      	welcomeScreen();
-	      	alarme_setMinuteur(ui_tempoDem, &procGtmp); // Affiche pour 2 seconde
+	    	// ECRAN DEMARRAGE
+		case 0:
+			g_tmp = 0;
+			welcomeScreen();
+			alarme_setMinuteur(ui_tempoDem, &procGtmp); // Affiche pour 2 seconde
 			state_affmenu = 1;
-	    break;
+			#ifdef MEDEBUG
+			print_log(INFO, "menu: 0->1\n");
+			#endif
+		break;
 
-	    case 1:
-	    	if (g_tmp != 0)  // Fin de l'ecran de demarrage
-	    	{
-	    		clearCmdButtons();
+	    	case 1:
+			if (g_tmp != 0)  // Fin de l'ecran de demarrage
+			{
+				clearCmdButtons();
 				lcd_clear();
 				clock_reset();
 				state_affmenu = 2;
-	    	}
-	      	break;
+				#ifdef MEDEBUG
+				print_log(INFO, "menu: 1->2\n");
+				#endif
+			}
+		break;
 
-	    // ECRAN D'ACCEUIL
+		// ECRAN D'ACCEUIL
 
-	    case 2:
-	    	afficheHome(1);  // Forcer l'affichage complet
-	    	state_affmenu = 21;
-	    break;
+		case 2:
+			afficheHome(1);  // Forcer l'affichage complet
+			state_affmenu = 21;
+			#ifdef MEDEBUG
+			print_log(INFO, "menu: 2->21\n");
+			#endif
+		break;
 
-	    case 21:
-	    	afficheHome();
-			// Attente de l'appuie du bouton gauche
+		case 21:
+			afficheHome();
+			// Attente de l'appuie du bouton droit
 			if ( ! isEmpty_btfifo())
 			{
 				char event = get_btfifo();
@@ -114,12 +123,15 @@ void menu_affMenu(void)
 					// Affiche du menu
 					state_affmenu = 3;
 					lcd_clear();
+					#ifdef MEDEBUG
+					print_log(INFO, "menu: 21->3\n");
+					#endif
 				}
 			}
-		    break;
+		break;
 
 
-	    // MENU PRINCIPAL
+	    	// MENU PRINCIPAL
 
 		case 3:
 			select = afficheMenu(&MAIN_MENU, 0);  // TODO : tester si en mode sommeil avec menu ouvert et reallumer -> bug ?
@@ -132,7 +144,9 @@ void menu_affMenu(void)
 						state_affmenu = 5;
 						clearHorloge();
 						lcd_clear();
-						//clocktmp = clock_getClock();
+						#ifdef MEDEBUG
+						print_log(INFO, "menu: 3->5\n");
+						#endif
 					break;
 
 					case 1:
@@ -140,12 +154,18 @@ void menu_affMenu(void)
 						state_affmenu = 6;
 						clearHorloge();
 						lcd_clear();
+						#ifdef MEDEBUG
+						print_log(INFO, "menu: 3->6\n");
+						#endif
 					break;
 
 					case 2 :
 						// Donner à manger
 						state_affmenu = 4;
 						lcd_clear();
+						#ifdef MEDEBUG
+						print_log(INFO, "menu: 3->4\n");
+						#endif
 					break;
 				}
 			}
@@ -154,6 +174,9 @@ void menu_affMenu(void)
 				// retour à l'écran d'acceuil
 				lcd_clear();
 				state_affmenu = 2;
+				#ifdef MEDEBUG
+				print_log(INFO, "menu: 3->2\n");
+				#endif
 			}
 
 		break;
@@ -166,6 +189,9 @@ void menu_affMenu(void)
 			{
 				lcd_clear();
 				state_affmenu = 2;
+				#ifdef MEDEBUG
+				print_log(INFO, "menu: 4->2\n");
+				#endif
 			}
 		break;
 		
@@ -183,12 +209,18 @@ void menu_affMenu(void)
 				// Retour en ecran d'acceuil
 				lcd_clear();
 				state_affmenu = 2;
+				#ifdef MEDEBUG
+				print_log(INFO, "menu: 5->2\n");
+				#endif
 			}
 			else if (ret == MENU_CANCEL)
 			{
 				// Réglage annulé par l'utilisateur. Retour au menu
 				lcd_clear();
 				state_affmenu = 3;
+				#ifdef MEDEBUG
+				print_log(INFO, "menu: 5->2\n");
+				#endif
 			}
 		break;
 		
@@ -201,6 +233,9 @@ void menu_affMenu(void)
 				// dans tous les cas retourner au menu principale
 				//lcd_clear();
 				state_affmenu = 3;
+				#ifdef MEDEBUG
+				print_log(INFO, "menu: 6->3\n");
+				#endif
 			}
 		break;
 	}
