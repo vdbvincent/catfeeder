@@ -134,7 +134,7 @@ void menu_affMenu(void)
 	    	// MENU PRINCIPAL
 
 		case 3:
-			select = afficheMenu(&MAIN_MENU, 0);  // TODO : tester si en mode sommeil avec menu ouvert et reallumer -> bug ?
+			select = afficheMenu(&MAIN_MENU, 255);  // TODO : tester si en mode sommeil avec menu ouvert et reallumer -> bug ?
 			if (select.retour == SELECT_OK)
 			{
 				switch (select.selection)
